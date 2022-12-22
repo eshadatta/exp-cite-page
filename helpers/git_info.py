@@ -1,5 +1,6 @@
 import git
 from git import Repo
+from datetime import datetime
 
 class GitInfo:
     def __init__(self, path):
@@ -22,6 +23,16 @@ class GitInfo:
             # file's most recent commit id
             file_commit_id = git.rev_list("-n 1", branch_commit_id, file)
         return file_commit_id
+
+    def commit_date(self, commit):
+        iso_format = self.git.show("-s","--format=%cI",commit)
+        dt = datetime.fromisoformat(iso_format)
+        timestamp = int(round(dt.timestamp()))
+        utc_datetime = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        return utc_datetime
+
+
+
         
 
  

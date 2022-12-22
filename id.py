@@ -7,6 +7,7 @@ import os
 from os.path import exists
 from git import Repo
 import helpers.git_info as gi
+import helpers.generate_id as gid
 
 def check_path(parser, p, type="file"):
     path_types = ["file", "dir"]
@@ -37,20 +38,50 @@ def git_info(args):
     g = gi.GitInfo(args.repo)
     branch = args.branch if args.branch else g.active_branch
     file_commit_id = g.get_file_commit_id(args.file, branch)
-    print(g.active_branch)
-    print(file_commit_id)
     if not(file_commit_id):
         raise ValueError(f"File {args.file} must be tracked in the git repository: {args.repo} in the specified branch: {branch} to continue processing")
+    utc_datetime = g.commit_date(file_commit_id)
+    return [file_commit_id, utc_datetime]
+
+def add_pid(pid, commit_id, utc_datetime, args):
+    path = os.path.normpath(args.repo)
+    file_path = args.file.split(path+"/")[1]
+    id = {"git_commit_id": commit_id, "current_id": pid, "file": file_path, "utc_commit_date": utc_datetime}
+    if (exists(args.pid_file_path)):
+        if not(os.path.isfile(args.pid_file_path)):
+            raise ValueError(f"{args.pid_file_path} must be a json file")
+        else:
+            # handle file processing
+            contents = []
+            try:
+                with open(args.pid_file_path, "r") as outfile:
+                    contents.append(json.load(outfile))
+            except Exception as e:
+                raise IOError(f"Error reading file: {e}")
+            try:
+                with open(args.pid_file_path, "w") as outfile:
+                    contents.append(id)
+                    json.dump(contents, outfile)
+            except Exception as e:
+                raise IOError(f"Error writing to file: {e}")
+    elif not(exists(args.pid_file_path)):
+        try:
+            with open(args.pid_file_path, "w") as outfile:
+                json.dump(id, outfile)
+        except Exception as e:
+            raise IOError(f"Error writing to file: {e}")
 
 def main():
     args = set_args()
-    git_info(args)
+    [commit_id, utc_datetime] = git_info(args)
+    id = gid.GenID().gen_default()
+    add_pid(id, commit_id, utc_datetime, args)
     # error handling for untracked file - done
     # get file's most recent commit id - done
-    # create a pid id
-    # create a json file, if one doesn't exist for pids
+    # create a pid id - done
+    # create a json file, if one doesn't exist for pids - done
     # if json file does exist, check to see if the file w/ pid exists in the file and update it.
-    # Else create an entry
+    # Else create an entry - done
     # Do the entries need their own key? Like a unique id of their own?
 
 
