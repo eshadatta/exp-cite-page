@@ -52,10 +52,10 @@ def add_pid(pid, commit_id, utc_datetime, args):
             raise ValueError(f"{args.pid_file_path} must be a json file")
         else:
             # handle file processing
-            contents = []
+            contents = None
             try:
                 with open(args.pid_file_path, "r") as outfile:
-                    contents.append(json.load(outfile))
+                    contents = json.load(outfile)
             except Exception as e:
                 raise IOError(f"Error reading file: {e}")
             try:
@@ -67,7 +67,7 @@ def add_pid(pid, commit_id, utc_datetime, args):
     elif not(exists(args.pid_file_path)):
         try:
             with open(args.pid_file_path, "w") as outfile:
-                json.dump(id, outfile)
+                json.dump([id], outfile)
         except Exception as e:
             raise IOError(f"Error writing to file: {e}")
 
