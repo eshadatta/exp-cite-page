@@ -1,6 +1,7 @@
 import git
 from git import Repo
 from datetime import datetime
+import os 
 
 class GitInfo:
     def __init__(self, path):
@@ -16,6 +17,7 @@ class GitInfo:
     def get_file_commit_id(self, file, branch):
         file_commit_id = None
         git = self.git
+        file = self.path + file
         tracked = None if not(git.ls_files(file)) else True
         if tracked:
             # most recent commit id for the branch in question
