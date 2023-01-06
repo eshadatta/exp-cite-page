@@ -24,7 +24,11 @@ class GitInfo:
             branch_commit_id = git.rev_list(branch, n=1)
             # file's most recent commit id
             file_commit_id = git.rev_list("-n 1", branch_commit_id, file)
-        return file_commit_id
+            # getting hash of file contents
+            git_hash = git.hash_object(file)
+        else:
+            raise ValueError(f"{file} must be tracked in git repository: {self.path}")
+        return [file_commit_id, git_hash]
 
     def commit_date(self, commit):
         iso_format = self.git.show("-s","--format=%cI",commit)

@@ -8,8 +8,8 @@ class ProcessJson:
         self.pid_file = self.repo + pid_file
         self.tracked_file = tracked_file
 
-    def add_pid(self, pid, commit_id, utc_datetime):
-        id = {"git_commit_id": commit_id, "current_id": pid, "file": self.tracked_file, "utc_commit_date": utc_datetime}
+    def add_pid(self, pid, commit_id, git_hash, utc_datetime):
+        id = {"git_commit_id": commit_id, "current_id": pid, "file": self.tracked_file, "file_hash": git_hash, "utc_commit_date": utc_datetime}
         if (exists(self.pid_file)):
             if not(os.path.isfile(self.pid_file)):
                 raise ValueError(f"{self.pid_file} must be a json file")

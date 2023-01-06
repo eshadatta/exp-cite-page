@@ -32,27 +32,24 @@ def check_args(parser, args):
         file = args.repo + args.file
     if not(exists(file) and os.path.isfile(file)):
          parser.error(f"{file} needs to exist and/or be a file")
-    print(args)
     return args
 
 def git_info(args):
     g = gi.GitInfo(args.repo)
     branch = args.branch if args.branch else g.active_branch
-    file_commit_id = g.get_file_commit_id(args.file, branch)
-    if not(file_commit_id):
-        raise ValueError(f"File {args.file} must be tracked in the git repository: {args.repo} in the specified branch: {branch} to continue processing")
+    [file_commit_id, git_hash] = g.get_file_commit_id(args.file, branch)
     utc_datetime = g.commit_date(file_commit_id)
-    return [file_commit_id, utc_datetime]
+    return [file_commit_id, git_hash, utc_datetime]
 
 
 
 def main():
     [parser, args] = set_args()
     args = check_args(parser, args)
-    [commit_id, utc_datetime] = git_info(args)
+    [commit_id, git_hash, utc_datetime] = git_info(args)
     id = gid.GenID().gen_default()
     json_file = pjson.ProcessJson(args.repo, args.pid_file_path, args.file)
-    json_file.add_pid(id, commit_id, utc_datetime)
+    json_file.add_pid(id, commit_id, git_hash, utc_datetime)
     # error handling for untracked file - done
     # get file's most recent commit id - done
     # create a pid id - done
