@@ -1,13 +1,19 @@
 import json
 import os 
 from os.path import exists
-
+from pathlib import Path
 class ProcessJson:
     def __init__(self, repo, pid_file, tracked_file):
         self.repo = repo
         self.pid_file = self.repo + pid_file
         self.tracked_file = tracked_file
 
+    def create_pid_file(self):
+        if not(exists(self.pid_file)):
+            Path(self.pid_file).touch()
+        else:
+            print(f"{self.pid_file} already exists")
+            
     def add_pid(self, pid, commit_id, git_hash, utc_datetime):
         id = {"git_commit_id": commit_id, "current_id": pid, "file": self.tracked_file, "file_hash": git_hash, "utc_commit_date": utc_datetime}
         if (exists(self.pid_file)):
