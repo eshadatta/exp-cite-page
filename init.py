@@ -12,7 +12,7 @@ import helpers.generate_id as gid
 def check_path(parser, p, type="file"):
     path_types = ["file", "dir"]
     if not(type in path_types):
-        raise("error")
+        raise parser.error(f"type: {type} must be one of these: {path_types}")
     if not(exists(p)):
         parser.error(f"{p} needs to exist")
     elif type == "file" and not(os.path.isfile(p)):
