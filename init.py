@@ -48,7 +48,8 @@ def main():
     content_path = c.read_config()
     file_list = c.get_file_list(content_path)
     init_files = i.InitializeFiles(args.repo_path, file_list, pid_file)
-    init_files.process_files()
+    files = init_files.process_files()
+    print(files)
     #reads the files, creates the first version tag in the frontmatter, commits this, and then adds the git information to the json files.
 if __name__ == "__main__":
     main()

@@ -13,13 +13,15 @@ class GitInfo:
         else:
             self.git = self.repo.git
             self.active_branch = self.repo.active_branch
-
+    def tracked(self, file):
+        tracked = None if not(git.ls_files(file)) else True
+        return tracked
     def get_file_commit_id(self, file, branch):
         file_commit_id = None
         git = self.git
         file = self.path + file
-        tracked = None if not(git.ls_files(file)) else True
-        if tracked:
+        is_tracked = self.tracked(file)
+        if is_tracked:
             # most recent commit id for the branch in question
             branch_commit_id = git.rev_list(branch, n=1)
             # file's most recent commit id

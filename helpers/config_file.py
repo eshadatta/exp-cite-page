@@ -56,6 +56,8 @@ class ConfigFile:
             if os.path.isdir(p):
                 for i in Path(p).rglob('*.md'):
                     file_list.append(str(os.path.abspath(i)))
+            elif os.path.isfile(p):
+                file_list.append(p)
         return file_list
 
 

@@ -13,28 +13,35 @@ class InitializeFiles:
          self.init_version = '0.0.0'
 
     def write_content_file(self, file_path, markdown):
+        initialized = False
         try:
             with open(file_path, 'w') as m:
                 m.write(frontmatter.dumps(markdown, handler=markdown.handler))
         except Exception as e:
             raise(f"ERROR: {e}")
-        print(f"Initialized {file_path}")
+        initialized = True
+        return initialized
         
             
     def initialize_content_file(self, file):
+        initialized = False
         try:
             markdown_file = frontmatter.load(file)
         except Exception as e:
             raise(f"ERROR: {e}")
         if not(self.init_tag in markdown_file.metadata):
             markdown_file.metadata[self.init_tag] = self.init_version
-            self.write_content_file(file, markdown_file)
+            initialized = self.write_content_file(file, markdown_file)
         
-        return markdown_file
+        return initialized
     
     def process_files(self):
+        files = []
         for p in self.content_file_paths:
-            self.initialize_content_file(p)
+            init = self.initialize_content_file(p)
+            if init:
+                files.append(p)
+        return files
     
 
         
