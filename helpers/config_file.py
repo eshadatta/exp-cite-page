@@ -8,7 +8,6 @@ import ast
 class ConfigFile:
     def __init__(self, content_path, pid_file, config_file_name = "static_pid_gen.ini"):
          self.c = configparser.ConfigParser()
-         self.c['REPO'] = {"repo_path": "."}
          self.content_path = content_path
          self.pid_file = pid_file
          self.config_file_name = config_file_name
@@ -40,4 +39,24 @@ class ConfigFile:
                 self.c.write(cf)
         except Exception as e:
             raise(f"ERROR: Could not create config file: {e}")
+        print(f"Config file: {self.config_file_name} created")
+
+    def read_config(self):
+        try:
+            self.c.read(self.config_file_name)
+        except Exception as e:
+            raise ValueError(f"ERROR: {e}")
+        # when read, the list gets read as a string of a list - converting to a list
+        content_path = ast.literal_eval(self.c['DEFAULT']['content_path'])
+        return content_path
+
+    def get_file_list(self, content_paths):
+        file_list = []
+        for p in content_paths:
+            if os.path.isdir(p):
+                for i in Path(p).rglob('*.md'):
+                    file_list.append(str(os.path.abspath(i)))
+        return file_list
+
+
 

@@ -9,7 +9,7 @@ from git import Repo
 import helpers.git_info as gi
 import helpers.generate_id as gid
 import helpers.config_file as cf
-
+import helpers.initialize_files as i
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -29,7 +29,8 @@ def set_args():
     # if json file does not exist, one will be created
     parser.add_argument('-p', '--pid-file-path', help='Path to json file where containing all the information associated with the files and their permanent IDs; relative to the repository root. If the file does not exist, a new file with the specified filename will be created', required=True)
     parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2, -c filepath3; relative to the repository root")
-    parser.add_argument('-r', '--repo-path', help='Local path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
+    parser.add_argument('-r', '--repo-path', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
+    parser.add_argument('-cf', '--config-filename', help='Filename for config init', required=True)
     parser.add_argument('-b', '--branch', help='Path to branch where the file is located. The default is the active branch of the repository')
     parser.add_argument('-dry', '--dry-run', help='Dry run to generate a permanent ID of a specified file', action='store_true')
     
@@ -40,7 +41,14 @@ def main():
     args = set_args()
     print(args)
     content_paths = list(map(lambda p: args.repo_path + "/" + p, args.content))
-    c = cf.ConfigFile(content_paths, args.pid_file_path)
+    config_file_name = args.repo_path + "/" + args.config_filename
+    pid_file = args.repo_path + "/" + args.pid_file_path
+    c = cf.ConfigFile(content_paths, pid_file, config_file_name)
     c.create_config()
+    content_path = c.read_config()
+    file_list = c.get_file_list(content_path)
+    init_files = i.InitializeFiles(args.repo_path, file_list, pid_file)
+    init_files.process_files()
+    #reads the files, creates the first version tag in the frontmatter, commits this, and then adds the git information to the json files.
 if __name__ == "__main__":
     main()
