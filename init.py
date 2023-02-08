@@ -46,10 +46,12 @@ def main():
     c = cf.ConfigFile(content_paths, pid_file, config_file_name)
     c.create_config()
     content_path = c.read_config()
+    # get list of markdown files
     file_list = c.get_file_list(content_path)
     init_files = i.InitializeFiles(args.repo_path, file_list, pid_file)
-    files = init_files.process_files()
-    print(files)
+    # initializing these files with a first tag of the first version
+    stuff = init_files.process_files()
+    print(stuff)
     #reads the files, creates the first version tag in the frontmatter, commits this, and then adds the git information to the json files.
 if __name__ == "__main__":
     main()

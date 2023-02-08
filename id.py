@@ -37,7 +37,7 @@ def check_args(parser, args):
 def git_info(args):
     g = gi.GitInfo(args.repo)
     branch = args.branch if args.branch else g.active_branch
-    [file_commit_id, git_hash] = g.get_file_commit_id(args.file, branch)
+    [file_commit_id, git_hash] = g.get_file_commit_info(args.file, branch)
     utc_datetime = g.commit_date(file_commit_id)
     return [file_commit_id, git_hash, utc_datetime]
 
