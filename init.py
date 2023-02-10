@@ -10,6 +10,7 @@ import helpers.git_info as gi
 import helpers.generate_id as gid
 import helpers.config_file as cf
 import helpers.initialize_files as i
+import helpers.process_json as pjson
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -52,6 +53,7 @@ def main():
     # initializing these files with a first tag of the first version
     stuff = init_files.process_files()
     print(stuff)
-    #reads the files, creates the first version tag in the frontmatter, commits this, and then adds the git information to the json files.
+    #Adds the git information to the json files.
+    json_file = pjson.ProcessJson(args.repo, args.pid_file_path, args.file)
 if __name__ == "__main__":
     main()
