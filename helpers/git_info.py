@@ -29,7 +29,7 @@ class GitInfo:
     # check if this is the latest commit
     def check_file_status(self, file):
         committed = False
-        status = self.git.status("-s", file)
+        status = self.git.diff(file)
         if len(status) == 0:
             committed = True
         return committed
