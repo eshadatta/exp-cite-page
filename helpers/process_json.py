@@ -5,8 +5,9 @@ from pathlib import Path
 class ProcessJson:
     def __init__(self, repo, pid_file):
         self.repo = repo
-        self.pid_file = self.repo + pid_file
+        self.pid_file = pid_file
         self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None}
+
     def create_pid_file(self):
         if not(exists(self.pid_file)):
             try:
@@ -15,11 +16,10 @@ class ProcessJson:
                 raise ValueError(f"ERROR: {e}")
         else:
             print(f"{self.pid_file} already exists")
-            
+
     def write_pid(self, contents):
         try:
             with open(self.pid_file, "w") as outfile:
-                contents.append(id)
                 json.dump(contents, outfile)
         except Exception as e:
                 raise IOError(f"Error writing to file: {e}")
@@ -47,5 +47,11 @@ class ProcessJson:
                     contents = [id]
         else:
             raise ValueError(f"PID File: {self.pid_file} must exist")
-        self.write_pid(contents)
+        return contents
+
+    def initialize_pid_file(self, pid_file_contents):
+        for f in pid_file_contents:
+            content = self.add_pid(f)
+            self.write_pid(content)
+
       

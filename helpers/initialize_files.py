@@ -64,7 +64,7 @@ class InitializeFiles:
         
         for f in files:
             [file_commit_id, git_hash, utc_datetime] = self.gen_initialized_file_info(f)
-            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_datetime": utc_datetime, "filepath": f}
+            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1]}
             file_git_info.append(info)
 
         return file_git_info

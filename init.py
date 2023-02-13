@@ -51,9 +51,11 @@ def main():
     file_list = c.get_file_list(content_path)
     init_files = i.InitializeFiles(args.repo_path, file_list, pid_file)
     # initializing these files with a first tag of the first version
-    stuff = init_files.process_files()
-    print(stuff)
-    #Adds the git information to the json files.
-    json_file = pjson.ProcessJson(args.repo, args.pid_file_path, args.file)
+    files = init_files.process_files()
+    print(files)
+    #Add  git information to the json files.
+    # need to either process by file or do it in the library
+    json_file = pjson.ProcessJson(args.repo_path, pid_file)
+    json_file.initialize_pid_file(files)
 if __name__ == "__main__":
     main()
