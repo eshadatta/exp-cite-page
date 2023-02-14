@@ -56,9 +56,9 @@ class ConfigFile:
         content_path = ast.literal_eval(self.c['DEFAULT']['content_path'])
         return content_path
 
-    def get_file_list(self, content_paths):
+    def get_file_list(self):
         file_list = []
-        for p in content_paths:
+        for p in self.content_path:
             if os.path.isdir(p):
                 for i in Path(p).rglob('*.md'):
                     file_list.append(str(os.path.abspath(i)))

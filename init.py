@@ -42,15 +42,12 @@ def main():
     args = set_args()
     print(args)
     c = cf.ConfigFile(args.repo_path, args.content, args.pid_file_path, args.config_filename)
-    #content_paths, pid_file, config_file_name)
     c.create_config()
-    content_path = c.read_config()
     # get list of markdown files
-    file_list = c.get_file_list(content_path)
+    file_list = c.get_file_list()
     init_files = i.InitializeFiles(args.repo_path, file_list, args.pid_file_path)
     # initializing these files with a first tag of the first version
     files = init_files.process_files()
-    print(files)
     #Add  git information to the json files.
     # need to either process by file or do it in the library
     json_file = pjson.ProcessJson(args.repo_path, args.pid_file_path)
