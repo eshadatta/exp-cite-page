@@ -6,11 +6,17 @@ import configparser
 import ast
 
 class ConfigFile:
-    def __init__(self, content_path, pid_file, config_file_name = "static_pid_gen.ini"):
-         self.c = configparser.ConfigParser()
-         self.content_path = content_path
-         self.pid_file = pid_file
-         self.config_file_name = config_file_name
+    def __init__(self, repo_path, content_path, pid_file, config_file_name = "static_pid_gen.ini"):
+        self.c = configparser.ConfigParser()
+        self.repo_path = repo_path
+        self.relative_content_paths = content_path
+        self.relative_pid_file = pid_file
+        content_paths = list(map(lambda p: self.repo_path + "/" + p, content_path))
+        config_file_name =  self.repo_path + "/" + config_file_name
+        pid_file = self.repo_path + "/" + pid_file
+        self.content_path = content_paths
+        self.pid_file = pid_file
+        self.config_file_name = config_file_name
 
     def create_pid_file(self):
         pid_file = self.pid_file
@@ -33,7 +39,7 @@ class ConfigFile:
     def create_config(self):
         self.chk_content_paths()
         self.create_pid_file()
-        self.c['DEFAULT'] = {'content_path': self.content_path, 'pid_file': self.pid_file}
+        self.c['DEFAULT'] = {'content_path': self.relative_content_paths, 'pid_file': self.relative_pid_file}
         try:
             with open(self.config_file_name, "w") as cf:
                 self.c.write(cf)
