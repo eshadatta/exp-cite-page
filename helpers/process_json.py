@@ -6,7 +6,7 @@ class ProcessJson:
     def __init__(self, repo, pid_file):
         self.repo = repo
         self.pid_file = pid_file
-        self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None}
+        self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None, "version": None}
 
     def write_pid(self, contents):
         try:
@@ -24,7 +24,7 @@ class ProcessJson:
         for k, v in self.pid_entry.items():
             pid_file_contents[k] = pid_file_contents.get(k, v)
 
-        id = {"file_commit_id": pid_file_contents["file_commit_id"], "current_id": pid_file_contents["current_id"], "file": pid_file_contents["file"], "file_hash": pid_file_contents["file_hash"], "utc_commit_date": pid_file_contents["utc_commit_date"]}
+        id = {"file_commit_id": pid_file_contents["file_commit_id"], "current_id": pid_file_contents["current_id"], "file": pid_file_contents["file"], "file_hash": pid_file_contents["file_hash"], "utc_commit_date": pid_file_contents["utc_commit_date"], "version": pid_file_contents["version"]}
         if (exists(self.pid_file)):
             if not(os.path.isfile(self.pid_file)):
                 raise ValueError(f"{self.pid_file} must be a json file")
