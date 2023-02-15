@@ -6,7 +6,7 @@ import configparser
 import ast
 
 class ConfigFile:
-    def __init__(self, repo_path, content_path, pid_file, config_file_name = "static_pid_gen.ini"):
+    def __init__(self, repo_path, content_path, pid_file, config_file_name):
         self.c = configparser.ConfigParser()
         self.repo_path = repo_path
         self.relative_content_paths = content_path

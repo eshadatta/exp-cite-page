@@ -31,7 +31,7 @@ def set_args():
     parser.add_argument('-p', '--pid-file-path', help='Path to json file where containing all the information associated with the files and their permanent IDs; relative to the repository root. If the file does not exist, a new file with the specified filename will be created', required=True)
     parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2, -c filepath3; relative to the repository root")
     parser.add_argument('-r', '--repo-path', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
-    parser.add_argument('-cf', '--config-filename', help='Filename for config init', required=True)
+    parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = "static.ini", help='Filename for config init, has a default filename if none is specified')
     parser.add_argument('-b', '--branch', help='Path to branch where the file is located. The default is the active branch of the repository')
     parser.add_argument('-dry', '--dry-run', help='Dry run to generate a permanent ID of a specified file', action='store_true')
     
@@ -45,12 +45,9 @@ def main():
     c.create_config()
     # get list of markdown files
     file_list = c.get_file_list()
-    print("FILE LIST: ", file_list)
     init_files = i.InitializeFiles(args.repo_path, file_list, args.pid_file_path)
     # initializing these files with a first tag of the first version
     files = init_files.process_files()
-    #Add  git information to the json files.
-    # need to either process by file or do it in the library
     json_file = pjson.ProcessJson(args.repo_path, c.pid_file)
     json_file.initialize_pid_file(files)
 if __name__ == "__main__":
