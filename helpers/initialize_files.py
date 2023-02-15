@@ -23,17 +23,20 @@ class InitializeFiles:
             raise(f"ERROR: {e}")
         initialized = True
         return initialized
-        
-            
-    def initialize_content_file(self, file):
-        initialized = False
+  
+    def read_markdown_file(self, file):
         try:
             markdown_file = frontmatter.load(file)
         except Exception as e:
             raise(f"ERROR: {e}")
-        if not(self.init_tag in markdown_file.metadata):
-            markdown_file.metadata[self.init_tag] = self.init_version
-            initialized = self.write_content_file(file, markdown_file)
+        return markdown_file
+
+    def initialize_content_file(self, file):
+        initialized = False
+        md = self.read_markdown_file(file)
+        if not(self.init_tag in md.metadata):
+            md.metadata[self.init_tag] = self.init_version
+            initialized = self.write_content_file(file, md)
         
         return initialized
     
@@ -43,6 +46,7 @@ class InitializeFiles:
             self.g.git_add_file(file)
         committed = self.g.check_file_status(file)
         if not(committed):
+
                 self.g.git_commit_file(file)
         [file_commit_id, git_hash] = self.g.git_commit_id(self.g.active_branch, file)
         return [file_commit_id, git_hash]

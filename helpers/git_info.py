@@ -29,9 +29,12 @@ class GitInfo:
     # check if this is the latest commit
     def check_file_status(self, file):
         committed = False
-        status = self.git.diff(file)
+        status = self.git.status("-s", file)
         if len(status) == 0:
-            committed = True
+            # checks if file is changed on disk vs index
+            diff = self.git.diff(file)
+            if len(diff) == 0:
+                committed = True
         return committed
 
     def git_add_file(self, file):

@@ -45,12 +45,13 @@ def main():
     c.create_config()
     # get list of markdown files
     file_list = c.get_file_list()
+    print("FILE LIST: ", file_list)
     init_files = i.InitializeFiles(args.repo_path, file_list, args.pid_file_path)
     # initializing these files with a first tag of the first version
     files = init_files.process_files()
     #Add  git information to the json files.
     # need to either process by file or do it in the library
-    json_file = pjson.ProcessJson(args.repo_path, args.pid_file_path)
+    json_file = pjson.ProcessJson(args.repo_path, c.pid_file)
     json_file.initialize_pid_file(files)
 if __name__ == "__main__":
     main()

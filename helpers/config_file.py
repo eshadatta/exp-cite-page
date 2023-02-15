@@ -35,7 +35,7 @@ class ConfigFile:
         for p in paths:
             if not(exists(p)):
                 raise ValueError(f"content path: {p} must exist")
-
+         
     def create_config(self):
         self.chk_content_paths()
         self.create_pid_file()

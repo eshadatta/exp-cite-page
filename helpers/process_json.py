@@ -8,21 +8,13 @@ class ProcessJson:
         self.pid_file = pid_file
         self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None}
 
-    def create_pid_file(self):
-        if not(exists(self.pid_file)):
-            try:
-                Path(self.pid_file).touch()
-            except Exception as e:
-                raise ValueError(f"ERROR: {e}")
-        else:
-            print(f"{self.pid_file} already exists")
-
     def write_pid(self, contents):
         try:
             with open(self.pid_file, "w") as outfile:
                 json.dump(contents, outfile)
         except Exception as e:
                 raise IOError(f"Error writing to file: {e}")
+
     def check_pre_existing_commits(self, json_file_contents, pid_file_contents):
         pid_file_commit_id = pid_file_contents['file_commit_id']
         pre_existing_files = [x['file'] for x in json_file_contents if x['file_commit_id'] == pid_file_commit_id]
