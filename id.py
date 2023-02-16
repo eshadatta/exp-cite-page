@@ -56,7 +56,7 @@ def check_config_args(config_args, arg_type=None):
             for i in v:
                 all_messages.append(u.check_path(i))
     
-    messages = list(filter(lambda x: x is not None, all_messages))
+    messages = list(filter(lambda x: x, all_messages))
     if messages:
         raise ValueError(f"From {script_name}.{method_name}: Cannot continue processing. See errors:{messages}")
 
