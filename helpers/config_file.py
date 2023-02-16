@@ -3,7 +3,6 @@ import os
 from os.path import exists
 from pathlib import Path
 import configparser
-import ast
 
 class ConfigFile:
     def __init__(self, repo_path, content_path, pid_file, config_file_name):
@@ -47,14 +46,7 @@ class ConfigFile:
             raise(f"ERROR: Could not create config file: {e}")
         print(f"Config file: {self.config_file_name} created")
 
-    def read_config(self):
-        try:
-            self.c.read(self.config_file_name)
-        except Exception as e:
-            raise ValueError(f"ERROR: {e}")
-        # when read, the list gets read as a string of a list - converting to a list
-        content_path = ast.literal_eval(self.c['DEFAULT']['content_path'])
-        return content_path
+   
 
     def get_file_list(self):
         file_list = []
