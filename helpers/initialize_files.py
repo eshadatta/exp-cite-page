@@ -4,14 +4,16 @@ from pathlib import Path
 import frontmatter
 from frontmatter.default_handlers import YAMLHandler, JSONHandler, TOMLHandler
 from . import git_info
+from . import static_page_id as sp
 
 class InitializeFiles:
     def __init__(self, repo_path, content_file_paths, pid_file):
          self.repo_path = repo_path
          self.content_file_paths = content_file_paths
          self.pid_file = pid_file
-         self.init_tag = 'x-version'
-         self.init_version = '0.0.0'
+         self.static_page = sp.static_page_id()
+         # need to test this change
+         #self.init_version = '0.0.0'
          self.g = git_info.GitInfo(self.repo_path)
 
     def write_content_file(self, file_path, markdown):
@@ -23,7 +25,8 @@ class InitializeFiles:
             raise(f"ERROR: {e}")
         initialized = True
         return initialized
-  
+        
+    # move to utilities
     def read_markdown_file(self, file):
         try:
             markdown_file = frontmatter.load(file)
@@ -34,8 +37,10 @@ class InitializeFiles:
     def initialize_content_file(self, file):
         initialized = False
         md = self.read_markdown_file(file)
-        if not(self.init_tag in md.metadata):
-            md.metadata[self.init_tag] = self.init_version
+        version_tag = self.static_page.init_version_tag
+        initial_version = self.static_page.init_version
+        if not(version_tag in md.metadata):
+            md.metadata[version_tag] = initial_version
             initialized = self.write_content_file(file, md)
         
         return initialized

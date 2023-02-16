@@ -47,7 +47,7 @@ class ConfigFile:
         print(f"Config file: {self.config_file_name} created")
 
    
-
+    # move to utilities
     def get_file_list(self):
         file_list = []
         for p in self.content_path:
