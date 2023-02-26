@@ -5,7 +5,7 @@ import frontmatter
 from frontmatter.default_handlers import YAMLHandler, JSONHandler, TOMLHandler
 from . import git_info
 from . import static_page_id as sp
-
+from . import utilities as u
 
 class InitializeFiles:
     def __init__(self, repo_path, content_file_paths, pid_file):
@@ -25,18 +25,9 @@ class InitializeFiles:
         initialized = True
         return initialized
 
-    # move to utilities
-    def read_markdown_file(self, file):
-        print("FILE: ", file)
-        try:
-            markdown_file = frontmatter.load(file)
-        except Exception as e:
-            raise(f"ERROR: {e}")
-        return markdown_file
-
     def initialize_content_file(self, file):
         initialized = False
-        md = self.read_markdown_file(file)
+        md = u.read_markdown_file(file)
         version_tag = self.static_page.init_version_tag
         initial_version = self.static_page.init_version
         if not(version_tag in md.metadata):
