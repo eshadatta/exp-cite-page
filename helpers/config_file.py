@@ -55,8 +55,6 @@ class ConfigFile:
             raise(f"ERROR: Could not create config file: {e}")
         print(f"Config file: {self.config_file_name} created")
 
-   
-    # move to utilities
     def get_file_list(self):
         try:
             file_list = u.get_file_list(self.content_path)
