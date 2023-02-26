@@ -45,9 +45,9 @@ def main():
     print(args)
     print(__file__)
     c = cf.ConfigFile(args.repo_path, args.content, args.pid_file_path, args.config_filename)
-    c.create_config()
     # get list of markdown files
     file_list = c.get_file_list()
+    c.create_config()
     init_files = i.InitializeFiles(args.repo_path, file_list, args.pid_file_path)
     # initializing these files with a first tag of the first version
     files = init_files.process_files()

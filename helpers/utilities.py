@@ -50,7 +50,7 @@ def get_file_list(content_path):
         else:
             file_list.append(f)
     if not_found:
-        raise ValueError(f"No files found for {not_found}")
+        raise ValueError(f"ERROR: Stopping processing. No files found for {not_found}")
 
     files = list(chain(*file_list))
     return files
