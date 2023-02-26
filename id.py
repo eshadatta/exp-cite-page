@@ -70,11 +70,16 @@ def main():
     full_paths = {}
     full_paths['pid_file'] = args.repo + "/" + pid_file
     full_paths['content_paths'] = list(map(lambda x: args.repo + "/" + x, content_paths))
+
+    # verifying config args in ini file are ok
     try:
         check_config_args(full_paths)
     except ValueError as e:
         print(e)
         sys.exit(1)
+
+    #gather files to be processed
+
     
     
     

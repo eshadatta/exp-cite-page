@@ -6,14 +6,13 @@ from frontmatter.default_handlers import YAMLHandler, JSONHandler, TOMLHandler
 from . import git_info
 from . import static_page_id as sp
 
+
 class InitializeFiles:
     def __init__(self, repo_path, content_file_paths, pid_file):
          self.repo_path = repo_path
          self.content_file_paths = content_file_paths
          self.pid_file = pid_file
          self.static_page = sp.static_page_id()
-         # need to test this change
-         #self.init_version = '0.0.0'
          self.g = git_info.GitInfo(self.repo_path)
 
     def write_content_file(self, file_path, markdown):
@@ -25,9 +24,10 @@ class InitializeFiles:
             raise(f"ERROR: {e}")
         initialized = True
         return initialized
-        
+
     # move to utilities
     def read_markdown_file(self, file):
+        print("FILE: ", file)
         try:
             markdown_file = frontmatter.load(file)
         except Exception as e:
@@ -66,6 +66,7 @@ class InitializeFiles:
         # also needs to check if there are initialized things that are not committed
         files = []
         file_git_info = []
+        print("PATHS: ", self.content_file_paths)
         for p in self.content_file_paths:
             init = self.initialize_content_file(p)
             if init:
@@ -73,9 +74,8 @@ class InitializeFiles:
         
         for f in files:
             [file_commit_id, git_hash, utc_datetime] = self.gen_initialized_file_info(f)
-            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.init_version}
+            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.static_page.init_version}
             file_git_info.append(info)
-
         return file_git_info
 
     

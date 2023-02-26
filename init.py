@@ -11,6 +11,8 @@ import helpers.generate_id as gid
 import helpers.config_file as cf
 import helpers.initialize_files as i
 import helpers.process_json as pjson
+import helpers.utilities as u
+import sys
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -41,6 +43,7 @@ def set_args():
 def main():
     args = set_args()
     print(args)
+    print(__file__)
     c = cf.ConfigFile(args.repo_path, args.content, args.pid_file_path, args.config_filename)
     c.create_config()
     # get list of markdown files

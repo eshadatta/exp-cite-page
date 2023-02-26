@@ -1,8 +1,10 @@
 import configparser
 import os
-from os.path import exists
+from os.path import exists, relpath
 from pathlib import Path
 import configparser
+from . import utilities as u
+import sys
 
 class ConfigFile:
     def __init__(self, repo_path, content_path, pid_file, config_file_name):
@@ -30,13 +32,20 @@ class ConfigFile:
             raise ValueError(f"ERROR: please send a path with a filename and not path: {pid_file}")
 
     def chk_content_paths(self):
-        paths = self.content_path
-        for p in paths:
-            if not(exists(p)):
-                raise ValueError(f"content path: {p} must exist")
-         
+        script_name = relpath(__file__)
+        method_name = self.chk_content_paths.__name__
+        msg = list(map(u.check_path, self.content_path))
+        # removing all ok messages, i.e. None
+        messages = list(filter(lambda x: x, msg))
+        if messages:
+            raise ValueError(f"From {script_name}.{method_name}: Cannot continue processing. See errors:{messages}")
+
     def create_config(self):
-        self.chk_content_paths()
+        try:
+            self.chk_content_paths()
+        except ValueError as e:
+            print(e)
+            sys.exit(1)
         self.create_pid_file()
         self.c['DEFAULT'] = {'content_path': self.relative_content_paths, 'pid_file': self.relative_pid_file}
         try:
@@ -49,13 +58,11 @@ class ConfigFile:
    
     # move to utilities
     def get_file_list(self):
-        file_list = []
-        for p in self.content_path:
-            if os.path.isdir(p):
-                for i in Path(p).rglob('*.md'):
-                    file_list.append(str(os.path.abspath(i)))
-            elif os.path.isfile(p):
-                file_list.append(p)
+        try:
+            file_list = u.get_file_list(self.content_path)
+        except ValueError as e:
+            print(e)
+            sys.exit(1)
         return file_list
 
 
