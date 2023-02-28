@@ -11,7 +11,7 @@ import helpers.generate_id as gid
 import helpers.process_json as pjson
 import helpers.utilities as u
 import sys
-
+import helpers.static_page_id as sp
 def check_path(parser, p, type='dir'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -26,10 +26,12 @@ def check_path(parser, p, type='dir'):
 
 def set_args():
     """CLI"""
+    s = sp.static_page_id()
+    default_filename = s.default_config_filename
     parser = argparse.ArgumentParser(
                     description="Generate a permanent ID for a specific file")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
-    parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = "static.ini", help='Filename for config init, has a default filename if none is specified')
+    parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = default_filename, help='Filename for config init, has a default filename if none is specified')
     parser.add_argument('-d', '--dry-run', help='Dry run to generate a permanent ID of a specified file or files', action='store_true')
     args = parser.parse_args()
     return parser, args
@@ -77,10 +79,28 @@ def main():
     except ValueError as e:
         print(e)
         sys.exit(1)
-
+    print(full_paths)
     #gather files to be processed
+    content_paths = full_paths['content_paths']
+    file_list = u.get_file_list(content_paths)
+    [gen_dois, unprocessed_files] = u.check_file_versions(args.repo,  full_paths['pid_file'], file_list)
+    print(f"Files to be DOI'zed: {gen_dois}")
+    print(f"Files will not be processed: {unprocessed_files}")
+'''
+  for all files in content paths, 
+  read frontmatter - DONE
+  if x-version:
+    process if x-version is > initialized - DONE
 
-    
+  processing x-version:
+    if major version greater than base:
+        check pid json file
+            if in json file and current major version is greater than major version in json file: - DONE
+                generate id. Store other ids, in previous id and with git info related with it - NEED TO DO
+        if not in pid: - OUTPUTTING THIS INFO
+'''
+
+
     
     
 
