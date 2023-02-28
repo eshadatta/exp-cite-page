@@ -79,26 +79,32 @@ def get_files_pid(pid_file):
     return file_version_info
     
 def check_file_versions(repo_path, pid_file, file_list):
+    #get a list of all files and their versions from the pid file
     initialized_files =  get_files_pid(pid_file)
     generate_dois = []
     uninitialized_files = []
     for f in file_list:
         md = read_markdown_file(f)
         base_major_version = get_major_version(base_version)
+        # is the file initialized or does it have the tag
         if (version_tag in md.metadata):
             version = md.metadata[version_tag]
             major_version = get_major_version(version)
+            # is the version greater than the default version
             if major_version > base_major_version:
                 relative_path = f.split(repo_path+"/")[1]
+                # does the file being processed exist in the pid file
                 if relative_path in initialized_files.keys():
+                    # get the existing version in the pid file
                     previous_major_file_version = get_major_version(initialized_files[relative_path])
+                    # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                     if major_version > previous_major_file_version:
                         print(f"INFO: {f} will be processed")
                         generate_dois.append(f)
                 else:
                     uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. File will not be processed"})
         else:
-            uninitialized_files.append({f: f"INFO: Does not contain {version_tag}. File will not be processed"})
+            uninitialized_files.append({f: f"INFO: Does not contain the tag: {version_tag}. File is not initialized and will not be processed"})
 
     return [generate_dois, uninitialized_files]
 
