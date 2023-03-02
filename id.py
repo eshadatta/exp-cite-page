@@ -40,12 +40,32 @@ def check_args(parser, file):
     if not(exists(file) and os.path.isfile(file)):
          parser.error(f"{file} needs to exist and/or be a file. Please run the following command to initialize the id generator: python init.py  -c [content-paths] -p pid-file-name.json -r repo-path")
 
-def git_info(args):
+def git_info(args, info, files):
     g = gi.GitInfo(args.repo)
-    branch = args.branch if args.branch else g.active_branch
-    [file_commit_id, git_hash] = g.get_file_commit_info(args.file, branch)
-    utc_datetime = g.commit_date(file_commit_id)
-    return [file_commit_id, git_hash, utc_datetime]
+    branch = g.active_branch
+    file_info = []
+    err_msg = {}
+    for f, version in files.items():
+        [file_commit_id, git_hash, err] = g.check_git_info(f, branch)
+        if file_commit_id and git_hash:
+            utc_datetime = g.commit_date(file_commit_id)
+            info["file_commit_id"] = file_commit_id
+            info["file_hash"] = git_hash
+            info["file"] = f.split(args.repo+"/")[1]
+            info["utc_commit_date"] = utc_datetime 
+            info["current_id"] = gid.GenID().gen_default()
+            info["version"]  = version
+            {"file_commit_id": file_commit_id, "git_hash": git_hash, "utc_datetime": utc_datetime}
+            file_info.append(info)
+        else:
+            err_msg[f] = err
+        
+    if err_msg:
+        print("ERRORS found in files to be processed:")
+        for k, v in err_msg.items():
+            print(f"For file {k}: {v}")
+        raise AssertionError(f"Script will stop processing until errors are addressed")
+    return file_info
 
 def check_config_args(config_args, arg_type=None):
     script_name = basename(__file__)
@@ -68,7 +88,7 @@ def main():
     [parser, args] = set_args()
     config_file = args.repo + "/" + args.config_filename
     check_args(parser, config_file)
-    [pid_file, content_paths] = u.read_config(config_file)
+    [pid_file, content_paths, doi_prefix, production_domain] = u.read_config(config_file)
     full_paths = {}
     full_paths['pid_file'] = args.repo + "/" + pid_file
     full_paths['content_paths'] = list(map(lambda x: args.repo + "/" + x, content_paths))
@@ -76,16 +96,20 @@ def main():
     # verifying config args in ini file are ok
     try:
         check_config_args(full_paths)
-    except ValueError as e:
+         #gather files to be processed
+        content_paths = full_paths['content_paths']
+        file_list = u.get_file_list(content_paths)
+        [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
+        info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
+        fi = git_info(args, info.pid_entry, gen_dois)
+        print("FI: ", fi)
+        info.write_file_info(fi)
+    except Exception as e:
         print(e)
         sys.exit(1)
-    print(full_paths)
-    #gather files to be processed
-    content_paths = full_paths['content_paths']
-    file_list = u.get_file_list(content_paths)
-    [gen_dois, unprocessed_files] = u.check_file_versions(args.repo,  full_paths['pid_file'], file_list)
-    print(f"Files to be DOI'zed: {gen_dois}")
-    print(f"Files will not be processed: {unprocessed_files}")
+
+    #print("INFO FOR FILES TO BE PROCESSED: ", fi)
+    #print(f"Files will not be processed from UNPROCESSED FILES: {unprocessed_files}")
 '''
   for all files in content paths, 
   read frontmatter - DONE
@@ -96,22 +120,9 @@ def main():
     if major version greater than base:
         check pid json file
             if in json file and current major version is greater than major version in json file: - DONE
-                generate id. Store other ids, in previous id and with git info related with it - NEED TO DO
+                generate id. - DONE
+                -Store other ids, in previous id and with git info related with it - NEED TO DO
         if not in pid: - OUTPUTTING THIS INFO
 '''
-
-
-    
-    
-
-    # parse content paths to see what has changed to version different from what's listed in the pid json file. If file is not listed in the pid json file
-    #[commit_id, git_hash, utc_datetime] = git_info(args)
-    #id = gid.GenID().gen_default()
-    #json_file = pjson.ProcessJson(args.repo, args.pid_file_path, args.file)
-    #json_file.add_pid(id, commit_id, git_hash, utc_datetime)
-   
-
-
-
 if __name__ == "__main__":
     main()

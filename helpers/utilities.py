@@ -26,6 +26,7 @@ def check_path(path, type=None):
             msg = f"{path} must be a file"
     return msg
 
+# move this to config file class
 def read_config(config_file_name):
     c = configparser.ConfigParser()
     try:
@@ -35,7 +36,9 @@ def read_config(config_file_name):
      #when read, the list gets read as a string of a list - converting to a list
     content_path = ast.literal_eval(c['DEFAULT']['content_path'])
     pid_file = c['DEFAULT']['pid_file']
-    return [pid_file, content_path]
+    doi_prefix = c['DEFAULT']['doi_prefix']
+    domain = c['DEFAULT']['domain']
+    return [pid_file, content_path, doi_prefix, domain]
 
 def read_markdown_file(file):
     try:
@@ -81,7 +84,7 @@ def get_files_pid(pid_file):
 def check_file_versions(repo_path, pid_file, file_list):
     #get a list of all files and their versions from the pid file
     initialized_files =  get_files_pid(pid_file)
-    generate_dois = []
+    generate_dois = {}
     uninitialized_files = []
     for f in file_list:
         md = read_markdown_file(f)
@@ -90,21 +93,22 @@ def check_file_versions(repo_path, pid_file, file_list):
         if (version_tag in md.metadata):
             version = md.metadata[version_tag]
             major_version = get_major_version(version)
-            # is the version greater than the default version
-            if major_version > base_major_version:
-                relative_path = f.split(repo_path+"/")[1]
-                # does the file being processed exist in the pid file
-                if relative_path in initialized_files.keys():
+            relative_path = f.split(repo_path+"/")[1]
+            # does the file being processed exist in the pid file
+            if relative_path in initialized_files.keys():
+                # is the version greater than the default version
+                if major_version > base_major_version:
                     # get the existing version in the pid file
                     previous_major_file_version = get_major_version(initialized_files[relative_path])
                     # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                     if major_version > previous_major_file_version:
                         print(f"INFO: {f} will be processed")
-                        generate_dois.append(f)
-                else:
-                    uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. File will not be processed"})
+                        generate_dois[f] = version
+            else:
+                uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. Version in file: {md.metadata[version_tag]}. File will not be processed"})
         else:
             uninitialized_files.append({f: f"INFO: Does not contain the tag: {version_tag}. File is not initialized and will not be processed"})
-
+    # add file version to this
     return [generate_dois, uninitialized_files]
+
 

@@ -36,13 +36,13 @@ class InitializeFiles:
         
         return initialized
     
+
     def check_git_info(self, file):
         is_tracked = self.g.tracked(file)
         if not(is_tracked):
             self.g.git_add_file(file)
         committed = self.g.check_file_status(file)
         if not(committed):
-
                 self.g.git_commit_file(file)
         [file_commit_id, git_hash] = self.g.git_commit_id(self.g.active_branch, file)
         return [file_commit_id, git_hash]
@@ -57,7 +57,6 @@ class InitializeFiles:
         # also needs to check if there are initialized things that are not committed
         files = []
         file_git_info = []
-        print("PATHS: ", self.content_file_paths)
         for p in self.content_file_paths:
             init = self.initialize_content_file(p)
             if init:

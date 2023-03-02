@@ -13,6 +13,7 @@ class GitInfo:
         else:
             self.git = self.repo.git
             self.active_branch = self.repo.active_branch
+
     def tracked(self, file):
         tracked = None if not(self.git.ls_files(file)) else True
         return tracked
@@ -64,7 +65,8 @@ class GitInfo:
     def get_file_commit_info(self, file, branch):
         file_commit_id = None
         git_hash = None
-        file = self.path + file
+        if not(self.path in file):
+            file = self.path + file
         is_tracked = self.tracked(file)
         if is_tracked:
             [file_commit_id, git_hash]  = self.git_commit_id(branch, file)
@@ -80,7 +82,22 @@ class GitInfo:
         utc_datetime = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
         return utc_datetime
 
-
+    # there is a similar function in initialize_files
+    # this only shows messages if it is not tracked or committed
+    # this should be optimized
+    def check_git_info(self, file, branch):
+        error_messages = []
+        [file_commit_id, git_hash] = [None, None]
+        is_tracked = self.tracked(file)
+        if not(is_tracked):
+            error_messages.append(f"{file} must be tracked")
+        else:
+            committed = self.check_file_status(file)
+            if not(committed):
+                    error_messages.append(f"{file} must be committed")
+            else:
+                [file_commit_id, git_hash] = self.git_commit_id(branch, file)
+        return [file_commit_id, git_hash, error_messages]
 
         
 
