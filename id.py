@@ -43,20 +43,14 @@ def check_args(parser, file):
 def git_info(args, info, files):
     g = gi.GitInfo(args.repo)
     branch = g.active_branch
-    file_info = []
+    file_info = {}
     err_msg = {}
     for f, version in files.items():
         [file_commit_id, git_hash, err] = g.check_git_info(f, branch)
         if file_commit_id and git_hash:
             utc_datetime = g.commit_date(file_commit_id)
-            info["file_commit_id"] = file_commit_id
-            info["file_hash"] = git_hash
-            info["file"] = f.split(args.repo+"/")[1]
-            info["utc_commit_date"] = utc_datetime 
-            info["current_id"] = gid.GenID().gen_default()
-            info["version"]  = version
-            {"file_commit_id": file_commit_id, "git_hash": git_hash, "utc_datetime": utc_datetime}
-            file_info.append(info)
+            filename = f.split(args.repo+"/")[1]
+            file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": gid.GenID().gen_default(), "version": version, "file": filename}
         else:
             err_msg[f] = err
         
@@ -85,7 +79,9 @@ def check_config_args(config_args, arg_type=None):
 
 
 def main():
+
     [parser, args] = set_args()
+
     config_file = args.repo + "/" + args.config_filename
     check_args(parser, config_file)
     [pid_file, content_paths, doi_prefix, production_domain] = u.read_config(config_file)
@@ -102,7 +98,6 @@ def main():
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
         fi = git_info(args, info.pid_entry, gen_dois)
-        print("FI: ", fi)
         info.write_file_info(fi)
     except Exception as e:
         print(e)
