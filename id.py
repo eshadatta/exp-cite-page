@@ -12,6 +12,7 @@ import helpers.process_json as pjson
 import helpers.utilities as u
 import sys
 import helpers.static_page_id as sp
+import helpers.cleanup as cleanup
 def check_path(parser, p, type='dir'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -98,7 +99,10 @@ def main():
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
         fi = git_info(args, info.pid_entry, gen_dois)
-        info.write_file_info(fi)
+        for f, v in fi.items():
+            print(f)
+        cleanup.cleanup(full_paths['pid_file'], fi)
+        #info.write_file_info(fi)
     except Exception as e:
         print(e)
         sys.exit(1)
@@ -117,6 +121,7 @@ def main():
             if in json file and current major version is greater than major version in json file: - DONE
                 generate id. - DONE
                 -Store other ids, in previous id and with git info related with it - NEED TO DO
+        generated urls - DONEs
         if not in pid: - OUTPUTTING THIS INFO
 '''
 if __name__ == "__main__":

@@ -1,16 +1,31 @@
-import ijson
+import json
 
-def cleanup(pidfile, filelist):
-    file_info = {}
-    for i in filelist:
-        file_info[i['file']] = {"current_hash": i['file_hash'], "previous_hashes": []}
-    fnames = list(file_info.keys())
+def read_pidfile(pidfile):
+    data = None
     try:
-        with open(pidfile, "rb") as f:
-            for record in ijson.items(f, "item"):
-                if record['file'] in fnames and not(record['file_hash'] == file_info[record['file']]["current_hash"]):
-                    file_info[record['file']]["previous_hashes"].append((record['file_hash'], record['version']))
+        with open(pidfile, 'r') as file:
+            data = json.load(file)
     except Exception as e:
         print (e)
-    return file_info
+    return data
+def cleanup(pidfile, updated_files):
+    previous_files = None
+    files = list(updated_files.keys())
+    data = read_pidfile(pidfile)
+    if data:
+        previous_files = list(filter(lambda x: x['file'] in files, data))
+        for f, i in updated_files.items():
+            previous_file_info = list(filter(lambda x: x['file'] == f, previous_files))
+            relationship = {"file_commit_id": previous_file_info[0]['file_commit_id'], "file_hash": previous_file_info[0]['file_hash'], "version": previous_file_info[0]['version']}
+            if 'past_versions' and 'relationships' in i:
+                i['past_versions'].append(previous_file_info[0]['version'])
+                i['relationships'].append(relationship)
+            else:
+                i['past_versions'] = [previous_file_info[0]['version']]
+                i['relationships'] = [relationship]
+    print(updated_files)
+    for f, i in updated_files.items():
+        print(f)
+        print(i)
+    return updated_files
 
