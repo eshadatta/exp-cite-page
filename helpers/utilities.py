@@ -101,14 +101,12 @@ def check_file_versions(repo_path, pid_file, file_list):
                     previous_major_file_version = get_major_version(initialized_files[relative_path])
                     # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                     if major_version > previous_major_file_version:
-                        print("FILE: ", f)
                         generate_dois[f] = version
             else:
                 uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. Version in file: {md.metadata[version_tag]}. File will not be processed"})
         else:
             uninitialized_files.append({f: f"INFO: Does not contain the tag: {version_tag}. File is not initialized and will not be processed"})
     # add file version to this
-    print(generate_dois)
     return [generate_dois, uninitialized_files]
 
 

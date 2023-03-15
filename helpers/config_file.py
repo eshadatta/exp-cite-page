@@ -2,7 +2,6 @@ import configparser
 import os
 from os.path import exists, relpath
 from pathlib import Path
-import configparser
 from . import utilities as u
 import sys
 
