@@ -77,7 +77,7 @@ def get_files_pid(pid_file):
         sys.exit(1)
 
     for d in data:
-        file_version_info[d['file']] = d['version']
+        file_version_info[d['file']] = {"version": d['version'], "url": d['url']}
     return file_version_info
     
 def check_file_versions(repo_path, pid_file, file_list):
@@ -98,10 +98,10 @@ def check_file_versions(repo_path, pid_file, file_list):
                 # is the version greater than the default version
                 if major_version > base_major_version:
                     # get the existing version in the pid file
-                    previous_major_file_version = get_major_version(initialized_files[relative_path])
+                    previous_major_file_version = get_major_version(initialized_files[relative_path]["version"])
                     # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                     if major_version > previous_major_file_version:
-                        generate_dois[f] = version
+                        generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"]}
             else:
                 uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. Version in file: {md.metadata[version_tag]}. File will not be processed"})
         else:

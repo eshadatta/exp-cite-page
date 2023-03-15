@@ -45,12 +45,12 @@ def git_info(args, info, files):
     branch = g.active_branch
     file_info = {}
     err_msg = {}
-    for f, version in files.items():
+    for f, v in files.items():
         [file_commit_id, git_hash, err] = g.check_git_info(f, branch)
         if file_commit_id and git_hash:
             utc_datetime = g.commit_date(file_commit_id)
             filename = f.split(args.repo+"/")[1]
-            file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": gid.GenID().gen_default(), "version": version, "file": filename}
+            file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": gid.GenID().gen_default(), "version": v["version"], "url": v["url"], "file": filename}
         else:
             err_msg[f] = err
         

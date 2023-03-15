@@ -26,7 +26,7 @@ class ProcessJson:
         for k, v in self.pid_entry.items():
             pid_file_contents[k] = pid_file_contents.get(k, v)
 
-        id = {"file_commit_id": pid_file_contents["file_commit_id"], "current_id": pid_file_contents["current_id"], "file": pid_file_contents["file"], "file_hash": pid_file_contents["file_hash"], "utc_commit_date": pid_file_contents["utc_commit_date"], "version": pid_file_contents["version"], "doi_prefix": self.doi_prefix, "production_domain": self.file_url_domain,"url": None}
+        id = {"file_commit_id": pid_file_contents["file_commit_id"], "current_id": pid_file_contents["current_id"], "file": pid_file_contents["file"], "file_hash": pid_file_contents["file_hash"], "utc_commit_date": pid_file_contents["utc_commit_date"], "version": pid_file_contents["version"], "doi_prefix": self.doi_prefix, "production_domain": self.file_url_domain,"url": pid_file_contents["url"]}
         # handle file processing
         contents = []
         file_size = os.path.getsize(self.pid_file)
