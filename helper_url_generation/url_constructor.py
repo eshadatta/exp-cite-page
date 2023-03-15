@@ -55,10 +55,12 @@ def generate_blog_url(path):
 
 def generate_non_blog_url(path, content_path = "content/"):
     url = None
+    file_name_special_cases = ["index", "_index"]
     file_basename = basename(path)
     filename = splitext(file_basename)[0]
-    if filename == "_index":
+    if filename in file_name_special_cases:
         url = path.split(file_basename)[0].split(content_path)[1]
+        print("URL: ", url)
     else:
         url = splitext(path)[0].split(content_path)[1]
     return url
