@@ -27,7 +27,7 @@ def process_frontmatter_title(str):
     str = str.lower()
     # finding all non-alphanumeric characters
     non_word = re.findall(r'\W',str)
-    # removing the whitespace character from the ones that are found and
+    # removing the whitespace and hypen character from the non-alphanumeric characters that are found and
     # removing duplicates
     non_word_chars = list(set(filter(lambda r: not(r == " " or r == "-"), non_word)))
     # replacing the non-alphanumeric chars found in the list with ""
@@ -73,7 +73,6 @@ def set_args():
                     description="Generate urls")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
     parser.add_argument('-cf', '--config-filename',  help='Filename for config init', type=lambda s:check_path(parser,s, "file"), required=True)
-    parser.add_argument('-chk', '--check-urls-only',  help='Runs a check on the pid file to make sure the urls resolve. Does not generate the urls', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -138,14 +137,7 @@ def main():
     args = set_args()
     [pid_file, domain] = read_config(args.config_filename)
     pid = args.repo + "/" + pid_file
-    if not(args.check_urls_only):
-        generate_urls(args.repo, domain, pid)
-    bad_url_status = check_urls(pid)
-    if bad_url_status:
-        for file, info in bad_url_status.items():
-            print(f"For {file}: {info}")
-            sys.exit(1)
-
-
+    generate_urls(args.repo, domain, pid)
+    
 if __name__ == "__main__":
     main()

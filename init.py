@@ -47,8 +47,6 @@ def set_args():
 
 def main():
     args = set_args()
-    print(args)
-    print(__file__)
     c = cf.ConfigFile(args.repo_path, args.content, args.pid_file_path, args.config_filename)
     # get list of markdown files
     file_list = c.get_file_list()

@@ -99,10 +99,8 @@ def main():
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
         fi = git_info(args, info.pid_entry, gen_dois)
-        for f, v in fi.items():
-            print(f)
-        cleanup.cleanup(full_paths['pid_file'], fi)
-        #info.write_file_info(fi)
+        updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
+        info.write_file_info(updated_files, rest_files)
     except Exception as e:
         print(e)
         sys.exit(1)

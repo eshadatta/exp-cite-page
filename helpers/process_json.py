@@ -51,15 +51,16 @@ class ProcessJson:
             content = self.add_pid(f)
             self.write_pid(content)
 
-    def write_file_info(self, pid_file_contents):
-        if (exists(self.pid_file)):
-            if not(os.path.isfile(self.pid_file)):
-                raise ValueError(f"{self.pid_file} must be a json file")
-        else:
-            raise ValueError(f"PID File: {self.pid_file} must exist")
-        for _, i in pid_file_contents.items():
-            content = self.add_pid(i)
-            self.write_pid(content)
+    def write_file_info(self, updated_pid_file_contents, rest_pid_contents):
+        keys = list(self.pid_entry.keys())
+        for f, info in updated_pid_file_contents.items():
+            for k in keys:
+                # adding the rest of the information that's the same for all files
+                if not(k in info):
+                    info[k] = self.pid_entry[k]
+            rest_pid_contents.append(info)
+        self.write_pid(rest_pid_contents)
+
 
 
       
