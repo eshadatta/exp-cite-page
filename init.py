@@ -1,19 +1,11 @@
-import git
-import json
-import hashlib
-import uuid
 import argparse
 import os
 from os.path import exists
-from git import Repo
-import helpers.git_info as gi
-import helpers.generate_id as gid
 import helpers.config_file as cf
 import helpers.initialize_files as i
 import helpers.process_json as pjson
-import helpers.utilities as u
 import helpers.static_page_id as sp
-import sys
+
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
     if not(type in path_types):

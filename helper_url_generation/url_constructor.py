@@ -72,7 +72,7 @@ def set_args():
     parser = argparse.ArgumentParser(
                     description="Generate urls")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
-    parser.add_argument('-cf', '--config-filename',  help='Filename for config init', type=lambda s:check_path(parser,s, "file"), required=True)
+    parser.add_argument('-cf', '--config-filename',  help='Full path to the config file', type=lambda s:check_path(parser,s, "file"), required=True)
     args = parser.parse_args()
     return args
 
