@@ -32,6 +32,8 @@ def set_args():
     parser.add_argument('-b', '--branch', help='Path to branch where the file is located. The default is the active branch of the repository')
     parser.add_argument('-doi', '--doi-prefix', help='DOI prefix of the member registering this content', required=True)
     parser.add_argument('-d', '--domain', help='Production domain of the content, for example: https://www.crossref.org/', required=True)
+    #parser.add_argument('-sd', '--staging-domain', help='Staging domain of the content, for example: https://www.crossref.org/', required=True)
+    #parser.add_argument('-ld', '--local-domain', help='Localhost domain of the content, for example: https://www.crossref.org/', required=True)
     parser.add_argument('-dry', '--dry-run', help='Dry run to generate a permanent ID of a specified file', action='store_true')
     
     args = parser.parse_args()

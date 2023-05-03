@@ -43,6 +43,7 @@ def check_args(parser, file):
 
 def git_info(args, info, files):
     g = gi.GitInfo(args.repo)
+    base_version = sp.static_page_id().init_version
     branch = g.active_branch
     file_info = {}
     err_msg = {}
@@ -51,7 +52,11 @@ def git_info(args, info, files):
         if file_commit_id and git_hash:
             utc_datetime = g.commit_date(file_commit_id)
             filename = f.split(args.repo+"/")[1]
-            file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": gid.GenID().gen_default(), "version": v["version"], "url": v["url"], "file": filename}
+            if v['version'] == base_version:
+                current_id = None
+            else:
+                current_id = gid.GenID().gen_default() 
+            file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename}
         else:
             err_msg[f] = err
         
@@ -97,6 +102,7 @@ def main():
         content_paths = full_paths['content_paths']
         file_list = u.get_file_list(content_paths)
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
+        print("UP: ", unprocessed_files)
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
         fi = git_info(args, info.pid_entry, gen_dois)
         updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
