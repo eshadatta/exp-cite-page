@@ -95,11 +95,8 @@ def check_file_versions(repo_path, pid_file, file_list):
             relative_path = f.split(repo_path+"/")[1]
             # does the file being processed exist in the pid file
             if relative_path in initialized_files.keys():
-                print("Relative path: ", relative_path)
                 # is the version greater than the default version
                 if major_version > base_major_version:
-                    print("File: ", f)
-                    print("Version: ", version)
                     # get the existing version in the pid file
                     previous_major_file_version = get_major_version(initialized_files[relative_path]["version"])
                     # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
