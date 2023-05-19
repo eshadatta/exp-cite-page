@@ -43,6 +43,7 @@ def check_args(parser, file):
 
 def git_info(args, info, files):
     g = gi.GitInfo(args.repo)
+    print("HERE: git_info")
     base_version = sp.static_page_id().init_version
     branch = g.active_branch
     file_info = {}
