@@ -102,6 +102,7 @@ def main():
         check_config_args(full_paths)
          #gather files to be processed
         content_paths = full_paths['content_paths']
+        print("after check_config_args")
         file_list = u.get_file_list(content_paths)
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
