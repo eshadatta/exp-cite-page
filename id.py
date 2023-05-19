@@ -89,6 +89,7 @@ def main():
     [parser, args] = set_args()
 
     config_file = args.repo + "/" + args.config_filename
+    print("CONFIG: ", config_file)
     check_args(parser, config_file)
     [pid_file, content_paths, doi_prefix, production_domain] = u.read_config(config_file)
     full_paths = {}
