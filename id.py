@@ -42,8 +42,9 @@ def check_args(parser, file):
          parser.error(f"{file} needs to exist and/or be a file. Please run the following command to initialize the id generator: python init.py  -c [content-paths] -p pid-file-name.json -r repo-path")
 
 def git_info(args, info, files):
+    print("HERE: in git_info before instantiation")
     g = gi.GitInfo(args.repo)
-    print("HERE: git_info")
+    print("HERE: git_info after instantiation")
     base_version = sp.static_page_id().init_version
     branch = g.active_branch
     file_info = {}
@@ -104,8 +105,11 @@ def main():
         content_paths = full_paths['content_paths']
         print("after check_config_args")
         file_list = u.get_file_list(content_paths)
+        print("after get_file_list")
         [gen_dois, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list)
+        print("after check_file_versions")
         info = pjson.ProcessJson(args.repo, full_paths['pid_file'], doi_prefix, production_domain)
+        print("after process json")
         fi = git_info(args, info.pid_entry, gen_dois)
         updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
         info.write_file_info(updated_files, rest_files)
