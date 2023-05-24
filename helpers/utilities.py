@@ -103,7 +103,7 @@ def check_file_versions(repo_path, pid_file, file_list):
                     if major_version > previous_major_file_version:
                         generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"]}
             else:
-                uninitialized_files.append({f: f"ERROR: Does not exist in {pid_file}. Version in file: {md.metadata[version_tag]}. File will still be processed"})
+                uninitialized_files.append({f: f"WARNING: Does not exist in {pid_file}. Version in file: {md.metadata[version_tag]}. File will still be processed"})
                 generate_dois[f] = {"version": md.metadata[version_tag], "url": None}
  
         else:
