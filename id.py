@@ -42,9 +42,7 @@ def check_args(parser, file):
          parser.error(f"{file} needs to exist and/or be a file. Please run the following command to initialize the id generator: python init.py  -c [content-paths] -p pid-file-name.json -r repo-path")
 
 def git_info(args, info, files):
-    print("HERE: in git_info before instantiation")
     g = gi.GitInfo(args.repo)
-    print("HERE: git_info after instantiation")
     base_version = sp.static_page_id().init_version
     branch = g.active_branch
     file_info = {}
@@ -117,8 +115,8 @@ def main():
         print(e)
         sys.exit(1)
 
-    #print("INFO FOR FILES TO BE PROCESSED: ", fi)
-    #print(f"Files will not be processed from UNPROCESSED FILES: {unprocessed_files}")
+    print("INFO FOR FILES TO BE PROCESSED: ", fi)
+    print(f"Files will not be processed from UNPROCESSED FILES: {unprocessed_files}")
 '''
   for all files in content paths, 
   read frontmatter - DONE
