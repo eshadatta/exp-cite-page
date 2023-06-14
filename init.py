@@ -31,6 +31,7 @@ def set_args():
     parser.add_argument('-d', '--domain', help='Production domain of the content, for example: https://www.crossref.org/', required=True)
     #parser.add_argument('-sd', '--staging-domain', help='Staging domain of the content, for example: https://www.crossref.org/', required=True)
     #parser.add_argument('-ld', '--local-domain', help='Localhost domain of the content, for example: https://www.crossref.org/', required=True)
+    # currently requiring doi as true. This can change when other types of ids are being used
     parser.add_argument('-doi', '--doi', action='store_true', required=True, help='Identifier type, in this case doi')
     parser.add_argument('-dry', '--dry-run', help='Dry run to generate a permanent ID of a specified file', action='store_true')
     id_types, _ = parser.parse_known_args()
@@ -41,10 +42,7 @@ def set_args():
     return args
     
 def main():
-    set_args()
-    exit()
     args = set_args()
-    print(args.content)
     c = cf.ConfigFile(args.repo_path, args.content, args.pid_file_path, args.config_filename)
     # get list of markdown files
     file_list = c.get_file_list()
