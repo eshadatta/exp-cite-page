@@ -40,21 +40,14 @@ def set_args():
     if id_types.id_type == "doi":
         idtype_parser.add_argument('--doi-prefix', required=True, help="Add doi prefix string to this argument, example: --doi-prefix 'x.xxx'")
     args = idtype_parser.parse_args()
-    print(args)
     return args
 
     
 def main():
     args = set_args()
     c = cf.ConfigFile(args.repo_path, args.pid_file_path, args.config_filename)
-    # get list of markdown files
-    #file_list = c.get_file_list()
     doi_prefix = getattr(args, 'doi_prefix', None)
     c.create_config(args.id_type, args.domain, doi_prefix)
-    #init_files = i.InitializeFiles(args.repo_path, file_list, args.pid_file_path)
-    # initializing these files with a first tag of the first version
-    #files = init_files.process_files()
-    #json_file = pjson.ProcessJson(args.repo_path, c.pid_file, args.doi_prefix, args.domain)
-    #json_file.initialize_pid_file(files)
+
 if __name__ == "__main__":
     main()
