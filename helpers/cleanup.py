@@ -8,9 +8,10 @@ def read_pidfile(pidfile):
     except Exception as e:
         print (e)
     return data
+
 def cleanup(pidfile, updated_files):
     previous_files = None
-    rest_files = None
+    rest_files = []
     files = list(updated_files.keys())
     data = read_pidfile(pidfile)
     if data:

@@ -3,12 +3,14 @@ import os
 from os.path import exists
 from pathlib import Path
 class ProcessJson:
-    def __init__(self, repo, pid_file, doi_prefix, domain):
+    def __init__(self, repo, pid_file, domain, doi_prefix):
         self.repo = repo
         self.pid_file = pid_file
         self.file_url_domain = domain
         self.doi_prefix = doi_prefix
-        self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None, "version": None, "doi_prefix": doi_prefix, "production_domain": domain,"url": None}
+        self.pid_entry = {"file_commit_id": None, "current_id": None, "file": None, "file_hash": None, "utc_commit_date": None, "version": None, "production_domain": domain,"url": None}
+        if self.doi_prefix:
+            self.pid_entry.update({"doi_prefix": doi_prefix})
 
     def write_pid(self, contents):
         try:

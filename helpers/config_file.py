@@ -4,7 +4,7 @@ from os.path import exists, relpath
 from pathlib import Path
 from . import utilities as u
 import sys
-
+import json
 class ConfigFile:
     def __init__(self, repo_path, pid_file, config_file_name):
         self.c = configparser.ConfigParser()
@@ -22,7 +22,9 @@ class ConfigFile:
         pid_file = self.pid_file
         if not(exists(pid_file)):
                 try:
-                    Path(pid_file).touch()
+                    d = {}
+                    with open(pid_file, 'w') as outfile:
+                        json.dump(d, outfile)
                 except Exception as e:
                     raise ValueError(f"ERROR: {e}")
         elif (exists(pid_file) and os.path.isfile(pid_file)):
