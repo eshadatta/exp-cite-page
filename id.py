@@ -55,7 +55,7 @@ def git_info(args, info, files):
             if v['version'] == base_version:
                 current_id = None
             else:
-                current_id = gid.GenID().gen_default() 
+                current_id = gid.GenID().gen_default(len=10) 
             file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename}
         else:
             err_msg[f] = err
