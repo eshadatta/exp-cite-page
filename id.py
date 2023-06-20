@@ -117,7 +117,6 @@ def main():
             updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
             info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
             info.write_file_info(updated_files, rest_files)
-            print(unprocessed_files)
         elif args.dry_run:
             print("Generates a ProcessJSON object which contains path and domain information")
             print("Updates any PID information in the pid file, if the file already exists in the pid file or inserts PID information if the file is new")
