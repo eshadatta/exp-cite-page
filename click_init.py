@@ -1,11 +1,24 @@
 import argparse
 import os
+import click
 from os.path import exists
 import helpers.config_file as cf
 import helpers.initialize_files as i
 import helpers.process_json as pjson
 import helpers.static_page_id as sp
 
+s = sp.static_page_id()
+default_config_filename = s.default_config_filename
+default_pid_filename = s.default_pid_json_filename
+default_id_types = s.default_id_types
+
+@click.command()
+@click.option('-r', '--repo-path', help="Path to repository containing the files", required=True, type=click.Path(exists=True, dir_okay=True, file_okay=False, readable=True, writable=True))
+@click.option('-d', '--domain', help='Production domain of the content, for example: https://www.crossref.org/', required=True)
+
+def set_args(repo_path, domain):
+    click.echo(repo_path)
+    click.echo(domain)
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
     if not(type in path_types):
@@ -18,7 +31,8 @@ def check_path(parser, p, type='file'):
         parser.error(f"{p} needs to be a directory")
     return os.path.normpath(p)
 
-def set_args():
+'''
+def set_args2():
     s = sp.static_page_id()
     default_config_filename = s.default_config_filename
     default_pid_filename = s.default_pid_json_filename
@@ -42,9 +56,11 @@ def set_args():
     args = idtype_parser.parse_args()
     print(args)
     return args
-
+'''
     
 def main():
+
+    #id_type, args = set_args()
     args = set_args()
     c = cf.ConfigFile(args.repo_path, args.pid_file_path, args.config_filename)
     # get list of markdown files
@@ -57,4 +73,5 @@ def main():
     #json_file = pjson.ProcessJson(args.repo_path, c.pid_file, args.doi_prefix, args.domain)
     #json_file.initialize_pid_file(files)
 if __name__ == "__main__":
-    main()
+    set_args()
+    exit()
