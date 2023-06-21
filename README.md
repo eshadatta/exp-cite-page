@@ -15,11 +15,16 @@ This is a prototype to create permanent identifiers for static pages such as blo
 * This only supports DOIs for now. A UUID option has been given as an example. 
 * Currently, the config file is in an `.ini` format because I thought it would be easier for the user to enter this rather than deal with possibly malformed YAML files. This can be reverted to YAML, of course.
 
+
 #### **USAGE:**
 A toy example of a collection of markdown pages is available for the user to see the results of the code. The following steps will be shown with this toy example.
 1. Please clone the toy example from [here](https://gitlab.com/eshadatta-crossref/tiny_static_site) 
 2. Separately, please clone this [repository](https://gitlab.com/crossref/labs/static-page-id-generator.git)
 3. In the root directory of the static-page-id-generator repository, please install the requirements: `pip install -r requirements.txt`
+
+#### TL;DR:
+* For a quick summary to run everything, go [here](#just-tell-me-how-to-run-everything)
+* Otherwise, read on below.
 
 ##### **USAGE OVERVIEW**
 * In order to use this software, the user needs to add a frontmatter tag and a version using the [semantic versioning convention](https://semver.org/) to the markdown file. The script looks for this tag and checks the version in order to generate IDs.
@@ -108,7 +113,7 @@ A toy example of a collection of markdown pages is available for the user to see
           - 2023
         ---
     ```
-    * Please edit the frontmatter to add the following: `x-version: 0.0.0`. After editing, it should look like this:
+    * Please edit the frontmatter to add the following: `x-version: 0.0.0`. **After editing**, it should look like this:
     ```markdown
         ---
         title: 'Our annual call for board nominations'
@@ -131,7 +136,7 @@ A toy example of a collection of markdown pages is available for the user to see
     ```
     * It is important to commit this change. If the user doesn't, the script will error out.
 * To generate an id for this file, please run the `id.py` script:
-      `python id.py -r ~/tiny_static_site/ -c content/blog/2023/`
+      `python id.py -r <path-to-repo>/tiny_static_site/ -c content/blog/2023/`
 * It should run and create an entry in the `pid.json` file in the root of the toy example repo. 
 * The pid file will look like the following:
     ```json
@@ -153,11 +158,11 @@ A toy example of a collection of markdown pages is available for the user to see
 ### There are different ways to run the `id.py` script:
 #### Using the toy example:
 * **With one file:**
-`python id.py -r ~/tiny_static_site/ -c 2023-05-30-our-annual-call-for-board-nominations.md`
+`python id.py -r  <path-to-repo>/tiny_static_site/ -c 2023-05-30-our-annual-call-for-board-nominations.md`
 * **With multiple paths:**
-`python id.py -r ~/tiny_static_site/ -c content/blog/2023/ content/blog/2022`
+`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/ content/blog/2022`
 * **With a mix of files and paths:**
-`python id.py -r ~/tiny_static_site/ -c content/blog/2023/2023-02-28-in-the-know-on-workflows.md content/blog/2022`
+`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/2023-02-28-in-the-know-on-workflows.md content/blog/2022`
 * If the major version has been bumped up in the markdown file and the file already exists in the pid file, the file will show information about both versions. For example, if the `x-version` has changed from `0.0.0` to `1.0.0` and the file already exists in the pid json file, it will show the git information about both versions and the id for both. 
   * Frontmatter change from major version 0 to 1:
     ```
@@ -204,7 +209,7 @@ A toy example of a collection of markdown pages is available for the user to see
     ```
 #### **URL GENERATION:**
 * URLs pointing to the production instance need to be created and associated with the files so that the IDs can be registered with the url. Many times, the static site may have its own logic according to the use case of the institution. The given script here follows the Crossref website logic. 
-* `python helper_url_generation/url_constructor.py -r ~/tiny_static_site/ -cf ~/tiny_static_site/static.ini`. This populates the pid.json file with the urls.
+* `python helper_url_generation/url_constructor.py -r  <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`. This populates the pid.json file with the urls.
     ```json
     [{
 		"file_commit_id": "6375f0c13a42668210378e2352d447eca6fc3857",
@@ -245,6 +250,6 @@ A toy example of a collection of markdown pages is available for the user to see
 2. Add the `x-version` tag to the markdown frontmatter and follow the semantic versioning convention and add `0.0.0` or bump up the major version. 
     * `x-version: 0.0.0`
 3. Run `id.py` to generate IDs for the files. [Here]
-(here-are-different-ways-to-run-the-idpy-script) are ways to do it.
+(#there-are-different-ways-to-run-the-idpy-script) are ways to do it.
 4. Run the url generator script. An example for the crossref site is here: 
    * `python helper_url_generation/url_constructor.py -r <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`
