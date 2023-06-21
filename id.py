@@ -94,7 +94,6 @@ def check_config_args(config_args, dry_run, arg_type=None):
 def main():
     [parser, args] = set_args()
     config_file = args.repo + "/" + args.config_filename
-    print(args)
     [pid_file, id_type, doi_prefix, production_domain] = u.read_config(config_file)
     full_paths = {}
     full_paths['pid_file'] = args.repo + "/" + pid_file
