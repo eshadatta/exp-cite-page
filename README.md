@@ -7,6 +7,8 @@ A prototype to create PIDs for a static page generator
 
 This is a prototype to create permanent identifiers for static pages such as blog posts. Eventually, the identifiers can be used to generate different types of permanent urls including DOIs.
 
+This is meant to be used with markdown files and is being currently tested with Hugo.
+
 ### **Current Status**
 * Needs test coverage
 * I need to narrow down an argument parser library
@@ -34,7 +36,7 @@ A toy example of a collection of markdown pages is available for the user to see
 
 #### **init.py**:
 * creates a config file (default file name: `static.ini`) and a json file (default file name: `pid.json`)
-    * The required arguments are the repository path that contains the static site, the production domain, and the id type to be used.
+    * The required arguments are the repository path that contains the static site, the production domain, and the id type to be used. Currently, the dry run has not yet been implemented for `init.py`.
     * `python init.py -h` gives the following:
         ```
         python init.py -h
@@ -93,6 +95,19 @@ A toy example of a collection of markdown pages is available for the user to see
                             Filename for config init, has a default filename if none is specified
     -d, --dry-run           Dry run to generate a permanent ID of a specified file or files
     ```
+* This can be run with the dry run argument. If done so, this is the expected output:
+  ```
+  $ python id.py -r ~/tiny_static_site/ -c content/blog --dry-run
+    RUNNING DRY RUN:
+    At check_args: Checks if config file has been created
+    At check_config_args: Checks if config values exist
+    At get_file_list: Gets file list from paths
+    At check_file_versions: gets a list of all files from given content paths and their versions from the pid file (if they exist) and generates a list of files to be pid-ized
+    At git_info: Generate PID and git information for file to be saved in pid file
+    Generates a ProcessJSON object which contains path and domain information
+    Updates any PID information in the pid file, if the file already exists in the pid file or inserts PID information if the file is new
+  ```
+  
 * **MARKDOWN EDITING**: The user needs to add a tag like the following to the frontmatter of the markdown. So, please edit `content/blog/2023/2023-05-30-our-annual-call-for-board-nominations.md` in the `tiny_static_site` repo. So, it should look like this **before**:
     ```markdown
         ---
