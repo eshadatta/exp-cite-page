@@ -239,6 +239,12 @@ A toy example of a collection of markdown pages is available for the user to see
 		"doi_prefix": "10.1212"
 	}]
     ```
-
-
-
+### Just tell me how to run everything:
+1. Using the toy site as an example, run the init script from the root of the static id generator script:
+    * `python init.py -r <path-to-repo>/tiny_static_site/ -id doi --doi-prefix 10.1212 -d https://www.crossref.org`
+2. Add the `x-version` tag to the markdown frontmatter and follow the semantic versioning convention and add `0.0.0` or bump up the major version. 
+    * `x-version: 0.0.0`
+3. Run `id.py` to generate IDs for the files. [Here]
+(here-are-different-ways-to-run-the-idpy-script) are ways to do it.
+4. Run the url generator script. An example for the crossref site is here: 
+   * `python helper_url_generation/url_constructor.py -r <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`
