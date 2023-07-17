@@ -5,6 +5,7 @@ import helpers.config_file as cf
 import helpers.initialize_files as i
 import helpers.process_json as pjson
 import helpers.static_page_id as sp
+from typing import Optional
 
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
@@ -18,7 +19,7 @@ def check_path(parser, p, type='file'):
         parser.error(f"{p} needs to be a directory")
     return os.path.normpath(p)
 
-def set_args():
+def set_args(argv):
     s = sp.static_page_id()
     default_config_filename = s.default_config_filename
     default_pid_filename = s.default_pid_json_filename
@@ -33,18 +34,18 @@ def set_args():
     parser.add_argument('-b', '--branch', help='Path to branch where the file is located. The default is the active branch of the repository')
     parser.add_argument('-id', '--id-type', choices=default_id_types, required=True)
     parser.add_argument('-dry', '--dry-run', help='Dry run to generate a permanent ID of a specified file', action='store_true')
-    id_types, _ = parser.parse_known_args()
+    id_types, _ = parser.parse_known_args(argv)
     # adding another argparse object to process sub commands associated with a specific argument
     idtype_parser = argparse.ArgumentParser(
         description="Generate a permanent ID for a static site generator", parents=[parser], add_help=False)
     if id_types.id_type == "doi":
         idtype_parser.add_argument('--doi-prefix', required=True, help="Add doi prefix string to this argument, example: --doi-prefix 'x.xxx'")
-    args = idtype_parser.parse_args()
+    args = idtype_parser.parse_args(argv)
     return args
 
     
-def main():
-    args = set_args()
+def main(argv = None):
+    args = set_args(argv)
     c = cf.ConfigFile(args.repo_path, args.pid_file_path, args.config_filename)
     doi_prefix = getattr(args, 'doi_prefix', None)
     c.create_config(args.id_type, args.domain, doi_prefix)
