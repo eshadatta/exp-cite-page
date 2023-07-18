@@ -8,10 +8,6 @@ from os.path import exists
 from itertools import chain
 import json
 
-
-#VALID_ARGS = [{"-r": "tests/fixtures/tiny_static_site", "-d": "https://test.org", "-id": "uuid"},{"-r": "tests/fixtures/tiny_static_site", "-d": "https://test.org", "-id": "doi", "--doi-prefix": "x.x.x"},{"-r": "tests/fixtures/tiny_static_site", "-d": "https://test.org", "-id": "uuid", "-cf": "config.ini", "-p": "record.json"},{"-r": "tests/fixtures/tiny_static_site", "-d": "https://test.org", "-id": "doi", "--doi-prefix": "x.x.x","-cf": "config.ini", "-p": "record.json"}]
-
-
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
 
@@ -31,6 +27,7 @@ def files():
     # returning an empty array to create valid args with and without specifying user files
     user_specified_files = {"-p": "record.json", "-cf": "config.ini"}
     return [{}, user_specified_files]
+
 def fixtures():
     path = fixture_dir_path().copy()
     filenames = fixture_default_filenames().copy()
@@ -58,6 +55,12 @@ def remove_files(files):
                 os.remove(f)
             except Exception as e:
                 print(e)
+def invalid_args():
+    INVALID_ARGS = ['', ['t'], ['-a'], ['-x', 't'], ['-r', 'x']]
+    invalid_args = {
+        "empty_arg": {"arg": '', 'error': 'test'}
+    }
+    return invalid_args
 
 def valid_args():
     valid_args_combo = []
@@ -69,6 +72,8 @@ def valid_args():
             args['--doi-prefix'] = id['doi_prefix']
         for f in script_files:
             if len(f) != 0:
+                # could be optimized
+                # python dictionary behavior is difficult here
                 s = args.copy()
                 s.update(f)
                 valid_args_combo.append(s)
@@ -114,5 +119,10 @@ def test_correct_args(valid_args, capsys):
     file_collection = [x['full_path'] for x in necessary_files.values()]
     remove_files(file_collection)
 
+def test_invalid_args(capsys):
+    with pytest.raises(SystemExit) as e:
+        init.main(['-r', 'x'])
+   
+    assert e.value.code != 0
 
     
