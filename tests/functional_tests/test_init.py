@@ -7,11 +7,17 @@ import configparser
 from os.path import exists
 from itertools import chain
 import json
+
+# convert dictionary into a flattened list
+def flatten_dict(d):
+    data = [[k, v] for k, v in d.items()]
+    data = list(chain(*data))
+    return data
+
 def fixtures():
     return {"dir_path": "tests/fixtures/tiny_static_site", 'default_pid_json_filename': 'pid.json','default_config_filename': 'static.ini'}
 
 def correct_args(pid_file_name = None, config_file_name = None):
-    #required_args = ["-r", fixtures()['dir_path'], "-d", "https://test.org"]
     required_args = {"-r": fixtures()['dir_path'], "-d": "https://test.org"}
     id = [{'-id': 'doi', '--doi-prefix': 'x.x.x'}, {'-id': 'uuid'}]
     files = {}
@@ -59,8 +65,7 @@ def test_init_default_filenames(capsys):
     #with pytest.raises(SystemExit) as e:
     required_args, id_args, _ = correct_args()
     # flattening this to a list
-    rargs = [[k, v] for k, v in required_args.items()]
-    rargs = list(chain(*rargs))
+    rargs = flatten_dict(required_args)
     dfnames = get_default_filenames()
     for a in id_args:
         for f in dfnames:
@@ -68,9 +73,8 @@ def test_init_default_filenames(capsys):
                 os.remove(f) 
         id_type = a['-id']
         doi_prefix = a.get('--doi-prefix', None)
-        args = [[k, v] for k, v in a.items()]
-        arg_list = list(chain(*args))
-        full_args = rargs + arg_list
+        args_list = flatten_dict(a)
+        full_args = rargs + args_list
         init.main(full_args)
         _, err = capsys.readouterr()
         assert err == ''
@@ -95,18 +99,15 @@ def test_init_configured_filenames(capsys):
     config_file_name = 'config.ini'
     required_args, id_args, files = correct_args(pid_file_name = pid_file_name, config_file_name = config_file_name)
     # flattening this to a list
-    rargs = [[k, v] for k, v in required_args.items()]
-    rargs = list(chain(*rargs))
-    file_args = [[k, v] for k, v in files.items()]
-    file_args = list(chain(*file_args))
+    rargs = flatten_dict(required_args)
+    file_args = flatten_dict(files)
     for a in id_args:
         for f in list(files.values()):
             if exists(f):
                 os.remove(f) 
         id_type = a['-id']
         doi_prefix = a.get('--doi-prefix', None)
-        args = [[k, v] for k, v in a.items()]
-        arg_list = list(chain(*args))
+        arg_list = flatten_dict(a)
         full_args = rargs + file_args + arg_list
         init.main(full_args)
         _, err = capsys.readouterr()
