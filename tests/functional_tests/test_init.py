@@ -51,6 +51,14 @@ def read_config_parser(file):
         raise NameError(e)
     return list(config['DEFAULT'].items())
 
+def remove_files(files):
+    for f in files:
+        if exists(f):
+            try:
+                os.remove(f)
+            except Exception as e:
+                print(e)
+
 def valid_args():
     valid_args_combo = []
     ids = fixture_id()
@@ -76,7 +84,17 @@ def test_default_filename():
 @pytest.mark.parametrize('valid_args', valid_args())
 def test_correct_args(valid_args, capsys):
     repo_path = valid_args['-r']
+    necessary_files = {}
+    necessary_files['pid_file'] = {"name": valid_args.get("-p", fixture_default_filenames()['default_pid_json_filename'])}
+    necessary_files['config_file'] = {"name": valid_args.get("-cf", fixture_default_filenames()['default_config_filename'])}
+    for v in necessary_files.values():
+        v['full_path'] = f"{repo_path}/{v['name']}"
+    id_type = valid_args['-id']
+    doi_prefix = valid_args.get('--doi-prefix', None)
     process_args = flatten_dict(valid_args)
     init.main(process_args)
     _, err = capsys.readouterr()
     assert err == ''
+
+
+    
