@@ -10,10 +10,16 @@ import json
 def fixtures():
     return {"dir_path": "tests/fixtures/tiny_static_site", 'default_pid_json_filename': 'pid.json','default_config_filename': 'static.ini'}
 
-def correct_args():
-    required_args = ["-r", fixtures()['dir_path'], "-d", "https://test.org"]
+def correct_args(pid_file_name = None, config_file_name = None):
+    #required_args = ["-r", fixtures()['dir_path'], "-d", "https://test.org"]
+    required_args = {"-r": fixtures()['dir_path'], "-d": "https://test.org"}
     id = [{'-id': 'doi', '--doi-prefix': 'x.x.x'}, {'-id': 'uuid'}]
-    return required_args, id
+    files = {}
+    if pid_file_name:
+        files['-p'] = pid_file_name
+    if config_file_name:
+        files['-cf'] = config_file_name
+    return required_args, id, files
 
 def get_default_filenames():
     fix = list(fixtures().keys())
@@ -51,7 +57,10 @@ def test_default_filename():
 # should not error out
 def test_init_default_filenames(capsys):
     #with pytest.raises(SystemExit) as e:
-    required_args, id_args = correct_args()
+    required_args, id_args, _ = correct_args()
+    # flattening this to a list
+    rargs = [[k, v] for k, v in required_args.items()]
+    rargs = list(chain(*rargs))
     dfnames = get_default_filenames()
     for a in id_args:
         for f in dfnames:
@@ -61,7 +70,7 @@ def test_init_default_filenames(capsys):
         doi_prefix = a.get('--doi-prefix', None)
         args = [[k, v] for k, v in a.items()]
         arg_list = list(chain(*args))
-        full_args = required_args + arg_list
+        full_args = rargs + arg_list
         init.main(full_args)
         _, err = capsys.readouterr()
         assert err == ''
@@ -73,15 +82,51 @@ def test_init_default_filenames(capsys):
             d = json.load(fp)
         assert len(d) == 0
         ini_contents = read_config_parser(ini_file)
-        check_defaults = {"pid_file": fixtures()['default_pid_json_filename'], "domain": required_args[3], "id_type": id_type}
+        check_defaults = {"pid_file": fixtures()['default_pid_json_filename'], "domain": required_args['-d'], "id_type": id_type}
         if doi_prefix:
             check_defaults["doi_prefix"] = doi_prefix
         for c in ini_contents:
             key = c[0]
             assert check_defaults[key] == c[1]
 
-        #full_args.append(required_args + arg_list)
-    #for a in get_full_args:
+def test_init_configured_filenames(capsys):
+    #with pytest.raises(SystemExit) as e:
+    pid_file_name = 'record.json'
+    config_file_name = 'config.ini'
+    required_args, id_args, files = correct_args(pid_file_name = pid_file_name, config_file_name = config_file_name)
+    # flattening this to a list
+    rargs = [[k, v] for k, v in required_args.items()]
+    rargs = list(chain(*rargs))
+    file_args = [[k, v] for k, v in files.items()]
+    file_args = list(chain(*file_args))
+    for a in id_args:
+        for f in list(files.values()):
+            if exists(f):
+                os.remove(f) 
+        id_type = a['-id']
+        doi_prefix = a.get('--doi-prefix', None)
+        args = [[k, v] for k, v in a.items()]
+        arg_list = list(chain(*args))
+        full_args = rargs + file_args + arg_list
+        init.main(full_args)
+        _, err = capsys.readouterr()
+        assert err == ''
+        for f in list(files.values()):
+            full_path = f"{required_args['-r']}/{f}"
+            assert exists(full_path)
+        json_file = f"{required_args['-r']}/{files['-p']}"
+        ini_file = f"{required_args['-r']}/{files['-cf']}"
+        with open(json_file, 'r') as fp:
+            d = json.load(fp)
+        assert len(d) == 0
+        ini_contents = read_config_parser(ini_file)
+        check_defaults_config_file = {"pid_file": pid_file_name, "domain": required_args['-d'], "id_type": id_type}
+        if doi_prefix:
+            check_defaults_config_file["doi_prefix"] = doi_prefix
+        for c in ini_contents:
+            key = c[0]
+            assert check_defaults_config_file[key] == c[1]
+
         
 
 
