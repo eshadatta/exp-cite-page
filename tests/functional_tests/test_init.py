@@ -90,11 +90,29 @@ def test_correct_args(valid_args, capsys):
     for v in necessary_files.values():
         v['full_path'] = f"{repo_path}/{v['name']}"
     id_type = valid_args['-id']
+    domain = valid_args['-d']
     doi_prefix = valid_args.get('--doi-prefix', None)
     process_args = flatten_dict(valid_args)
     init.main(process_args)
     _, err = capsys.readouterr()
     assert err == ''
+
+    for f in necessary_files.values():
+        assert exists(f['full_path'])
+
+    with open(necessary_files['pid_file']['full_path'], 'r') as fp:
+        d = json.load(fp)
+        assert len(d) == 0
+    ini_contents = read_config_parser(necessary_files['config_file']['full_path'])
+    check_defaults = {"pid_file": necessary_files['pid_file']['name'], "domain": domain, "id_type": id_type}
+    if doi_prefix:
+        check_defaults["doi_prefix"] = doi_prefix
+    for c in ini_contents:
+        key = c[0]
+        assert check_defaults[key] == c[1]
+    
+    file_collection = [x['full_path'] for x in necessary_files.values()]
+    remove_files(file_collection)
 
 
     
