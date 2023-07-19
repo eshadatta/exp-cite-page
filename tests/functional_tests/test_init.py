@@ -79,6 +79,14 @@ def valid_args():
                 valid_args_combo.append(s)
         valid_args_combo.append(args)
     return valid_args_combo
+def get_data(info):
+    repo_path = info['-r']
+    necessary_files = {}
+    necessary_files['pid_file'] = {"name": info.get("-p", fixture_default_filenames()['default_pid_json_filename'])}
+    necessary_files['config_file'] = {"name": info.get("-cf", fixture_default_filenames()['default_config_filename'])}
+    for v in necessary_files.values():
+        v['full_path'] = f"{repo_path}/{v['name']}"
+    return necessary_files
 
 def test_default_filename():
     s = sp.static_page_id()
@@ -88,12 +96,7 @@ def test_default_filename():
 
 @pytest.mark.parametrize('valid_args', valid_args())
 def test_correct_args(valid_args, capsys):
-    repo_path = valid_args['-r']
-    necessary_files = {}
-    necessary_files['pid_file'] = {"name": valid_args.get("-p", fixture_default_filenames()['default_pid_json_filename'])}
-    necessary_files['config_file'] = {"name": valid_args.get("-cf", fixture_default_filenames()['default_config_filename'])}
-    for v in necessary_files.values():
-        v['full_path'] = f"{repo_path}/{v['name']}"
+    files = get_data(valid_args)
     id_type = valid_args['-id']
     domain = valid_args['-d']
     doi_prefix = valid_args.get('--doi-prefix', None)
@@ -102,21 +105,21 @@ def test_correct_args(valid_args, capsys):
     _, err = capsys.readouterr()
     assert err == ''
 
-    for f in necessary_files.values():
+    for f in files.values():
         assert exists(f['full_path'])
 
-    with open(necessary_files['pid_file']['full_path'], 'r') as fp:
+    with open(files['pid_file']['full_path'], 'r') as fp:
         d = json.load(fp)
         assert len(d) == 0
-    ini_contents = read_config_parser(necessary_files['config_file']['full_path'])
-    check_defaults = {"pid_file": necessary_files['pid_file']['name'], "domain": domain, "id_type": id_type}
+    ini_contents = read_config_parser(files['config_file']['full_path'])
+    check_defaults = {"pid_file": files['pid_file']['name'], "domain": domain, "id_type": id_type}
     if doi_prefix:
         check_defaults["doi_prefix"] = doi_prefix
     for c in ini_contents:
         key = c[0]
         assert check_defaults[key] == c[1]
     
-    file_collection = [x['full_path'] for x in necessary_files.values()]
+    file_collection = [x['full_path'] for x in files.values()]
     remove_files(file_collection)
 
 def test_invalid_args(capsys):
