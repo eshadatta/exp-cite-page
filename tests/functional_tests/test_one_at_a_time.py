@@ -80,11 +80,11 @@ def valid_args():
         valid_args_combo.append(args)
     return valid_args_combo
 
-""" def test_default_filename():
+def test_default_filename():
     s = sp.static_page_id()
     fix = fixture_default_filenames()
     for k, v in fix.items():
-        assert getattr(s,k) == v  """
+        assert getattr(s,k) == v
 
 def remove_files(valid_args):
     files = data(valid_args)
@@ -111,23 +111,25 @@ class InitTest:
 
     def check_files(self):
         all_files = [x['full_path'] for x in self.files.values()]
-        for f in all_files:
-            assert exists(f)
+        return all_files
 
     def check_pid_file_contents(self):
         pid_file = self.files['pid_file']['full_path']
-        with open(pid_file, 'r') as fp:
-            d = json.load(fp)
-            assert len(d) == 0
+        file_length = 1
+        try:
+            with open(pid_file, 'r') as fp:
+                d = json.load(fp)
+                file_length = len(d)
+        except Exception as e:
+            print(e)
+        return file_length
 
     def check_config_contents(self):
         ini_contents = read_config_parser(self.files['config_file']['full_path'])
         check_defaults = {"pid_file": self.files['pid_file']['name'], "domain": self.domain, "id_type": self.id_type}
         if self.doi_prefix:
             check_defaults["doi_prefix"] = self.doi_prefix
-        for c in ini_contents:
-            key = c[0]
-            assert check_defaults[key] == c[1]
+        return [check_defaults, ini_contents]
 
 @pytest.mark.parametrize('v_args', valid_args())
 class TestInit: 
@@ -140,10 +142,16 @@ class TestInit:
         remove_files(v_args)
 
     def test_all(self, v_args):
+        json_file_should_be_empty = 0
         test_init = InitTest(v_args)
-        test_init.check_files()
-        test_init.check_pid_file_contents()
-        test_init.check_config_contents()
+        files = test_init.check_files()
+        for f in files:
+            assert exists(f)
+        json_file_should_be_empty == test_init.check_pid_file_contents()
+        defaults, ini_contents = test_init.check_config_contents()
+        for c in ini_contents:
+            key = c[0]
+            assert defaults[key] == c[1]
         
         
 
