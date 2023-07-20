@@ -7,6 +7,12 @@ from os.path import exists
 from itertools import chain
 import json
 
+class InitTest:
+    def __init__(self, args):
+        self.args = args
+    def call_init(self):
+        init.main(self.args)
+    
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
 
@@ -87,30 +93,40 @@ def get_data(info):
         v['full_path'] = f"{repo_path}/{v['name']}"
     return necessary_files
 
-ITERATIONS = 2
-ARGS = [['-r', 'tests/fixtures/tiny_static_site', '-d', 'x', '-id', 'uuid'],['-r', 'tests/fixtures/tiny_static_site', '-d', 'x', '-id', 'doi', '--doi-prefix', 'e']]
-#files = ['tests/fixtures/tiny_static_site/pid.json', 'tests/fixtures/tiny_static_site/static.ini']
-
 def remove(files):
     for f in files:
         if os.path.exists(f):
             os.remove(f)
 
+
+def get_args(args):
+    return args
+
+
 @pytest.fixture(scope='class', autouse=True)
 def setup_teardown(request):
     process_args = flatten_dict(request.param)
-    print(f'{request.param}-SETUP')
-    yield init.main(process_args)
-    files = get_data(request.param)
-    file_collection = [x['full_path'] for x in files.values()]
-    print(f'{request.param}-TEARDOWN')
-    remove(file_collection)
+    init.main(process_args)
+    yield get_args(request.param)
+    #print(f'{request.param}-SETUP')
+    #yield init.main(process_args)
+    #files = get_data(request.param)
+    #file_collection = [x['full_path'] for x in files.values()]
+    #print(f'{request.param}-TEARDOWN')
+    #remove(file_collection)
 
 @pytest.mark.parametrize('setup_teardown', valid_args(), indirect=True)
-class TestSomething:
-    def test_something(self):
-        print("test_something: ")
+class TestInitValidArgs:
+    def test_init(self, capsys, get_args):
+        print('test_init: ', get_args)
+        #_, err = capsys.readouterr()  
+        #assert err == '' 
 
-    def test_something_else(self):
-        print("test_something_else: ")
+    """ def test_check_files(self, get_args):
+        files = get_data(get_args)
+        for f in files.values():
+            assert exists(f['full_path'])
 
+    def test_something_else(self, get_args):
+        print("test_something_else: ", get_args)
+ """
