@@ -101,35 +101,33 @@ def data(valid_args):
         v['full_path'] = f"{repo_path}/{v['name']}"
     return necessary_files
     
+class InitTest:
+    def __init__(self, args):
+        self.args = args
+        self.files = data(self.args)
+        self.domain = args['-d']
+        self.id_type = args['-id']
+        self.doi_prefix = args.get('--doi-prefix', None)
 
-""" @pytest.fixture
-def check_files():
-    def _chk_files(args):
-        files = data(args)
-        all_files = [x['full_path'] for x in files.values()]
+    def check_files(self):
+        all_files = [x['full_path'] for x in self.files.values()]
         for f in all_files:
             assert exists(f)
-    yield _chk_files """
 
-def check_files(files):
-    all_files = [x['full_path'] for x in files.values()]
-    for f in all_files:
-        assert exists(f)
+    def check_pid_file_contents(self):
+        pid_file = self.files['pid_file']['full_path']
+        with open(pid_file, 'r') as fp:
+            d = json.load(fp)
+            assert len(d) == 0
 
-def check_pid_file_contents(files):
-    pid_file = files['pid_file']['full_path']
-    with open(pid_file, 'r') as fp:
-        d = json.load(fp)
-        assert len(d) == 0
-
-def check_config_contents(doi_prefix, id_type, domain, files):
-    ini_contents = read_config_parser(files['config_file']['full_path'])
-    check_defaults = {"pid_file": files['pid_file']['name'], "domain": domain, "id_type": id_type}
-    if doi_prefix:
-        check_defaults["doi_prefix"] = doi_prefix
-    for c in ini_contents:
-        key = c[0]
-        assert check_defaults[key] == c[1]
+    def check_config_contents(self):
+        ini_contents = read_config_parser(self.files['config_file']['full_path'])
+        check_defaults = {"pid_file": self.files['pid_file']['name'], "domain": self.domain, "id_type": self.id_type}
+        if self.doi_prefix:
+            check_defaults["doi_prefix"] = self.doi_prefix
+        for c in ini_contents:
+            key = c[0]
+            assert check_defaults[key] == c[1]
 
 @pytest.mark.parametrize('v_args', valid_args())
 class TestInit: 
@@ -141,33 +139,11 @@ class TestInit:
         yield
         remove_files(v_args)
 
-    #def test_all(self, capsys, check_files, v_args):
-        #check_files(v_args)
-
     def test_all(self, v_args):
-        id_type = v_args['-id']
-        domain = v_args['-d']
-        doi_prefix = v_args.get('--doi-prefix', None)
-        files = data(v_args)
-        check_files(files)
-        check_pid_file_contents(files)
-        check_config_contents(doi_prefix, id_type, domain, files)
+        test_init = InitTest(v_args)
+        test_init.check_files()
+        test_init.check_pid_file_contents()
+        test_init.check_config_contents()
         
-""" 
-    def test_check_files(self, valid_args):
-        print("HERE2: ", valid_args)
-        _, files = self.data(valid_args)
-        for f in files.values():
-            assert exists(f['full_path'])
-        self.remove_files(valid_args)
         
-    def test_check_pid_file_contents(self, valid_args):
-        print("HERE3: ", valid_args)
-        _, files = self.data(valid_args)
-        pid_file = files['pid_file']['full_path']
-        with open(pid_file, 'r') as fp:
-            d = json.load(fp)
-            assert len(d) == 0
-        self.remove_files(valid_args)
-    
-     """
+
