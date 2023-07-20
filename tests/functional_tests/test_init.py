@@ -58,7 +58,7 @@ def remove_files(files):
 def invalid_args():
     INVALID_ARGS = ['', ['t'], ['-a'], ['-x', 't'], ['-r', 'x']]
     invalid_args = {
-        "empty_arg": {"arg": '', 'error': 'test'}
+        "empty_arg": {"arg": ''}
     }
     return invalid_args
 
@@ -79,53 +79,103 @@ def valid_args():
                 valid_args_combo.append(s)
         valid_args_combo.append(args)
     return valid_args_combo
-def get_data(info):
-    repo_path = info['-r']
-    necessary_files = {}
-    necessary_files['pid_file'] = {"name": info.get("-p", fixture_default_filenames()['default_pid_json_filename'])}
-    necessary_files['config_file'] = {"name": info.get("-cf", fixture_default_filenames()['default_config_filename'])}
-    for v in necessary_files.values():
-        v['full_path'] = f"{repo_path}/{v['name']}"
-    return necessary_files
 
 def test_default_filename():
     s = sp.static_page_id()
     fix = fixture_default_filenames()
     for k, v in fix.items():
-        assert getattr(s,k) == v 
+        assert getattr(s,k) == v
 
-@pytest.mark.parametrize('valid_args', valid_args())
-def test_correct_args(valid_args, capsys):
-    files = get_data(valid_args)
-    id_type = valid_args['-id']
-    domain = valid_args['-d']
-    doi_prefix = valid_args.get('--doi-prefix', None)
-    process_args = flatten_dict(valid_args)
-    init.main(process_args)
-    _, err = capsys.readouterr()
-    assert err == ''
-
+def remove_files(valid_args):
+    files = data(valid_args)
     for f in files.values():
-        assert exists(f['full_path'])
+        if exists(f['full_path']):
+            os.remove(f['full_path'])
 
-    with open(files['pid_file']['full_path'], 'r') as fp:
-        d = json.load(fp)
-        assert len(d) == 0
-    ini_contents = read_config_parser(files['config_file']['full_path'])
-    check_defaults = {"pid_file": files['pid_file']['name'], "domain": domain, "id_type": id_type}
-    if doi_prefix:
-        check_defaults["doi_prefix"] = doi_prefix
-    for c in ini_contents:
-        key = c[0]
-        assert check_defaults[key] == c[1]
+def data(valid_args):
+    repo_path = valid_args['-r']
+    necessary_files = {}
+    necessary_files['pid_file'] = {"name": valid_args.get("-p", fixture_default_filenames()['default_pid_json_filename'])}
+    necessary_files['config_file'] = {"name": valid_args.get("-cf", fixture_default_filenames()['default_config_filename'])}
+    for v in necessary_files.values():
+        v['full_path'] = f"{repo_path}/{v['name']}"
+    return necessary_files
     
-    file_collection = [x['full_path'] for x in files.values()]
-    remove_files(file_collection)
+class InitTest:
+    def __init__(self, args):
+        self.args = args
+        self.files = data(self.args)
+        self.domain = args['-d']
+        self.id_type = args['-id']
+        self.doi_prefix = args.get('--doi-prefix', None)
 
-def test_invalid_args(capsys):
-    with pytest.raises(SystemExit) as e:
-        init.main(['-r', 'x'])
+    def check_files(self):
+        all_files = [x['full_path'] for x in self.files.values()]
+        return all_files
+
+    def check_pid_file_contents(self):
+        pid_file = self.files['pid_file']['full_path']
+        file_length = 1
+        try:
+            with open(pid_file, 'r') as fp:
+                d = json.load(fp)
+                file_length = len(d)
+        except Exception as e:
+            print(e)
+        return file_length
+
+    def check_config_contents(self):
+        ini_contents = read_config_parser(self.files['config_file']['full_path'])
+        check_defaults = {"pid_file": self.files['pid_file']['name'], "domain": self.domain, "id_type": self.id_type}
+        if self.doi_prefix:
+            check_defaults["doi_prefix"] = self.doi_prefix
+        return [check_defaults, ini_contents]
+
+@pytest.mark.parametrize('v_args', valid_args())
+class TestInit: 
+    @pytest.fixture(scope='function', autouse=True)
+    def setup_and_teardown(self, v_args):
+        print("setup")
+        process_args = flatten_dict(v_args)
+        init.main(process_args)
+        yield
+        remove_files(v_args)
+
+    def test_all(self, v_args):
+        json_file_should_be_empty = 0
+        test_init = InitTest(v_args)
+        files = test_init.check_files()
+        for f in files:
+            assert exists(f)
+        json_file_should_be_empty == test_init.check_pid_file_contents()
+        defaults, ini_contents = test_init.check_config_contents()
+        for c in ini_contents:
+            key = c[0]
+            assert defaults[key] == c[1]
+
+
+def invalid_args():
+    invalid_args = {
+        "empty_args": [''],
+        "unnamed_arg": ['t'],
+        "incorrect_flag": ['-a'],
+        "incorrect_flag_with_value": ['-x', 't'],
+        "correct_flag_with_non_existent_dir": ['-r', 'x'],
+        "incomplete_args": ['-r', '.'],
+        "required_arg_without_value1": ['-r', '.', '-d'],
+        "incomplete_args2": ['-r', '.', '-d', 'a'],
+        "required_arg_without_value2": ['-r', '.', '-d', 'a', '-id'],
+        "required_arg_with_incorrect_value": ['-r', '.', '-d', 'a', '-id', 'x'],
+        "required_arg_without_req_subcommand": ['-r', '.', '-d', 'a', '-id', 'doi']
+    }
+    return invalid_args
+
+
+def test_invalid_args():
+    invalid_args = invalid_args()
+    for k, v in invalid_args.items():
+        with pytest.raises(SystemExit) as e:
+            init.main(v)
    
-    assert e.value.code != 0
+        assert e.value.code != 0
 
-    

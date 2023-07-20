@@ -58,7 +58,7 @@ def remove_files(files):
 def invalid_args():
     INVALID_ARGS = ['', ['t'], ['-a'], ['-x', 't'], ['-r', 'x']]
     invalid_args = {
-        "empty_arg": {"arg": '', 'error': 'test'}
+        "empty_arg": {"arg": ''}
     }
     return invalid_args
 
@@ -152,6 +152,30 @@ class TestInit:
         for c in ini_contents:
             key = c[0]
             assert defaults[key] == c[1]
-        
-        
+
+
+def invalid_args():
+    invalid_args = {
+        "empty_args": [''],
+        "unnamed_arg": ['t'],
+        "incorrect_flag": ['-a'],
+        "incorrect_flag_with_value": ['-x', 't'],
+        "correct_flag_with_non_existent_dir": ['-r', 'x'],
+        "incomplete_args": ['-r', '.'],
+        "required_arg_without_value1": ['-r', '.', '-d'],
+        "incomplete_args2": ['-r', '.', '-d', 'a'],
+        "required_arg_without_value2": ['-r', '.', '-d', 'a', '-id'],
+        "required_arg_with_incorrect_value": ['-r', '.', '-d', 'a', '-id', 'x'],
+        "required_arg_without_req_subcommand": ['-r', '.', '-d', 'a', '-id', 'doi']
+    }
+    return invalid_args
+
+
+def test_invalid_args():
+    invalid_args = invalid_args()
+    for k, v in invalid_args.items():
+        with pytest.raises(SystemExit) as e:
+            init.main(v)
+   
+        assert e.value.code != 0
 
