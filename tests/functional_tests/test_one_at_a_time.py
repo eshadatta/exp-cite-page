@@ -55,12 +55,6 @@ def remove_files(files):
                 os.remove(f)
             except Exception as e:
                 print(e)
-def invalid_args():
-    INVALID_ARGS = ['', ['t'], ['-a'], ['-x', 't'], ['-r', 'x']]
-    invalid_args = {
-        "empty_arg": {"arg": ''}
-    }
-    return invalid_args
 
 def valid_args():
     valid_args_combo = []
