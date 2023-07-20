@@ -144,7 +144,7 @@ class TestInit:
     #def test_all(self, capsys, check_files, v_args):
         #check_files(v_args)
 
-    def test_all(self, capsys, v_args):
+    def test_all(self, v_args):
         id_type = v_args['-id']
         domain = v_args['-d']
         doi_prefix = v_args.get('--doi-prefix', None)
