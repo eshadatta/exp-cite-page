@@ -172,8 +172,8 @@ def invalid_args():
 
 
 def test_invalid_args():
-    invalid_args = invalid_args()
-    for k, v in invalid_args.items():
+    args = invalid_args()
+    for k, v in args.items():
         with pytest.raises(SystemExit) as e:
             init.main(v)
    
