@@ -49,7 +49,6 @@ def check_args(parser, file, dry_run):
         if not(exists(file) and os.path.isfile(file)):
             parser.error(f"{file} needs to exist and/or be a file. Please run the following command to initialize the id generator: python init.py -r repo-path -d domain")
 
-
 def git_info(args, files, dry_run):
     '''Generate PID and git information for file to be saved in pid file'''
     file_info = {}
@@ -113,7 +112,6 @@ def main(argv = None):
         file_list = u.get_file_list(content_paths, args.dry_run)
         [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
         fi = git_info(args, gen_pids, args.dry_run)
-        print("FI: ", fi)
         if not(args.dry_run):
             updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
             info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)

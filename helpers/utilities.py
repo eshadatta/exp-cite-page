@@ -118,6 +118,8 @@ def check_file_versions(repo_path, pid_file, file_list, dry_run):
                         # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                         if major_version > previous_major_file_version:
                             generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"]}
+                        else:
+                            print(f"For {f}: Version {major_version} can not be less than the previous version: {previous_major_file_version}. File will not be processed")
                 else:
                     # if file does not already exist in the pid file, it will be added to the list for id generation
                     generate_dois[f] = {"version": md.metadata[version_tag], "url": None}
