@@ -84,8 +84,6 @@ class TestID:
         process_args = f.valid_init_args()
         init.main(process_args)
         yield
-        dir_path = f.fixture_dir_path()["dir_path"]
-        content_files = scenario['args']['-c']
         content_file(dir_path, content_files, "restore")
         default_files = list(f.fixture_default_filenames().values())
         default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
