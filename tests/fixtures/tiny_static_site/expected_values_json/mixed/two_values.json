@@ -1,0 +1,35 @@
+[
+	{
+		"file_commit_id": "acc21f43ad41137f4e904cb66ef8f20181e449b0",
+		"file_hash": "fd9ecd4e678133be99e796b00fb0cd7b1b2593c9",
+		"utc_commit_date": "2023-07-28 14:57:09",
+		"current_id": "3ztJNZncYc",
+		"version": "0.0.0",
+		"url": null,
+		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
+		"production_domain": "https://test.org",
+		"doi_prefix": "x.x.x"
+	},
+	{
+		"file_commit_id": "2c49c58ac7e8a9f8c907c15e56f892eacecfdba2",
+		"file_hash": "ae11a356ce9a3ef7d09f33bc340c14324cca8e55",
+		"utc_commit_date": "2023-07-28 15:02:02",
+		"current_id": "3FaEE6gE33",
+		"version": "1.0.0",
+		"url": null,
+		"file": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md",
+		"past_versions": [
+			"0.0.0"
+		],
+		"past_relationships": [
+			{
+				"file_commit_id": "e9d0b6658bfae69071b38cfdd55819dd26522a97",
+				"file_hash": "0a6c4849aa0649b64a4b1462a128d30475f8a224",
+				"version": "0.0.0",
+				"id": "uXY4C3jbig"
+			}
+		],
+		"production_domain": "https://test.org",
+		"doi_prefix": "x.x.x"
+	}
+]

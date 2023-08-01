@@ -17,6 +17,7 @@ import helpers.git_info as gi
 import helpers.generate_id as gid
 from unittest.mock import patch
 import id
+import helpers.utilities as u
 
 
 def gen_args():
@@ -45,28 +46,68 @@ def get_mock_git_info(d):
 # mocking methods used in both these classes
 # generate combos of valid args and do the test like the commented out test id function
 def get_all_scenarios():
-    pass
+    test_scenarios = f.TestScenarios()
+    regex = re.compile(rf'^{test_scenarios.test_name}')
+    scenario_methods = list(filter(regex.match, dir(test_scenarios)))
+    scenarios = []
+    for i in scenario_methods:
+        m = getattr(test_scenarios, i)
+        scenarios.append(m())
+    return scenarios
 
+def content_file(dir_path, file, action="initialize"):
+        s = f.TestScenarios()
+        c = [file] if not(isinstance(file, list)) else file
+        c = list(map(lambda x: f"{dir_path}/{x}", c))
+        for i in c:
+            md = u.read_markdown_file(i)
+            if action == "restore":
+                md.metadata.pop(s.version_tag, None)
+            elif action == "initialize":
+                md.metadata[s.version_tag] = s.initial_version
+            s.write_content_file(i, md)
+
+def restore(file):
+    s = f.TestScenarios()
+    s.content_file(file, "restore")
+
+@pytest.mark.parametrize('scenario', get_all_scenarios())
 @patch('helpers.git_info.GitInfo', autospec=True)
 @patch('helpers.generate_id.GenID', autospec=True)
-def test_id(mock_id, mock_git):
-    test_scenarios = f.TestScenarios()
-    scenario_info = test_scenarios.scenario_single_non_existing_file()
-    #scenario_info = test_scenarios.scenario_multiple_non_existing_file()
-    [file_commit_id, file_hash, err] = get_mock_git_info(scenario_info['expected_content_values'])
+class TestID:
+    @pytest.fixture(scope='function', autouse=True)
+    def setup_andteardown(self, scenario):
+        dir_path = f.fixture_dir_path()["dir_path"]
+        content_files = scenario['args']['-c']
+        content_file(dir_path, content_files, "initialize")
+        name = scenario['name']
+        process_args = f.valid_init_args()
+        init.main(process_args)
+        yield
+        dir_path = f.fixture_dir_path()["dir_path"]
+        content_files = scenario['args']['-c']
+        content_file(dir_path, content_files, "restore")
+        default_files = list(f.fixture_default_filenames().values())
+        default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
+        f.remove_files(default_config_files)
 
-    args = f.flatten_dict(scenario_info['args'])
-    m = mock_git.return_value
-    m.path = "test"
-    m.active_branch = "branch"
-    m.check_git_info.return_value = [file_commit_id, file_hash, err]
-    m.commit_date.return_value = scenario_info['expected_content_values']['utc_commit_date']
-    m_id = mock_id.return_value
-    m_id.gen_default.return_value = scenario_info['expected_content_values']['current_id']
-    id.main(args)
-    pid_output = check_output("tests/fixtures/tiny_static_site/pid.json")
-    expected_output = check_output(scenario_info['expected_output'])
-    assert pid_output == expected_output
+    def test_id(self, mock_id, mock_git, scenario):
+        print("HERE: ", scenario['name'])
+        [file_commit_id, file_hash, err] = get_mock_git_info(scenario['expected_content_values'])
+        args = f.flatten_dict(scenario['args'])
+        m = mock_git.return_value
+        m.path = "test"
+        m.active_branch = "branch"
+        m.check_git_info.return_value = [file_commit_id, file_hash, err]
+        m.commit_date.return_value = scenario['expected_content_values']['utc_commit_date']
+        m_id = mock_id.return_value
+        m_id.gen_default.return_value = scenario['expected_content_values']['current_id']
+        id.main(args)
+        pid_output = check_output("tests/fixtures/tiny_static_site/pid.json")
+        print("PID OUTPUT: ", pid_output)
+        expected_output = check_output(scenario['expected_output'])
+        print('EXPECTED OUTPUT: ', expected_output)
+        assert pid_output == expected_output
 
     
 # need to run a more comprehensive unittest on git_info to make sure it's returning what is expected. Probably need to mock the git info and uuid class for that

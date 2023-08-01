@@ -73,13 +73,13 @@ def read_config_parser(file):
 
 def files():
     return ["tests/fixtures/tiny_static_site/content/blog/2022/2022-09-16-2022-board-election.md", "tests/fixtures/tiny_static_site/content/blog/2023/2023-04-01-renewed-persistence.md"]
-""" 
-def setup_teardown(self):
-    init.main(self.process_args)
-    yield
-    remove_files(self.default_config_files)   
-      """
-#@pytest.fixture(name="single_non_existing")
+
+def valid_init_args():
+    ids = fixture_id()[1]
+    args = {"-r": fixture_dir_path()['dir_path'], "-d": fixture_domain()["domain"], "-id": ids['id'], "--doi-prefix": ids['doi_prefix']}
+    process_args = flatten_dict(args)
+    return process_args
+
 class TestScenarios():
     def __init__(self):
         ids = fixture_id()[1]
@@ -93,6 +93,7 @@ class TestScenarios():
         self.init_process_args = flatten_dict(args)
         self.content_path = "content/blog"
         self.relevant_keys = ['file_commit_id', 'file_hash', 'utc_commit_date', 'current_id']
+        self.test_name = "scenario_"
 
     def write_content_file(self, file_path, markdown):
         try:
@@ -123,29 +124,31 @@ class TestScenarios():
         except Exception as e:
             print(e)
         return contents
-    
-    def generate_fixture_info(self, content_path, expected_output):
+
+    def generate_fixture_info(self, name, content_path, expected_output):
         info = {}
         expected_json = self.get_mock_values(expected_output)
         expected_json_values = self.get_mock_json_values(expected_json[0])
-        info = {"args": {"-r": self.dir_path, "-c": content_path}}
+        info = {"name": name, "args": {"-r": self.dir_path, "-c": content_path}}
         info.update({"expected_output": expected_output,"expected_content_values": expected_json_values})
         return info
     
     def scenario_single_non_existing_file(self):
+        name = "scenario_single_non_existing_file"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/one_value.json"
         file = files()[0]
-        self.content_file(file, "initialize")
+        #self.content_file(file, "initialize")
         content_path = file.split(self.dir_path+"/")[1]
-        info = self.generate_fixture_info(content_path, expected_output)
+        info = self.generate_fixture_info(name, content_path, expected_output)
         return info
     
     def scenario_multiple_non_existing_file(self):
+        name = "scenario_multiple_non_existing_file"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/multiple_values.json"
-        for f in files():
-            self.content_file(f, "initialize")
+        #for f in files():
+            #self.content_file(f, "initialize")
         content_path = [i.split(self.dir_path+"/")[1] for i in files()]   
-        info = self.generate_fixture_info(content_path, expected_output)   
+        info = self.generate_fixture_info(name, content_path, expected_output)   
         return info
 
 
