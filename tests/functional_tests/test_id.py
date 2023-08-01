@@ -57,19 +57,19 @@ def get_all_scenarios():
 
 def content_file(dir_path, file, action="initialize"):
         s = f.TestScenarios()
+        # converting files to a list if incoming file is a string
         c = [file] if not(isinstance(file, list)) else file
+        # adding directory path to the relative path
         c = list(map(lambda x: f"{dir_path}/{x}", c))
         for i in c:
             md = u.read_markdown_file(i)
+            # removing x-version
             if action == "restore":
                 md.metadata.pop(s.version_tag, None)
+            # adding x-version
             elif action == "initialize":
                 md.metadata[s.version_tag] = s.initial_version
             s.write_content_file(i, md)
-
-def restore(file):
-    s = f.TestScenarios()
-    s.content_file(file, "restore")
 
 @pytest.mark.parametrize('scenario', get_all_scenarios())
 @patch('helpers.git_info.GitInfo', autospec=True)
@@ -80,7 +80,6 @@ class TestID:
         dir_path = f.fixture_dir_path()["dir_path"]
         content_files = scenario['args']['-c']
         content_file(dir_path, content_files, "initialize")
-        name = scenario['name']
         process_args = f.valid_init_args()
         init.main(process_args)
         yield
@@ -88,9 +87,8 @@ class TestID:
         default_files = list(f.fixture_default_filenames().values())
         default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
         f.remove_files(default_config_files)
-
+    # mocking git info methods
     def test_id(self, mock_id, mock_git, scenario):
-        print("HERE: ", scenario['name'])
         [file_commit_id, file_hash, err] = get_mock_git_info(scenario['expected_content_values'])
         args = f.flatten_dict(scenario['args'])
         m = mock_git.return_value
@@ -102,9 +100,7 @@ class TestID:
         m_id.gen_default.return_value = scenario['expected_content_values']['current_id']
         id.main(args)
         pid_output = check_output("tests/fixtures/tiny_static_site/pid.json")
-        print("PID OUTPUT: ", pid_output)
         expected_output = check_output(scenario['expected_output'])
-        print('EXPECTED OUTPUT: ', expected_output)
         assert pid_output == expected_output
 
     
