@@ -2,7 +2,7 @@ import init
 import id
 import pytest
 import re
-import os
+import shutil
 import configparser
 from os.path import exists
 from itertools import chain
@@ -69,7 +69,30 @@ def content_file(dir_path, file, action="initialize"):
             # adding x-version
             elif action == "initialize":
                 md.metadata[s.version_tag] = s.initial_version
+            elif action == "increment":
+                prev_version = md.metadata[s.version_tag]
+                mv = int(prev_version.split(".")[0]) + 1
+                updated_version = f"{str(mv)}.0.0"
+                md.metadata[s.version_tag] = updated_version
             s.write_content_file(i, md)
+
+
+def setup_files(dir_path, content_files):
+    content_file(dir_path, content_files, "initialize")
+    process_args = f.valid_init_args()
+    init.main(process_args)
+
+def teardown_files(dir_path, content_files):
+    content_file(dir_path, content_files, "restore")
+    default_files = list(f.fixture_default_filenames().values())
+    default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
+    f.remove_files(default_config_files)
+
+def prepare_existing_pid_file(src, dst):
+    try:
+        shutil.copyfile(src, dst)
+    except Exception as e:
+        print(e)
 
 @pytest.mark.parametrize('scenario', get_all_scenarios())
 @patch('helpers.git_info.GitInfo', autospec=True)
@@ -79,16 +102,18 @@ class TestID:
     def setup_andteardown(self, scenario):
         dir_path = f.fixture_dir_path()["dir_path"]
         content_files = scenario['args']['-c']
-        content_file(dir_path, content_files, "initialize")
-        process_args = f.valid_init_args()
-        init.main(process_args)
+        pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
+        setup_files(dir_path, content_files)
+        if (re.search("scenario_existing", scenario['name'])):
+            preset_file = scenario['preset_file']
+            prepare_existing_pid_file(preset_file, pid_file)
+            content_file(dir_path, content_files, "increment")
         yield
-        content_file(dir_path, content_files, "restore")
-        default_files = list(f.fixture_default_filenames().values())
-        default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
-        f.remove_files(default_config_files)
+        teardown_files(dir_path, content_files)
+
     # mocking git info methods
     def test_id(self, mock_id, mock_git, scenario):
+        print(f"For {scenario['name']}: {scenario}")
         [file_commit_id, file_hash, err] = get_mock_git_info(scenario['expected_content_values'])
         args = f.flatten_dict(scenario['args'])
         m = mock_git.return_value
@@ -98,26 +123,10 @@ class TestID:
         m.commit_date.return_value = scenario['expected_content_values']['utc_commit_date']
         m_id = mock_id.return_value
         m_id.gen_default.return_value = scenario['expected_content_values']['current_id']
+        pid_file = f.fixture_dir_path()["dir_path"]+"/"+f.fixture_default_filenames()['default_pid_json_filename']
         id.main(args)
-        pid_output = check_output("tests/fixtures/tiny_static_site/pid.json")
+        pid_output = check_output(pid_file)
         expected_output = check_output(scenario['expected_output'])
         assert pid_output == expected_output
 
     
-# need to run a more comprehensive unittest on git_info to make sure it's returning what is expected. Probably need to mock the git info and uuid class for that
-
-# this runs a functional test to make sure that id.py runs as expected
-# I don't really like magical programming but both mock and monkeypatch have it, monkeypatch is a little more explicit in its patching
-
-#I was having trouble with monkeypatching here
-""" @patch("id.git_info")
-def test_id(mock_git):
-    args = f.flatten_dict(gen_args())
-    mock_git.return_value = f.fixture_git_response()
-    id.main(args)
-    pid_output = check_output("tests/fixtures/tiny_static_site/pid.json")
-    expected_output = check_output("tests/fixtures/tiny_static_site/expected_values_json/one_value.json")
-    assert pid_output == expected_output """
-    # open json file
-    #check against expected value
-    # assert that it's all good

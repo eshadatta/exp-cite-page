@@ -9,6 +9,7 @@ import frontmatter
 import helpers.static_page_id as sp
 import helpers.utilities as u
 import json
+import shutil
 
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
@@ -148,11 +149,15 @@ class TestScenarios():
         info = self.generate_fixture_info(name, content_path, expected_output)   
         return info
     
-    def scenario_single_existing_file(self):
-        name = "scenario_multiple_non_existing_file"
-        expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/multiple_values.json"
-        content_path = [i.split(self.dir_path+"/")[1] for i in files()]   
-        info = self.generate_fixture_info(name, content_path, expected_output)   
+    def scenario_existing_single_file(self):
+        print("HERE")
+        name = "scenario_existing_single_file"
+        expected_output = "tests/fixtures/tiny_static_site/expected_values_json/existing_files/one_value.json"
+        preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/one_value.json"
+        file = files()[0]
+        content_path = file.split(self.dir_path+"/")[1]  
+        info = self.generate_fixture_info(name, content_path, expected_output)
+        info.update({"preset_file": preset_file})  
         return info
 
 

@@ -6,16 +6,16 @@
 		"current_id": "3aeeUjiZWR",
 		"version": "1.0.0",
 		"url": null,
-		"file": "content/blog/2023/2023-04-01-renewed-persistence.md",
+		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
 		"past_versions": [
 			"0.0.0"
 		],
 		"past_relationships": [
 			{
-				"file_commit_id": "acc21f43ad41137f4e904cb66ef8f20181e449b0",
-				"file_hash": "6f9a627dc2150dda9170620ea09eadd7dd326867",
+				"file_commit_id": "e9d0b6658bfae69071b38cfdd55819dd26522a97",
+				"file_hash": "0a6c4849aa0649b64a4b1462a128d30475f8a224",
 				"version": "0.0.0",
-				"id": "oJmd9CJ4sK"
+				"id": "uXY4C3jbig"
 			}
 		],
 		"production_domain": "https://test.org",
