@@ -1,18 +1,16 @@
 ---
-title: '2023 public data file now available with new and improved retrieval options'
-author: Patrick Polischuk
-draft: false
-
-authors:
-  - Patrick Polischuk
-date: 2023-05-02
-categories:
-  - Metadata
-  - Community
-  - APIs
-
 Archives:
-  - 2023
+- 2023
+author: Patrick Polischuk
+authors:
+- Patrick Polischuk
+categories:
+- Metadata
+- Community
+- APIs
+date: 2023-05-02
+draft: false
+title: 2023 public data file now available with new and improved retrieval options
 ---
 
 We have some exciting news for fans of big batches of metadata: this year’s public data file is now available. Like [in](https://www.crossref.org/blog/free-public-data-file-of-112-million-crossref-records/) [years](https://www.crossref.org/blog/new-public-data-file-120-million-metadata-records/) [past](https://www.crossref.org/blog/2022-public-data-file-of-more-than-134-million-metadata-records-now-available/), we’ve wrapped up all of our metadata records into a single download for those who want to get started using all Crossref metadata records.
