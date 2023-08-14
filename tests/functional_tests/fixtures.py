@@ -93,8 +93,8 @@ class TestScenarios():
         self.default_config_files = list(map(lambda x: self.dir_path+"/"+x, default_files))
         self.init_process_args = flatten_dict(args)
         self.content_path = "content/blog"
-        self.relevant_keys = ['file_commit_id', 'file_hash', 'utc_commit_date', 'current_id']
-        self.test_name = "scenario_"
+        self.relevant_keys = ['file_commit_id', 'file_hash', 'utc_commit_date', 'current_id', 'file', 'version']
+        #self.test_name = "scenario_"
 
     def write_content_file(self, file_path, markdown):
         try:
@@ -159,6 +159,21 @@ class TestScenarios():
         info = self.generate_fixture_info(name, content_path, expected_output)
         info.update({"preset_file": preset_file})  
         return info
+    
+    def mixed_scenario(self):
+        print("HERE")
+        name = "mixed_scenario"
+        expected_output = "tests/fixtures/tiny_static_site/expected_values_json/mixed/two_values.json"
+        preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/another_test_one_value.json"
+        info = {"name": name, "args": {"-r": self.dir_path, "-c": "content/blog"}, "expected_output": expected_output, "preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
+        expected_json = self.get_mock_values(expected_output)
+        expected_values = {}
+        for i in expected_json:
+            expected_values[i['file']] = {}
+            for k in self.relevant_keys:
+                expected_values[i['file']][k] = i[k]
+        info.update({"expected_values": expected_values})
+        return info 
 
 
 

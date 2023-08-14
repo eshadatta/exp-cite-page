@@ -40,14 +40,17 @@ def check_output(output):
 def fixture_gi():
     return {"path": "test", "active_branch": "t", "check_git_info": ["fc","gh",""], "commit_date": "2023-07-25 17:02:32"}
 
-def get_mock_git_info(d):
-    return [d['file_commit_id'], d['file_hash'], []]
+def get_mock_git_info(d = None):
+    x = [1,2,[]]
+    if d:
+        x = [d['file_commit_id'], d['file_hash'], []]
+    return x
 
 # mocking methods used in both these classes
 # generate combos of valid args and do the test like the commented out test id function
-def get_all_scenarios():
+def get_all_scenarios(scenario_type):
     test_scenarios = f.TestScenarios()
-    regex = re.compile(rf'^{test_scenarios.test_name}')
+    regex = re.compile(rf'^{scenario_type}')
     scenario_methods = list(filter(regex.match, dir(test_scenarios)))
     scenarios = []
     for i in scenario_methods:
@@ -94,7 +97,30 @@ def prepare_existing_pid_file(src, dst):
     except Exception as e:
         print(e)
 
-@pytest.mark.parametrize('scenario', get_all_scenarios())
+@pytest.mark.parametrize('scenario1', get_all_scenarios(scenario_type='mixed_'))
+def test_me(monkeypatch, scenario1):
+    print("scenario: ", scenario1)
+    dir_path = f.fixture_dir_path()["dir_path"]
+    content_files = list(scenario1['files'].values())
+    existing_file = scenario1['files']['existing']
+    pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
+    setup_files(dir_path, content_files)
+    preset_file = scenario1['preset_file']
+    prepare_existing_pid_file(preset_file, pid_file)
+    content_file(dir_path, existing_file, "increment")
+    args = f.flatten_dict(scenario1['args'])
+    def mock_git_info(a, b, c):
+        file_info = scenario1['expected_values']
+        return file_info
+    monkeypatch.setattr('id.git_info', mock_git_info)
+    id.main(args)
+    pid_output = check_output(pid_file)
+    expected_output = check_output(scenario1['expected_output'])
+    assert pid_output == expected_output
+    teardown_files(dir_path, content_files)
+
+# you are getting file info from the script. Look that up to get the uuid and the file hash
+@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'))
 @patch('helpers.git_info.GitInfo', autospec=True)
 @patch('helpers.generate_id.GenID', autospec=True)
 class TestID:
