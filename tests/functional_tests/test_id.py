@@ -97,20 +97,26 @@ def prepare_existing_pid_file(src, dst):
     except Exception as e:
         print(e)
 
-@pytest.mark.parametrize('scenario1', get_all_scenarios(scenario_type='mixed_'))
-def test_me(monkeypatch, scenario1):
-    print("scenario: ", scenario1)
+@pytest.mark.parametrize('scenario1', get_all_scenarios(scenario_type='scenario_'))
+def test_id(monkeypatch, scenario1):
+    existing_file = None
     dir_path = f.fixture_dir_path()["dir_path"]
-    content_files = list(scenario1['files'].values())
-    existing_file = scenario1['files']['existing']
+    if not('mixed' in scenario1['name']):
+        content_files = scenario1['args']['-c']
+    else:
+        content_files = list(scenario1['files'].values())
     pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
     setup_files(dir_path, content_files)
-    preset_file = scenario1['preset_file']
-    prepare_existing_pid_file(preset_file, pid_file)
-    content_file(dir_path, existing_file, "increment")
+    if '_mixed' in scenario1['name']:
+        existing_file = scenario1['files']['existing']
+    if 'scenario_existing' in scenario1['name'] or '_mixed' in scenario1['name']:
+        increment_file = existing_file if existing_file else content_files
+        preset_file = scenario1['preset_file']
+        prepare_existing_pid_file(preset_file, pid_file)
+        content_file(dir_path, increment_file, "increment")
     args = f.flatten_dict(scenario1['args'])
     def mock_git_info(a, b, c):
-        file_info = scenario1['expected_values']
+        file_info = scenario1['expected_content_values']
         return file_info
     monkeypatch.setattr('id.git_info', mock_git_info)
     id.main(args)
@@ -118,41 +124,3 @@ def test_me(monkeypatch, scenario1):
     expected_output = check_output(scenario1['expected_output'])
     assert pid_output == expected_output
     teardown_files(dir_path, content_files)
-
-# you are getting file info from the script. Look that up to get the uuid and the file hash
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'))
-@patch('helpers.git_info.GitInfo', autospec=True)
-@patch('helpers.generate_id.GenID', autospec=True)
-class TestID:
-    @pytest.fixture(scope='function', autouse=True)
-    def setup_andteardown(self, scenario):
-        dir_path = f.fixture_dir_path()["dir_path"]
-        content_files = scenario['args']['-c']
-        pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-        setup_files(dir_path, content_files)
-        if (re.search("scenario_existing", scenario['name'])):
-            preset_file = scenario['preset_file']
-            prepare_existing_pid_file(preset_file, pid_file)
-            content_file(dir_path, content_files, "increment")
-        yield
-        teardown_files(dir_path, content_files)
-
-    # mocking git info methods
-    def test_id(self, mock_id, mock_git, scenario):
-        print(f"For {scenario['name']}: {scenario}")
-        [file_commit_id, file_hash, err] = get_mock_git_info(scenario['expected_content_values'])
-        args = f.flatten_dict(scenario['args'])
-        m = mock_git.return_value
-        m.path = "test"
-        m.active_branch = "branch"
-        m.check_git_info.return_value = [file_commit_id, file_hash, err]
-        m.commit_date.return_value = scenario['expected_content_values']['utc_commit_date']
-        m_id = mock_id.return_value
-        m_id.gen_default.return_value = scenario['expected_content_values']['current_id']
-        pid_file = f.fixture_dir_path()["dir_path"]+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-        id.main(args)
-        pid_output = check_output(pid_file)
-        expected_output = check_output(scenario['expected_output'])
-        assert pid_output == expected_output
-
-    

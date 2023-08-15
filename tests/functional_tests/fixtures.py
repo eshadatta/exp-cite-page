@@ -112,6 +112,14 @@ class TestScenarios():
         self.write_content_file(file, md)
 
     def get_mock_json_values(self, output):
+        expected_values = {}
+        for i in output:
+            expected_values[i['file']] = {}
+            for k in self.relevant_keys:
+                expected_values[i['file']][k] = i[k]
+        return expected_values
+    
+    def get_mock_json_values2(self, output):
         content_output = {}
         for k in self.relevant_keys:
             content_output[k] = output[k]
@@ -129,7 +137,7 @@ class TestScenarios():
     def generate_fixture_info(self, name, content_path, expected_output):
         info = {}
         expected_json = self.get_mock_values(expected_output)
-        expected_json_values = self.get_mock_json_values(expected_json[0])
+        expected_json_values = self.get_mock_json_values(expected_json)
         info = {"name": name, "args": {"-r": self.dir_path, "-c": content_path}}
         info.update({"expected_output": expected_output,"expected_content_values": expected_json_values})
         return info
@@ -150,7 +158,6 @@ class TestScenarios():
         return info
     
     def scenario_existing_single_file(self):
-        print("HERE")
         name = "scenario_existing_single_file"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/existing_files/one_value.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/one_value.json"
@@ -160,9 +167,8 @@ class TestScenarios():
         info.update({"preset_file": preset_file})  
         return info
     
-    def mixed_scenario(self):
-        print("HERE")
-        name = "mixed_scenario"
+    def scenario_mixed(self):
+        name = "scenario_mixed"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/mixed/two_values.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/another_test_one_value.json"
         info = {"name": name, "args": {"-r": self.dir_path, "-c": "content/blog"}, "expected_output": expected_output, "preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
@@ -172,7 +178,7 @@ class TestScenarios():
             expected_values[i['file']] = {}
             for k in self.relevant_keys:
                 expected_values[i['file']][k] = i[k]
-        info.update({"expected_values": expected_values})
+        info.update({"expected_content_values": expected_values})
         return info 
 
 
