@@ -134,12 +134,13 @@ class TestScenarios():
             print(e)
         return contents
 
-    def generate_fixture_info(self, name, content_path, expected_output):
+    def generate_fixture_info(self, name, content_path, expected_output, additional_data = None):
         info = {}
         expected_json = self.get_mock_values(expected_output)
         expected_json_values = self.get_mock_json_values(expected_json)
-        info = {"name": name, "args": {"-r": self.dir_path, "-c": content_path}}
-        info.update({"expected_output": expected_output,"expected_content_values": expected_json_values})
+        info = {"name": name, "args": {"-r": self.dir_path, "-c": content_path}, "expected_output": expected_output,"expected_content_values": expected_json_values}
+        if additional_data:
+            info.update(additional_data)
         return info
     
     def scenario_single_non_existing_file(self):
@@ -162,23 +163,18 @@ class TestScenarios():
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/existing_files/one_value.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/one_value.json"
         file = files()[0]
-        content_path = file.split(self.dir_path+"/")[1]  
-        info = self.generate_fixture_info(name, content_path, expected_output)
-        info.update({"preset_file": preset_file})  
+        content_path = file.split(self.dir_path+"/")[1]
+        preset_file_info = {"preset_file": preset_file}
+        info = self.generate_fixture_info(name, content_path, expected_output, preset_file_info)
         return info
     
     def scenario_mixed(self):
         name = "scenario_mixed"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/mixed/two_values.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/another_test_one_value.json"
-        info = {"name": name, "args": {"-r": self.dir_path, "-c": "content/blog"}, "expected_output": expected_output, "preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
-        expected_json = self.get_mock_values(expected_output)
-        expected_values = {}
-        for i in expected_json:
-            expected_values[i['file']] = {}
-            for k in self.relevant_keys:
-                expected_values[i['file']][k] = i[k]
-        info.update({"expected_content_values": expected_values})
+        content_path = "content/blog"
+        additional_data = {"preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
+        info = self.generate_fixture_info(name, content_path, expected_output, additional_data)
         return info 
 
 

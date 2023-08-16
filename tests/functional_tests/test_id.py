@@ -8,14 +8,6 @@ from os.path import exists
 from itertools import chain
 import json
 import tests.functional_tests.fixtures as f
-import git
-from git import Repo
-import sys
-import random
-import os.path
-import helpers.git_info as gi
-import helpers.generate_id as gid
-from unittest.mock import patch
 import id
 import helpers.utilities as u
 
@@ -97,30 +89,30 @@ def prepare_existing_pid_file(src, dst):
     except Exception as e:
         print(e)
 
-@pytest.mark.parametrize('scenario1', get_all_scenarios(scenario_type='scenario_'))
-def test_id(monkeypatch, scenario1):
+@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'))
+def test_id(monkeypatch, scenario):
     existing_file = None
     dir_path = f.fixture_dir_path()["dir_path"]
-    if not('mixed' in scenario1['name']):
-        content_files = scenario1['args']['-c']
+    if not('mixed' in scenario['name']):
+        content_files = scenario['args']['-c']
     else:
-        content_files = list(scenario1['files'].values())
+        content_files = list(scenario['files'].values())
     pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
     setup_files(dir_path, content_files)
-    if '_mixed' in scenario1['name']:
-        existing_file = scenario1['files']['existing']
-    if 'scenario_existing' in scenario1['name'] or '_mixed' in scenario1['name']:
+    if '_mixed' in scenario['name']:
+        existing_file = scenario['files']['existing']
+    if 'scenario_existing' in scenario['name'] or '_mixed' in scenario['name']:
         increment_file = existing_file if existing_file else content_files
-        preset_file = scenario1['preset_file']
+        preset_file = scenario['preset_file']
         prepare_existing_pid_file(preset_file, pid_file)
         content_file(dir_path, increment_file, "increment")
-    args = f.flatten_dict(scenario1['args'])
+    args = f.flatten_dict(scenario['args'])
     def mock_git_info(a, b, c):
-        file_info = scenario1['expected_content_values']
+        file_info = scenario['expected_content_values']
         return file_info
     monkeypatch.setattr('id.git_info', mock_git_info)
     id.main(args)
     pid_output = check_output(pid_file)
-    expected_output = check_output(scenario1['expected_output'])
+    expected_output = check_output(scenario['expected_output'])
     assert pid_output == expected_output
     teardown_files(dir_path, content_files)
