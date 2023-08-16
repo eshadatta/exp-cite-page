@@ -12,14 +12,6 @@ import id
 import helpers.utilities as u
 
 
-def gen_args():
-    content_path = f.fixture_content_path()+'2022/2022-09-16-2022-board-election.md'
-    args = {'-r': f.fixture_dir_path()['dir_path'], '-c': 'content/blog'}
-    return args
-
-def valid_args():
-    {}
-
 def check_output(output):
     contents = None
     try:
@@ -29,17 +21,6 @@ def check_output(output):
         print(e)
     return contents
 
-def fixture_gi():
-    return {"path": "test", "active_branch": "t", "check_git_info": ["fc","gh",""], "commit_date": "2023-07-25 17:02:32"}
-
-def get_mock_git_info(d = None):
-    x = [1,2,[]]
-    if d:
-        x = [d['file_commit_id'], d['file_hash'], []]
-    return x
-
-# mocking methods used in both these classes
-# generate combos of valid args and do the test like the commented out test id function
 def get_all_scenarios(scenario_type):
     test_scenarios = f.TestScenarios()
     regex = re.compile(rf'^{scenario_type}')
@@ -88,6 +69,7 @@ def prepare_existing_pid_file(src, dst):
         shutil.copyfile(src, dst)
     except Exception as e:
         print(e)
+        
 def scenario_name(scenario):
     return scenario['name']
 
