@@ -94,7 +94,6 @@ class TestScenarios():
         self.init_process_args = flatten_dict(args)
         self.content_path = "content/blog"
         self.relevant_keys = ['file_commit_id', 'file_hash', 'utc_commit_date', 'current_id', 'file', 'version']
-        #self.test_name = "scenario_"
 
     def write_content_file(self, file_path, markdown):
         try:
@@ -118,13 +117,7 @@ class TestScenarios():
             for k in self.relevant_keys:
                 expected_values[i['file']][k] = i[k]
         return expected_values
-    
-    def get_mock_json_values2(self, output):
-        content_output = {}
-        for k in self.relevant_keys:
-            content_output[k] = output[k]
-        return content_output
-    
+        
     def get_mock_values(self, file):
         contents = None
         try:
@@ -172,7 +165,7 @@ class TestScenarios():
         name = "scenario_mixed"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/mixed/two_values.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/another_test_one_value.json"
-        content_path = "content/blog"
+        content_path = self.content_path
         additional_data = {"preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
         info = self.generate_fixture_info(name, content_path, expected_output, additional_data)
         return info 
