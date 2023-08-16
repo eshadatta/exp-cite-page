@@ -29,17 +29,10 @@ def fixture_id():
 def fixture_content_path():
     return "content/blog/"
 
-def fixture_files():
-    files = ['2022/2022-09-16-2022-board-election.md']
-    return files
-
-def files():
+def init_files():
     # returning an empty array to create valid args with and without specifying user files
     user_specified_files = {"-p": "record.json", "-cf": "config.ini"}
     return [{}, user_specified_files]
-
-def fixture_git_response():
-    return {'content/blog/2022/2022-09-22-crossref-role-integrity-scholarly-record.md': {'file_commit_id': '8a45235c90adc33c60167661050b877a9f7fa4af', 'file_hash': 'e854b9426e59005a40c493ca40628fa1d15239a8', 'utc_commit_date': '2023-07-24 14:43:05', 'current_id': 'JvdtZ5EPCH', 'version': '0.0.0', 'url': None, 'file': 'content/blog/2022/2022-09-22-crossref-role-integrity-scholarly-record.md'}}
 
 def flatten_dict(d, expected_length = 3, key = '-c'):
     data = [[k, v] for k, v in d.items()]
@@ -92,7 +85,7 @@ class TestScenarios():
         self.initial_version = self.static_page.init_version
         self.default_config_files = list(map(lambda x: self.dir_path+"/"+x, default_files))
         self.init_process_args = flatten_dict(args)
-        self.content_path = "content/blog"
+        self.content_path = fixture_content_path()
         self.relevant_keys = ['file_commit_id', 'file_hash', 'utc_commit_date', 'current_id', 'file', 'version']
 
     def write_content_file(self, file_path, markdown):
