@@ -151,8 +151,8 @@ class TestScenarios():
         info = self.generate_fixture_info(name, content_path, expected_output)
         return info
     
-    def scenario_multiple_non_existing_file(self):
-        name = "scenario_multiple_non_existing_file"
+    def scenario_multiple_non_existing_files(self):
+        name = "scenario_multiple_non_existing_files"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/multiple_values.json"
         content_path = [i.split(self.dir_path+"/")[1] for i in files()]   
         info = self.generate_fixture_info(name, content_path, expected_output)   

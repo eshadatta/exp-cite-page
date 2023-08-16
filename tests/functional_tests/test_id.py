@@ -88,9 +88,10 @@ def prepare_existing_pid_file(src, dst):
         shutil.copyfile(src, dst)
     except Exception as e:
         print(e)
+def scenario_name(scenario):
+    return scenario['name']
 
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'))
-def test_id(monkeypatch, scenario):
+def check_scenario_settings(scenario):
     existing_file = None
     dir_path = f.fixture_dir_path()["dir_path"]
     if not('mixed' in scenario['name']):
@@ -106,6 +107,11 @@ def test_id(monkeypatch, scenario):
         preset_file = scenario['preset_file']
         prepare_existing_pid_file(preset_file, pid_file)
         content_file(dir_path, increment_file, "increment")
+    return [dir_path, pid_file, content_files]
+
+@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
+def test_id(monkeypatch, scenario):
+    dir_path, pid_file, content_files = check_scenario_settings(scenario)
     args = f.flatten_dict(scenario['args'])
     def mock_git_info(a, b, c):
         file_info = scenario['expected_content_values']
