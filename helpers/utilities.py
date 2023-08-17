@@ -33,6 +33,9 @@ def check_path(path, type=None):
 
 # move this to config file class
 def read_config(config_file_name):
+    msg = check_path(config_file_name)
+    if msg:
+        raise RuntimeError(f"{config_file_name} must exist")
     c = configparser.ConfigParser()
     try:
         c.read(config_file_name)

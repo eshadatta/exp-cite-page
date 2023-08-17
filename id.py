@@ -36,7 +36,7 @@ def set_args(argv):
     parser = argparse.ArgumentParser(
                     description="Generate a permanent ID for a specific file")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
-    parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2; relative to the repository root", default=".")
+    parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2; relative to the repository root")
     parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = default_config_filename, help='Filename for config init, has a default filename if none is specified')
     parser.add_argument('-b', '--batch-process', help='batch process', action='store_true')
     parser.add_argument('-d', '--dry-run', help='Dry run to generate a permanent ID of a specified file or files', action='store_true')
@@ -113,6 +113,7 @@ def main(argv = None):
         content_paths = full_paths['content_paths']
         file_list = u.get_file_list(content_paths, args.dry_run)
         if args.batch_process:
+            print("RUNNING IN BATCH MODE")
             file_info = init_file.InitializeFiles(args.repo, file_list, full_paths['pid_file']).process_files()
         else:
             [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
@@ -122,8 +123,12 @@ def main(argv = None):
                 file_info = git_info(args, gen_pids, args.dry_run)
         if not(args.dry_run):
             updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], file_info)
-            info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
-            info.write_file_info(updated_files, rest_files)
+            if updated_files:
+                info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
+                info.write_file_info(updated_files, rest_files)
+                print(f"Files in {args.content} have been processed and written to {full_paths['pid_file']}")
+            else:
+                print(f"No updated files in {args.content}. Nothing was processed")
         elif args.dry_run:
             print("Generates a ProcessJSON object which contains path and domain information")
             print("Updates any PID information in the pid file, if the file already exists in the pid file or inserts PID information if the file is new")
