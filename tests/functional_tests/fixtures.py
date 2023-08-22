@@ -37,16 +37,17 @@ def init_files():
 def flatten_dict(d, expected_length = 3, key = '-c'):
     data = [[k, v] for k, v in d.items()]
     data = list(chain(*data))
+    args = list(filter(lambda x: x, data))
     if key in d.keys() and isinstance(d[key], list):
         for i in range(0, len(d[key])):
             file = d[key][i]
             index = i + expected_length
             limit = len(data) -1
             if index > limit:
-                data.append(file)
+                args.append(file)
             else:
-                data[index] = file
-    return data
+                args[index] = file
+    return args
 
 def remove_files(files):
     for f in files:
@@ -141,7 +142,15 @@ class TestScenarios():
         name = "scenario_multiple_non_existing_files"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/multiple_values.json"
         content_path = [i.split(self.dir_path+"/")[1] for i in files()]   
-        info = self.generate_fixture_info(name, content_path, expected_output)   
+        info = self.generate_fixture_info(name, content_path, expected_output)
+        return info
+    
+    def scenario_batch(self):
+        name = "scenario_batch"
+        expected_output = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/batch.json"
+        content_path = self.content_path
+        info = self.generate_fixture_info(name, content_path, expected_output)
+        info['args'].update({"-b": None})
         return info
     
     def scenario_existing_single_file(self):

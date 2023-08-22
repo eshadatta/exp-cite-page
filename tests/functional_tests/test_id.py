@@ -10,7 +10,7 @@ import json
 import tests.functional_tests.fixtures as f
 import id
 import helpers.utilities as u
-
+import helpers.initialize_files
 
 def check_output(output):
     contents = None
@@ -53,8 +53,9 @@ def content_file(dir_path, file, action="initialize"):
             s.write_content_file(i, md)
 
 
-def setup_files(dir_path, content_files):
-    content_file(dir_path, content_files, "initialize")
+def setup_files(dir_path, content_files, processing_type=None):
+    if not(processing_type):
+        content_file(dir_path, content_files, "initialize")
     process_args = f.valid_init_args()
     init.main(process_args)
 
@@ -75,13 +76,16 @@ def scenario_name(scenario):
 
 def check_scenario_settings(scenario):
     existing_file = None
+    processing_type = 'batch' if ('batch' in scenario['name']) else None
     dir_path = f.fixture_dir_path()["dir_path"]
-    if not('mixed' in scenario['name']):
+    if not('mixed' in scenario['name'] or 'batch' in scenario['name']):
         content_files = scenario['args']['-c']
+    elif 'batch' in scenario['name']:
+        content_files = list(scenario['expected_content_values'].keys())
     else:
         content_files = list(scenario['files'].values())
     pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-    setup_files(dir_path, content_files)
+    setup_files(dir_path, content_files, processing_type)
     if '_mixed' in scenario['name']:
         existing_file = scenario['files']['existing']
     if 'scenario_existing' in scenario['name'] or '_mixed' in scenario['name']:
@@ -90,15 +94,29 @@ def check_scenario_settings(scenario):
         prepare_existing_pid_file(preset_file, pid_file)
         content_file(dir_path, increment_file, "increment")
     return [dir_path, pid_file, content_files]
-
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
-def test_id(monkeypatch, scenario):
+# for batch scenario we are not initializing the files. The id script will do that
+@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_batch'), ids=scenario_name)
+def test_id_valid_args(monkeypatch, scenario):
     dir_path, pid_file, content_files = check_scenario_settings(scenario)
     args = f.flatten_dict(scenario['args'])
+    class MockInitialize(object):
+        def __init__(self):
+            pass
+        def process_files(self):
+            content_file(dir_path, content_files, "initialize")
+            return scenario['expected_content_values']
+    
+    def mock_initialize(a, b, c):
+        return MockInitialize()
+    
     def mock_git_info(a, b, c):
         file_info = scenario['expected_content_values']
         return file_info
-    monkeypatch.setattr('id.git_info', mock_git_info)
+    
+    if scenario['name'] == 'scenario_batch':
+        monkeypatch.setattr('helpers.initialize_files.InitializeFiles', mock_initialize)
+    else:
+        monkeypatch.setattr('id.git_info', mock_git_info)
     id.main(args)
     pid_output = check_output(pid_file)
     expected_output = check_output(scenario['expected_output'])
