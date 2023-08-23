@@ -78,6 +78,7 @@ def check_scenario_settings(scenario):
     existing_file = None
     processing_type = 'batch' if ('batch' in scenario['name']) else None
     dir_path = f.fixture_dir_path()["dir_path"]
+    # this needs to be optimized
     if not('mixed' in scenario['name'] or 'batch' in scenario['name']):
         content_files = scenario['args']['-c']
     elif 'batch' in scenario['name']:
