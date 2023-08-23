@@ -93,6 +93,7 @@ A toy example of a collection of markdown pages is available for the user to see
                             Examples: -c filepath1 filepath2; relative to the repository root
     -cf [CONFIG_FILENAME], --config-filename [CONFIG_FILENAME]
                             Filename for config init, has a default filename if none is specified
+    -b, --batch-process     batch process
     -d, --dry-run           Dry run to generate a permanent ID of a specified file or files
     ```
 * This can be run with the dry run argument. If done so, this is the expected output:
@@ -178,6 +179,9 @@ A toy example of a collection of markdown pages is available for the user to see
 `python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/ content/blog/2022`
 * **With a mix of files and paths:**
 `python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/2023-02-28-in-the-know-on-workflows.md content/blog/2022`
+* **To run a batch process:**
+`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog -b`: This will run through all files and initialize a file if it is not already initialized, i.e. it will add `x-version: 0.0.0` to the frontmatter of the markdown file and add it to the pid file. It will also commit the change.
+## Further information
 * If the major version has been bumped up in the markdown file and the file already exists in the pid file, the file will show information about both versions. For example, if the `x-version` has changed from `0.0.0` to `1.0.0` and the file already exists in the pid json file, it will show the git information about both versions and the id for both. 
   * Frontmatter change from major version 0 to 1:
     ```
@@ -267,3 +271,7 @@ A toy example of a collection of markdown pages is available for the user to see
 3. Run `id.py` to generate IDs for the files. [Here](#using-the-toy-example) are ways to do it.
 4. Run the url generator script. An example for the crossref site is here: 
    * `python helper_url_generation/url_constructor.py -r <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`
+
+## Developer Information
+* As of now, only integration tests are available. To run tests, after cloning the repository and installing the requirements, please run the following:
+`pytest tests/functional_tests`
