@@ -1,0 +1,24 @@
+[
+	{
+		"file_commit_id": "e9d0b6658bfae69071b38cfdd55819dd26522a97",
+		"file_hash": "0a6c4849aa0649b64a4b1462a128d30475f8a224",
+		"utc_commit_date": "2023-07-28 14:56:01",
+		"current_id": "uXY4C3jbig",
+		"version": "0.0.0",
+		"url": null,
+		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
+		"production_domain": "https://test.org",
+		"doi_prefix": "x.x.x"
+	},
+	{
+		"file_commit_id": "mock_commit8a45235c90adc33c60167661050b877a9f7fa4af",
+		"file_hash": "e854b9426e59005a40c493ca40628fa1d15239a8",
+		"utc_commit_date": "2023-07-25 17:02:32",
+		"current_id": "88MnTA7TXb",
+		"version": "0.0.0",
+		"url": null,
+		"file": "content/blog/2023/2023-04-01-renewed-persistence.md",
+		"production_domain": "https://test.org",
+		"doi_prefix": "x.x.x"
+	}
+]

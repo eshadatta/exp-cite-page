@@ -14,6 +14,7 @@ import helpers.utilities as u
 import sys
 import helpers.static_page_id as sp
 import helpers.cleanup as cleanup
+import helpers.initialize_files as init_file
 
 
 def check_path(parser, p, type='dir'):
@@ -28,17 +29,18 @@ def check_path(parser, p, type='dir'):
         parser.error(f"{p} needs to be a directory")
     return os.path.normpath(p)
 
-def set_args():
+def set_args(argv):
     """CLI"""
     s = sp.static_page_id()
     default_config_filename = s.default_config_filename
     parser = argparse.ArgumentParser(
                     description="Generate a permanent ID for a specific file")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
-    parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2; relative to the repository root", default=".")
+    parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2; relative to the repository root")
     parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = default_config_filename, help='Filename for config init, has a default filename if none is specified')
+    parser.add_argument('-b', '--batch-process', help='batch process', action='store_true')
     parser.add_argument('-d', '--dry-run', help='Dry run to generate a permanent ID of a specified file or files', action='store_true')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     return parser, args
 
 def check_args(parser, file, dry_run):
@@ -91,8 +93,8 @@ def check_config_args(config_args, dry_run, arg_type=None):
     if messages:
         raise ValueError(f"From {script_name}.{method_name}: Cannot continue processing. See errors:{messages}")
 
-def main():
-    [parser, args] = set_args()
+def main(argv = None):
+    [parser, args] = set_args(argv)
     config_file = args.repo + "/" + args.config_filename
     [pid_file, id_type, doi_prefix, production_domain] = u.read_config(config_file)
     full_paths = {}
@@ -110,16 +112,29 @@ def main():
         #gather files to be processed
         content_paths = full_paths['content_paths']
         file_list = u.get_file_list(content_paths, args.dry_run)
-        [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
-        fi = git_info(args, gen_pids, args.dry_run)
+        if args.batch_process:
+            print("RUNNING IN BATCH MODE")
+            if args.dry_run:
+                print("Initializing files and committing them")
+            else:
+                file_info = init_file.InitializeFiles(args.repo, file_list, full_paths['pid_file']).process_files()
+        else:
+            [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
+            if not(gen_pids) and not(args.dry_run):
+                raise RuntimeWarning(f"There are no files to be processed in the given content paths: {args.content}")
+            else:
+                file_info = git_info(args, gen_pids, args.dry_run)
         if not(args.dry_run):
-            updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], fi)
-            info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
-            info.write_file_info(updated_files, rest_files)
+            updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], file_info)
+            if updated_files:
+                info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
+                info.write_file_info(updated_files, rest_files)
+                print(f"Files in {args.content} have been processed and written to {full_paths['pid_file']}")
+            else:
+                print(f"No updated files in {args.content}. Nothing was processed")
         elif args.dry_run:
             print("Generates a ProcessJSON object which contains path and domain information")
             print("Updates any PID information in the pid file, if the file already exists in the pid file or inserts PID information if the file is new")
-
     except Exception as e:
         print(e)
         sys.exit(1)

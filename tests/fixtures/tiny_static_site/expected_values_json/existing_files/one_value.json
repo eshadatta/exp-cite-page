@@ -1,0 +1,24 @@
+[
+	{
+		"file_commit_id": "2c49c58ac7e8a9f8c907c15e56f892eacecfdba2",
+		"file_hash": "7702eb6f540e02c4f9d1bb43f11151c1942d6c3e",
+		"utc_commit_date": "2023-07-28 15:02:02",
+		"current_id": "3aeeUjiZWR",
+		"version": "1.0.0",
+		"url": null,
+		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
+		"past_versions": [
+			"0.0.0"
+		],
+		"past_relationships": [
+			{
+				"file_commit_id": "e9d0b6658bfae69071b38cfdd55819dd26522a97",
+				"file_hash": "0a6c4849aa0649b64a4b1462a128d30475f8a224",
+				"version": "0.0.0",
+				"id": "uXY4C3jbig"
+			}
+		],
+		"production_domain": "https://test.org",
+		"doi_prefix": "x.x.x"
+	}
+]
