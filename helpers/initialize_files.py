@@ -53,6 +53,7 @@ class InitializeFiles:
         return [file_commit_id, git_hash, utc_datetime]
 
     def process_files(self):
+        '''Adds x-version tag with the default version to all files sent by user'''
         # currently, this will only check to see files that have x-version and need to be committed
         # also needs to check if there are initialized things that are not committed
         files = []

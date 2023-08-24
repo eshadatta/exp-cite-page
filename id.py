@@ -114,10 +114,13 @@ def main(argv = None):
         file_list = u.get_file_list(content_paths, args.dry_run)
         if args.batch_process:
             print("RUNNING IN BATCH MODE")
-            file_info = init_file.InitializeFiles(args.repo, file_list, full_paths['pid_file']).process_files()
+            if args.dry_run:
+                print("Initializing files and committing them")
+            else:
+                file_info = init_file.InitializeFiles(args.repo, file_list, full_paths['pid_file']).process_files()
         else:
             [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
-            if not(gen_pids):
+            if not(gen_pids) and not(args.dry_run):
                 raise RuntimeWarning(f"There are no files to be processed in the given content paths: {args.content}")
             else:
                 file_info = git_info(args, gen_pids, args.dry_run)
