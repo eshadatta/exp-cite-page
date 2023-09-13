@@ -95,7 +95,13 @@ def get_files_pid(pid_file):
         for d in data:
             file_version_info[d['file']] = {"version": d['version'], "url": d['url']}
     return file_version_info
-    
+
+def get_md_title(file, md):
+    title = md.metadata.get('title', None)
+    if not(title):
+        raise ValueError(f"{file} must contain title")
+    return title
+
 def check_file_versions(repo_path, pid_file, file_list, dry_run):
     '''gets a list of all files from given content paths and their versions from the pid file (if they exist) and generates a list of files to be pid-ized'''
     generate_dois = {}
@@ -120,12 +126,12 @@ def check_file_versions(repo_path, pid_file, file_list, dry_run):
                         previous_major_file_version = get_major_version(initialized_files[relative_path]["version"])
                         # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                         if major_version > previous_major_file_version:
-                            generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"]}
+                            generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"], "title": md.metadata['title']}
                         else:
                             print(f"For {f}: Version {major_version} can not be less than the previous version: {previous_major_file_version}. File will not be processed")
                 else:
                     # if file does not already exist in the pid file, it will be added to the list for id generation
-                    generate_dois[f] = {"version": md.metadata[version_tag], "url": None}
+                    generate_dois[f] = {"version": md.metadata[version_tag], "url": None, "title": md.metadata['title']}
             else:
                 uninitialized_files.append(f)
         # add file version to this

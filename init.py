@@ -46,9 +46,23 @@ def set_args(argv):
     
 def main(argv = None):
     args = set_args(argv)
+    existing_files = []
+    #check if static ini exists and if so, say it does and don't process any more
     c = cf.ConfigFile(args.repo_path, args.pid_file_path, args.config_filename)
     doi_prefix = getattr(args, 'doi_prefix', None)
-    c.create_config(args.id_type, args.domain, doi_prefix)
+    config_file_exists = c.file_existence(c.config_file_name)
+    pid_file_exists = c.file_existence(c.pid_file)
+    if config_file_exists:
+        existing_files.append(c.config_file_name)
+    if pid_file_exists:
+        existing_files.append(c.pid_file)
+    
+    if not(existing_files):
+        c.create_config(args.id_type, args.domain, doi_prefix)
+    else:
+        print(f"Either {c.config_file_name} or {c.pid_file} or both already exist. File(s) were not overwritten. No new files were created")
 
+    return existing_files
+    
 if __name__ == "__main__":
     main()

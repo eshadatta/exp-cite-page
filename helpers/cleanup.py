@@ -20,7 +20,7 @@ def cleanup(pidfile, updated_files):
         for f, i in updated_files.items():
             previous_file_info = list(filter(lambda x: x['file'] == f, previous_files))
             if previous_file_info:
-                relationship = {"file_commit_id": previous_file_info[0]['file_commit_id'], "file_hash": previous_file_info[0]['file_hash'], "version": previous_file_info[0]['version'], "id": previous_file_info[0]['current_id']}
+                relationship = {"file_commit_id": previous_file_info[0]['file_commit_id'], "file_hash": previous_file_info[0]['file_hash'], "version": previous_file_info[0]['version'], "id": previous_file_info[0]['current_id'], "doi_submitted": previous_file_info[0]['doi_submitted']}
                 if 'past_versions' and 'past_relationships' in previous_file_info[0]:
                     i['past_versions'] = [previous_file_info[0]['version']] + previous_file_info[0]['past_versions']
                     i['past_relationships'] = [relationship] + previous_file_info[0]['past_relationships']

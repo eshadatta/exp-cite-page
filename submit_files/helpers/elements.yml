@@ -1,0 +1,19 @@
+doi_batch:
+  head: 
+    doi_batch_id: "Value"
+    timestamp: "Value"
+    depositor:
+      depositor_name: "Value"
+      email_address: "value"
+    registrant: "Value"
+  body: 
+    - posted_content: 
+        titles:
+          title: "Value"
+        posted_date:
+          month: "Value"
+          day: "Value"
+          year: "Value"
+        doi_data:
+          doi: "Value"
+          resource: "Value"  

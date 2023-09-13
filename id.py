@@ -65,8 +65,10 @@ def git_info(args, files, dry_run):
             if file_commit_id and git_hash:
                 utc_datetime = g.commit_date(file_commit_id)
                 filename = f.split(args.repo+"/")[1]
-                current_id = gid.GenID().gen_default(len=10) 
-                file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename}
+                current_id = gid.GenID().gen_default(len=10)
+                doi = {"doi": {"submitted": None, "registered": None, "value": None}}
+                file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename, "title": v['title']}
+                file_info[filename].update(doi)
             else:
                 err_msg[f] = err
             
