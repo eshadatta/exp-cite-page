@@ -18,19 +18,23 @@ class ConfigFile:
         self.pid_file = pid_file
         self.config_file_name = config_file_name
 
+    def file_existence(self, file):
+        file_exists = False
+        if (exists(file) and os.path.isfile(file)):
+            print(f"{file} already exists and will not be overwritten")
+            file_exists = True
+        return file_exists
+    
     def create_pid_file(self):
         pid_file = self.pid_file
-        if not(exists(pid_file)):
-                try:
-                    d = {}
-                    with open(pid_file, 'w') as outfile:
-                        json.dump(d, outfile)
-                except Exception as e:
-                    raise ValueError(f"ERROR: {e}")
-        elif (exists(pid_file) and os.path.isfile(pid_file)):
-            print(f"{pid_file} already exists")
+        try:
+            d = {}
+            with open(pid_file, 'w') as outfile:
+                json.dump(d, outfile)
+        except Exception as e:
+            raise ValueError(f"ERROR: {e}")
         else:
-            raise ValueError(f"ERROR: please send a path with a filename and not path: {pid_file}")
+            print(f"Pid tracking file: {pid_file} created")
 
     def chk_content_paths(self):
         script_name = relpath(__file__)
@@ -51,7 +55,8 @@ class ConfigFile:
                 self.c.write(cf)
         except Exception as e:
             raise(f"ERROR: Could not create config file: {e}")
-        print(f"Config file: {self.config_file_name} created")
+        else:
+            print(f"Config file: {self.config_file_name} created")
 
     def get_file_list(self):
         try:

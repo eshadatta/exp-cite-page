@@ -58,6 +58,7 @@ class InitializeFiles:
         # also needs to check if there are initialized things that are not committed
         files = []
         file_git_info = {}
+        doi = {"doi": {"submitted": None, "registered": None, "value": None}}
         for p in self.content_file_paths:
             init = self.initialize_content_file(p)
             if init:
@@ -66,7 +67,10 @@ class InitializeFiles:
         for f in files:
             current_id = id.GenID().gen_default(len=10)
             [file_commit_id, git_hash, utc_datetime] = self.gen_initialized_file_info(f)
-            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.static_page.init_version, "url": None, "current_id": current_id}
+            md = u.read_markdown_file(f)
+            title = u.get_md_title(f, md)
+            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.static_page.init_version, "url": None, "current_id": current_id, "title": title}
+            info.update(doi)
             file_git_info[f] = info
         return file_git_info
 

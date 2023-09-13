@@ -135,7 +135,7 @@ def check_urls(pidfile):
 def main():
     args = set_args()
     [pid_file, domain] = read_config(args.config_filename)
-    pid = args.repo + "/" + pid_file
+    pid = os.path.normpath(args.repo) + "/" + pid_file
     generate_urls(args.repo, domain, pid)
     
 if __name__ == "__main__":
