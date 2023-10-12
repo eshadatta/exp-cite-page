@@ -11,11 +11,10 @@ This is meant to be used with markdown files and is being currently tested with 
 
 ### **Current Status**
 * Needs test coverage
-* I need to narrow down an argument parser library
 * The scope for now is to only work with new PIDs, i.e. a file can have a new PID or be upgraded to a major version to get a new PID. It currently _does not_ work with deleted pages or tombstoning anything.
 * Code needs to be abstracted out further so that a user could add more functionality for custom url construction or ID generation
 * This only supports DOIs for now. A UUID option has been given as an example. 
-* Currently, the config file is in an `.ini` format because I thought it would be easier for the user to enter this rather than deal with possibly malformed YAML files. This can be reverted to YAML, of course.
+
 
 
 #### **USAGE:**
@@ -30,51 +29,66 @@ A toy example of a collection of markdown pages is available for the user to see
 
 ##### **USAGE OVERVIEW**
 * In order to use this software, the user needs to add a frontmatter tag and a version using the [semantic versioning convention](https://semver.org/) to the markdown file. The script looks for this tag and checks the version in order to generate IDs.
-* The software is currently divided into three scripts: `init.py`, `id.py`, and a url generator script. The `init.py` creates a pid json file that contains the id and the git information of the file(s) to be tracked, and a config file that contains other information needed by the id and url generator script. The `id.py` script generates an id and all gathers related git information for the file. There is also a url generator script that will generate a url according to the logic of the static site generator. This can be customized by the user.
+* The software has the following components:
+  * sets up files and a config files with the relevant information to begin processing
+  * Generates PIDs for tracked files.
+  * If the user is a crossref member, there are scripts that do the following:
+    * Creates a submission file to deposit the content for the user
+    * Deposits the content 
+    * Registers the PID as a DOI in Crossref
+* All of the scripts can be run individually or together. The following examples will demonstrate the scripts that are run under one script
 
 #### **USAGE EXAMPLES**:
+#### To run all steps of the Static Site PID Genertor: use this script: `run_all.py`
+* To see the commands available for the script, please run the following:
+```
+python run_all.py --help
+Usage: run_all.py [OPTIONS] COMMAND [ARGS]...
 
-#### **init.py**:
-* creates a config file (default file name: `static.ini`) and a json file (default file name: `pid.json`)
-    * The required arguments are the repository path that contains the static site, the production domain, and the id type to be used. Currently, the dry run has not yet been implemented for `init.py`.
-    * `python init.py -h` gives the following:
-        ```
-        python init.py -h
-        usage: init.py [-h] -r REPO_PATH -d DOMAIN [-p [PID_FILE_PATH]] [-cf [CONFIG_FILENAME]] [-b BRANCH] -id
-               {doi,uuid} [-dry]
-        Generate a permanent ID for a static site generator
+Options:
+  --help  Show this message and exit.
 
-        optional arguments:
-        -h, --help            show this help message and exit
-        -r REPO_PATH, --repo-path REPO_PATH
-                            Path to repository containing the files
-        -d DOMAIN, --domain DOMAIN
-                            Production domain of the content, for example: https://www.crossref.org/
-        -p [PID_FILE_PATH], --pid-file-path [PID_FILE_PATH]
-                            Path to json file where containing all the information associated with the
-                            files and their permanent IDs; relative to the repository root. If the file
-                            does not exist, a new file with the specified filename will be created. An
-                            existing file will not be overwritten
-        -cf [CONFIG_FILENAME], --config-filename [CONFIG_FILENAME]
-                            Filename for config init, has a default filename if none is specified. An
-                            existing file will be overwritten
-        -b BRANCH, --branch BRANCH
-                            Path to branch where the file is located. The default is the active branch of
-                            the repository
-        -id {doi,uuid}, --id-type {doi,uuid}
-        -dry, --dry-run         Dry run to generate a permanent ID of a specified file
+Commands:
+  gen-pid
+  init
+```
+The two commands available are: `init` and `gen-pid`. `init` creates a config file and a json file with all the relevant information required for processing. `gen-pid` runs all the subsequent steps from PID genertaion to DOI registration.
+Here are the steps in detail.
+### Script Steps:
+#### Initialize the script
+* creates a config file (default file name: `config.yml`) and a json file (default file name: `pid.json`)
+    * The required arguments are the repository path that contains the static site, the production domain, the doi-prefix to be used. 
+    * `python run_all.py init --help` gives the following:
         ```
-    * The user can specify a pid file name, a config file name, and a branch, if they so choose. If the user picks an id type of `doi`, they must also provide a `--doi-prefix` option with a doi prefix. So, a command using only the required arguments using the toy example cloned to the user's machine can look like the following:
-    `python init.py -r ~/tiny_static_site/ -id doi --doi-prefix 10.1212 -d https://www.crossref.org`
-    * Running this command will generate a config file named `static.ini` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`
+        Usage: run_all.py init [OPTIONS]
+
+        Options:
+          -cf, --conf-file TEXT  Name of config yml file. This file will be saved and
+                                should exist at the root of the repository
+          -r, --repo DIRECTORY   Path to repository containing the files  [required]
+          -c, --content TEXT     Examples: -c filepath1 -c filepath2; relative to the
+                                repository root
+          -d, --domain TEXT      Production domain of the content, for example:
+                                https://www.crossref.org/  [required]
+          --doi-prefix TEXT      Add doi prefix string to this argument, example:
+                                --doi-prefix 'x.xxx'  [required]
+          --id-type TEXT
+          -p, --pid-file TEXT    Json file that keeps track of the files, stored
+                                relative to the root of the repository
+          --help                 Show this message and exit.
+        ```
+    * The user can specify a pid file name, and a config file name if they so choose. The default id type is DOI. Currently, that is the only type of id type that is in use. The user has to specify a doi-prefix. So, a command using only the required arguments using the toy example cloned to the user's machine can look like the following:
+    `python run_all.py init -r tiny_static_site/ -d https://production.domain.org --doi-prefix 'user-prefix'`
+    * Running this command will generate a config file named `config.yml` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`
     * Using the above commands, the config file looks like the following:
         ```
-        $ cat static.ini
-        [DEFAULT]
-        pid_file = pid.json
-        domain = https://www.crossref.org
-        id_type = doi
-        doi_prefix = 10.1212
+        cat config.yml
+        $ content:
+          - content/blog
+          doi_prefix: 'user-prefix'
+          domain: https://production.domain.org
+          id_type: doi
+          pid_file: pid.json
         ```
 #### **id.py**:
 * Once the config and pid files are created, the user will run `id.py` which will generate IDs for the files.
