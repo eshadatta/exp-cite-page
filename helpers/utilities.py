@@ -1,4 +1,5 @@
 import ast
+import yaml
 import configparser
 import os
 from os.path import exists, isfile
@@ -31,8 +32,41 @@ def check_path(path, type=None):
             msg = f"ERROR: {path} must be a file"
     return msg
 
-# move this to config file class
 def read_config(config_file_name):
+    msg = check_path(config_file_name)
+    config = None
+    if msg:
+        raise RuntimeError(f"{config_file_name} must exist")
+    try:
+        with open(config_file_name, 'r') as y:
+            config = yaml.safe_load(y)
+    except Exception as e:
+        raise ValueError(f"ERROR: {e}")
+    
+    doi_prefix = None
+    keys = list(config.keys())
+    id_type = config['id_type']
+    pid_file = config['pid_file']
+    if ('doi_prefix' in keys):
+        doi_prefix = config['doi_prefix']
+    domain = config['domain']
+    return [pid_file, id_type, domain, doi_prefix]
+
+def read_all_config(config_file_name):
+    msg = check_path(config_file_name)
+    config = None
+    if msg:
+        raise RuntimeError(f"{config_file_name} must exist")
+    try:
+        with open(config_file_name, 'r') as y:
+            config = yaml.safe_load(y)
+    except Exception as e:
+        raise ValueError(f"ERROR: {e}")
+    
+    return config
+
+# move this to config file class
+def read_config2(config_file_name):
     msg = check_path(config_file_name)
     if msg:
         raise RuntimeError(f"{config_file_name} must exist")

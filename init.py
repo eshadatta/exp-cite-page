@@ -5,7 +5,7 @@ import helpers.config_file as cf
 import helpers.initialize_files as i
 import helpers.process_json as pjson
 import helpers.static_page_id as sp
-from typing import Optional
+import helpers.git_info as g
 
 def check_path(parser, p, type='file'):
     path_types = ["file", "dir"]
@@ -43,7 +43,7 @@ def set_args(argv):
     args = idtype_parser.parse_args(argv)
     return args
 
-    
+
 def main(argv = None):
     args = set_args(argv)
     existing_files = []
@@ -58,7 +58,12 @@ def main(argv = None):
         existing_files.append(c.pid_file)
     
     if not(existing_files):
+        c.create_pid_file()
         c.create_config(args.id_type, args.domain, doi_prefix)
+        git_info = g.GitInfo(args.repo_path)
+        files = [c.config_file_name, c.pid_file]
+        git_info.git_add_file(files)
+        git_info.git_commit_file(files, comment="Initialing files for PID generation")
     else:
         print(f"Either {c.config_file_name} or {c.pid_file} or both already exist. File(s) were not overwritten. No new files were created")
 

@@ -56,17 +56,17 @@ def process_submitted_dois(pid, xml):
         if r['current_id'] in ids:
             r['doi']['submitted'] = True
             r['doi']['value'] = doi_url_domain + r['doi_prefix'] + "/" + r['current_id']
-    print(records)
     record_submission_status(records, pid)
     
 def submit_file(args):
     username = args.username
     password = args.password
-    file = args.file_name
+    file = args.xml_file_name
     filename = os.path.basename(file)
     data = {'login_id':username, 'login_passwd': password, 'operation':'doMDUpload'}
     files = {'fname': (filename, open(file, 'rb'))}
     r = None
+    doi_submitted = None
     url = args.deposit_endpoint
     try:
         r = requests.post(url, files=files, data = data)
@@ -74,15 +74,20 @@ def submit_file(args):
         print(e)
     if r:
         if 'success' in r.text:
+            doi_submitted = True
             print("Submission was successful")
         else:
             print('Unsuccessful submission')
             print(r.text)
-
+    return doi_submitted
 
 def main(argv = None):
     args = set_args(argv)
-    #submit_file(args)
-    process_submitted_dois(args.pid_file_name, args.xml_file_name)
+    print("Submitting file: ", args.xml_file_name)
+    doi_submitted = submit_file(args)
+    if doi_submitted:
+        print(f"Updating doi status in {args.pid_file_name}")
+        process_submitted_dois(args.pid_file_name, args.xml_file_name)
+        print(f"DOI status updated")
 if __name__ == "__main__":
     main()

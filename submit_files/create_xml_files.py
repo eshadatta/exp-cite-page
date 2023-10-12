@@ -1,8 +1,8 @@
 import argparse
 import os
 from os.path import exists
-import helpers.deposit_structure as d
-import helpers.generate_xml as g
+from .helpers import deposit_structure as d
+from .helpers import generate_xml as g
 from datetime import datetime
 import yaml
 import xmlschema
@@ -24,6 +24,7 @@ def set_args(argv):
     parser.add_argument('-de', '--depositor_email', help='Depositor Email', required=True)
     parser.add_argument('-re', '--registrant', help='Registrant', required=True, type=str)
     parser.add_argument('-f', '--xml-file-name', help='Deposit file name', required=True, type=str)
+    parser.add_argument('-lc', '--localhost-check', help='Add localhost domain to check the urls to ensure they will work in production', type=str)
     parser.add_argument('-s', '--xml-schema', help='Crossref schema to validate deposit file', default="https://www.crossref.org/schemas/crossref5.3.0.xsd")
     args = parser.parse_args(argv)
     return args
@@ -82,11 +83,17 @@ def get_docs(pid_file):
     
 def main(argv = None):
     args = set_args(argv)
+    print("Generating XML document for submission")
     docs = get_docs(args.pid_file)
-    xml_structure = get_xml_structure()
-    s = gen_deposit_structure(args, xml_structure, docs)
-    gen_xml_docs(s, args.xml_file_name)
-    validate(args.xml_schema, args.xml_file_name)
-    print(f"SUCCESS! {args.xml_file_name} is valid. Ready for deposit")
+    xml_created = False
+    if docs:
+        xml_structure = get_xml_structure()
+        s = gen_deposit_structure(args, xml_structure, docs)
+        gen_xml_docs(s, args.xml_file_name)
+        validate(args.xml_schema, args.xml_file_name)
+        xml_created = True
+        print(f"SUCCESS! {args.xml_file_name} is valid. Ready for deposit")
+
+    return xml_created
 if __name__ == "__main__":
     main()

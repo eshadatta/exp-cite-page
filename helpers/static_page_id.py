@@ -2,7 +2,7 @@ class static_page_id:
     def __init__(self):
         self._init_version = "0.0.0"
         self._init_version_tag = "x-version"
-        self._default_config_filename = "static.ini"
+        self._default_config_filename = "config.yml"
         self._default_pid_json_filename = "pid.json"
         self._default_id_types = ["doi", "uuid"]
     @property
