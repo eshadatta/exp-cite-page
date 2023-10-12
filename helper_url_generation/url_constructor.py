@@ -3,10 +3,10 @@ import os
 from os.path import exists, basename, splitext
 import re 
 import json
-import configparser
 import frontmatter
 import requests
 import sys
+import yaml
 
 def check_path(parser, p, type='dir'):
     path_types = ["file", "dir"]
@@ -25,11 +25,13 @@ def process_frontmatter_title(str):
     str = str.strip()
     # converting the string to lower case
     str = str.lower()
+    # allow tokens
+    allowed_tokens = ["."," ","-","/"]
     # finding all non-alphanumeric characters
     non_word = re.findall(r'\W',str)
     # removing the whitespace and hypen character from the non-alphanumeric characters that are found and
     # removing duplicates
-    non_word_chars = list(set(filter(lambda r: not(r == " " or r == "-"), non_word)))
+    non_word_chars = list(set(filter(lambda r: not(r in allowed_tokens), non_word)))
     # replacing the non-alphanumeric chars found in the list with ""
     for i in non_word_chars:
         str = str.replace(i, "")
@@ -48,10 +50,17 @@ def read_markdown_file(file):
 
 def generate_blog_url(path):
     md = read_markdown_file(path)
+    slug = md.metadata.get('slug', None)
+    aliases = md.metadata.get('aliases', None)
     title = md.metadata.get('title', None)
-    if title:
-        title = "blog/" + process_frontmatter_title(title)
-    return title
+    real_url = None
+    if slug:
+        real_url = "blog/" + slug
+    elif aliases:
+        real_url = aliases
+    if not(real_url) and title:
+        real_url = "blog/" + process_frontmatter_title(title)
+    return real_url
 
 def generate_non_blog_url(path, content_path = "content/"):
     url = None
@@ -66,13 +75,14 @@ def generate_non_blog_url(path, content_path = "content/"):
 
 
 
-def set_args():
+def set_args(argv):
     """CLI"""
     parser = argparse.ArgumentParser(
                     description="Generate urls")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
     parser.add_argument('-cf', '--config-filename',  help='Full path to the config file', type=lambda s:check_path(parser,s, "file"), required=True)
-    args = parser.parse_args()
+    parser.add_argument('-td', '--testing-domain',  help='Testing domain to check that the urls resolve', required=True)
+    args = parser.parse_args(argv)
     return args
 
 def generate_urls(repo_path, domain, file):
@@ -80,16 +90,15 @@ def generate_urls(repo_path, domain, file):
         with open(file, "r+") as f:
             records = json.load(f)
             for record in records:
-                page_url = None
-                if "/blog/" in record['file']:
-                    filepath = repo_path + "/" + record['file']
-                    page_url = generate_blog_url(filepath)
-                else:
-                    page_url = generate_non_blog_url(record['file'])
-                if page_url:
-                    record['url'] = domain + "/" + page_url
-                else:
-                   record['url'] = page_url
+                if not(record['url']):
+                    page_url = None
+                    if "/blog/" in record['file']:
+                        filepath = repo_path + "/" + record['file']
+                        page_url = generate_blog_url(filepath)
+                    else:
+                        page_url = generate_non_blog_url(record['file'])
+                    if page_url:
+                        record['url'] = domain + "/" + page_url
             f.seek(0)
             f.truncate()
             json.dump(records, f)
@@ -98,13 +107,14 @@ def generate_urls(repo_path, domain, file):
     
 
 def read_config(config_file_name):
-    c = configparser.ConfigParser()
+    config = None
     try:
-        c.read(config_file_name)
+        with open(config_file_name, 'r') as y:
+            config = yaml.safe_load(y)
     except Exception as e:
         raise ValueError(f"ERROR: {e}")
-    pid_file = c['DEFAULT']['pid_file']
-    domain = c['DEFAULT']['domain']
+    pid_file = config['pid_file']
+    domain = config['domain']
     return [pid_file, domain]
 
 def read_pid_file(file):
@@ -125,6 +135,7 @@ def check_urls(pidfile):
             try:
                 request = requests.get(r['url'])
                 if not(request.ok):
+                    print (r['url'])
                     bad_url_status[r['file']] = {"url": r['url'], "status": request.status_code, "reason": request.reason}
             except Exception as e:
                 raise (f"Error occurred on request: {e}")
@@ -132,11 +143,12 @@ def check_urls(pidfile):
             
     
 # this script can be run after the files are initialized
-def main():
-    args = set_args()
+def main(argv=None):
+    args = set_args(argv)
+    print("Generating URLs")
     [pid_file, domain] = read_config(args.config_filename)
     pid = os.path.normpath(args.repo) + "/" + pid_file
     generate_urls(args.repo, domain, pid)
-    
+   
 if __name__ == "__main__":
     main()

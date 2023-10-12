@@ -4,8 +4,8 @@ import argparse
 import frontmatter
 import json
 from git import Repo
+import warnings
 
-# Current assumption: the pid file has a record of which DOIs have been successfully submitted to production
 def read_markdown_file(file):
     try:
         markdown_file = frontmatter.load(file)
@@ -66,7 +66,7 @@ def add_dois(dir, submitted_dois):
         md = read_markdown_file(file)
         md.metadata['DOI'] = d['doi']['value']
         write_content_file(file, md)
-        commit_file(dir, d['file'])
+        #commit_file(dir, d['file'])
 
 def main(argv=None):
     args = set_args(argv)
@@ -75,7 +75,7 @@ def main(argv=None):
     if d:
         add_dois(dirname, d)
     else:
-        raise ValueError("No dois were registered. Unable to update site with DOIs")
+        warnings.warn("No dois were registered. Unable to update site with DOIs")
 
 
 if __name__ == "__main__":

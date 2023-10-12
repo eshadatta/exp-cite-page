@@ -42,7 +42,7 @@ class GitInfo:
         try:
             self.git.add(file)
         except Exception as e:
-            raise(f"ERROR: {e}")
+            print(f"ERROR: {e}")
          
 
     def git_commit_file(self, file, comment = None):
@@ -51,7 +51,7 @@ class GitInfo:
         try:
             self.git.commit("-m", comment, file)
         except Exception as e:
-            raise(f"ERROR: {e}")
+            print(f"ERROR: {e}")
 
     def git_commit_id(self, branch, file):
         # most recent commit id for the branch in question

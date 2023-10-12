@@ -38,7 +38,7 @@ def set_args(argv):
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
     parser.add_argument('-c', '--content', required=True, type=str, nargs='+', help="Examples: -c filepath1 filepath2; relative to the repository root")
     parser.add_argument('-cf', '--config-filename', nargs='?', type=str, default = default_config_filename, help='Filename for config init, has a default filename if none is specified')
-    parser.add_argument('-b', '--batch-process', help='batch process', action='store_true')
+    parser.add_argument('-b', '--batch-process', help='initialize static pages; batch process. This only adds the x-version tag to pages in a specified path', action='store_true')
     parser.add_argument('-d', '--dry-run', help='Dry run to generate a permanent ID of a specified file or files', action='store_true')
     args = parser.parse_args(argv)
     return parser, args
@@ -95,17 +95,22 @@ def check_config_args(config_args, dry_run, arg_type=None):
     if messages:
         raise ValueError(f"From {script_name}.{method_name}: Cannot continue processing. See errors:{messages}")
 
+def commit_pid(repo, file, processed_files):
+    g = gi.GitInfo(repo)
+    g.git_commit_file(file, comment=f"Updating file with IDs for {processed_files}")
+
 def main(argv = None):
     [parser, args] = set_args(argv)
     config_file = args.repo + "/" + args.config_filename
-    [pid_file, id_type, doi_prefix, production_domain] = u.read_config(config_file)
+    # verifying config args in ini file are ok
+    [pid_file, id_type, production_domain, doi_prefix] = u.read_config(config_file)
     full_paths = {}
     full_paths['pid_file'] = args.repo + "/" + pid_file
     full_paths['content_paths'] = list(map(lambda x: args.repo + "/" + x, args.content))
     msg = [p for p in full_paths['content_paths'] if not(exists(p))]
     if msg:
         raise ValueError(f"Paths provided: {msg} do not exist. Cannot process further")
-    # verifying config args in ini file are ok
+    print("Generating PID(s)")
     try:
         if args.dry_run:
             print("RUNNING DRY RUN:")
@@ -114,6 +119,7 @@ def main(argv = None):
         #gather files to be processed
         content_paths = full_paths['content_paths']
         file_list = u.get_file_list(content_paths, args.dry_run)
+        file_info = None
         if args.batch_process:
             print("RUNNING IN BATCH MODE")
             if args.dry_run:
@@ -123,10 +129,10 @@ def main(argv = None):
         else:
             [gen_pids, unprocessed_files] = u.check_file_versions(args.repo, full_paths['pid_file'], file_list, args.dry_run)
             if not(gen_pids) and not(args.dry_run):
-                raise RuntimeWarning(f"There are no files to be processed in the given content paths: {args.content}")
+                print(f"There are no files to be processed in the given content paths: {args.content}")
             else:
                 file_info = git_info(args, gen_pids, args.dry_run)
-        if not(args.dry_run):
+        if not(args.dry_run) and file_info:
             updated_files, rest_files = cleanup.cleanup(full_paths['pid_file'], file_info)
             if updated_files:
                 info = pjson.ProcessJson(args.repo, full_paths['pid_file'], production_domain, doi_prefix)
