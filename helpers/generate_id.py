@@ -18,6 +18,7 @@ class GenID:
         id = shortuuid.ShortUUID().random()
         if len:
             id = id[:len]
+            id = id.lower()
         return id
     
     def gen_full_uuid(self):

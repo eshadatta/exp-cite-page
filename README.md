@@ -79,36 +79,71 @@ Here are the steps in detail.
         ```
     * The user can specify a pid file name, and a config file name if they so choose. The default id type is DOI. Currently, that is the only type of id type that is in use. The user has to specify a doi-prefix. So, a command using only the required arguments using the toy example cloned to the user's machine can look like the following:
     `python run_all.py init -r tiny_static_site/ -d https://production.domain.org --doi-prefix 'user-prefix'`
-    * Running this command will generate a config file named `config.yml` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`
+    * Running this command will generate a config file named `config.yml` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`. If one does not specify the `-c` parameter, the default value is sent which is the `.`. In the default case for the content parameter, the static site pid generator will begin tracking files for everything under the `-r` path. If a content path is specified, the script will begin tracking files for everything under the `-r` + `-c` paths, so if the content path is specified as `a/b`, the script with start tracking everything under `tiny_static_site/a/b`. If the default, `.`, is given, the script will start tracking everything under `tiny-static_site/`
     * Using the above commands, the config file looks like the following:
         ```
         cat config.yml
         $ content:
-          - content/blog
+          - .
           doi_prefix: 'user-prefix'
           domain: https://production.domain.org
           id_type: doi
           pid_file: pid.json
         ```
-#### **id.py**:
-* Once the config and pid files are created, the user will run `id.py` which will generate IDs for the files.
-* The user needs to add a frontmatter tag and a version number to one or more markdown files and commit them. They can then call the id generator script. 
-* The required arguments are the repo path and one or more content paths; relative to the repo root:
+#### **run_all**:
+* Once the config and pid files are created, the user would need to do the following actions to begin file tracking.
+* If the user is depositing the content with Crossref, a yml file is needed for the script to generate the xml file. 
+* In the frontmatter of the markdown file of interest, add a frontmatter tag, `x-version` and the version of the file, so to initialize files that do not have tracking, do the following:
+  * `x-version: 0.0.0`. Here's an example frontmatter setup:
+     ```
+     subject:
+      - 2023
+      author: XYZ
+      categories:
+      - Users
+      - Metadata
+      - Community
+      date: 2023-02-28
+      title: 'Metadata is great'
+      x-version: 0.0.0
+     ```
+* Once the user has added tags for the number of files needed
+* The user can generate the following command to run the following actions:
+  * Generate PIDs for tracked files
+  * The user will specify if the submission type is crossref or custom. The crossref deposit and registration workflow is part of this codebase. If it is a custom deposit and registration, the user will need to create that workflow
+  * Currently, the workflow for creating urls is hardcoded for the crossref website, but there will be functionality added to allow for custom url generation
+  * The script checks for the registered DOIs and if they have been registered successfully, the script will add it to the markdown files. The frontmatter of the processed file will look like this:
+  ```
+     DOI: https://doi.org/10.5555/mdabn8twsw
+     subject:
+      - 2023
+      author: XYZ
+      categories:
+      - Users
+      - Metadata
+      - Community
+      date: 2023-02-28
+      title: 'Metadata is great'
+      x-version: 0.0.0
+     ```
+* The command to run the above actions with default parameters are the following:
     ```
-    $ python id.py -h
-    usage: id.py [-h] -r REPO -c CONTENT [CONTENT ...] [-cf [CONFIG_FILENAME]] [-d]
+    $ python run_all.py gen-pid --help
+      Usage: run_all.py gen-pid [OPTIONS]
 
-    Generate a permanent ID for a specific file
-
-    optional arguments:
-    -h, --help              show this help message and exit
-    -r REPO, --repo REPO    Path to repository containing the files
-    -c CONTENT [CONTENT ...], --content CONTENT [CONTENT ...]
-                            Examples: -c filepath1 filepath2; relative to the repository root
-    -cf [CONFIG_FILENAME], --config-filename [CONFIG_FILENAME]
-                            Filename for config init, has a default filename if none is specified
-    -b, --batch-process     batch process
-    -d, --dry-run           Dry run to generate a permanent ID of a specified file or files
+      Options:
+        -cf, --conf-file TEXT           Name of config yml file. This file will be
+                                        saved and should exist at the root of the
+                                        repository
+        -r, --repo DIRECTORY            Path to repository containing the files
+                                        [required]
+        -b, --batch
+        -st, --sub-type [crossref|custom]
+                                        Type of submission protocol
+        --info FILE                     Submission information, for crossref, please
+                                        enter path to the submittor information yml
+                                        file
+        --help                          Show this message and exit.
     ```
 * This can be run with the dry run argument. If done so, this is the expected output:
   ```

@@ -1,0 +1,2 @@
+[console_scripts]
+testclick = testclick:cli

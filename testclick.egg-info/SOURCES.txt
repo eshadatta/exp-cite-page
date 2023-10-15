@@ -1,0 +1,9 @@
+README.md
+setup.py
+testclick.py
+testclick.egg-info/PKG-INFO
+testclick.egg-info/SOURCES.txt
+testclick.egg-info/dependency_links.txt
+testclick.egg-info/entry_points.txt
+testclick.egg-info/requires.txt
+testclick.egg-info/top_level.txt
