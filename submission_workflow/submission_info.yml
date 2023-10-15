@@ -1,0 +1,6 @@
+depositor: 
+  - name: "Add name"
+  - email: "email address of depositor"
+registrant: "Registrant Name"
+submission_path: "directory which contains all the xml files that might be deposited. This should be in the repository path"
+batch_id: "batch id of the submission file. Can be a string of some sort"

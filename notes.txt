@@ -1,0 +1,47 @@
+import GitPython as gp
+
+'''
+Arguments:
+repo - for repo path - can be set as a config
+branch in question - optional or working branch will be used
+file in question
+path to keep json files that contain PID information
+'''
+
+Keep in mind for pushing to production. We will be on the default branch. How do you want to figure this out for CI? Currently, we're doing this from the CLI from an active branch.
+'''
+import git
+from git import Repo
+repo = Repo("/Users/eshadatta/cr-site")
+git = repo.git
+'''
+# most recent commit id of the active branch
+# a = git.rev_list(repo.active_branch, n=1)
+# most recent commit of a file from the most recent commit of the active branch
+# git.rev_list("-n 1", a, "content/blog/2022/2022-12-07-introducing-the-global-equitable-membership-program.md")
+
+'''
+Once you have this info, 
+Generate a PID for the file
+Create or edit a json file with the following info:
+Filename - path relative to repo root to filename
+Current PID:
+List of previous pids - with null array if nothing
+Argument for type of id - generate with a string or just by itself
+len of id - optional arg
+
+Pseudo code for id generation
+id by string:
+import hashlib
+import uuid
+
+seed = 'Type your seed_string here' #Read comment below
+
+m = hashlib.md5()
+m.update(seed.encode('utf-8'))
+new_uuid = uuid.UUID(m.hexdigest())[:10]
+
+
+just a new uuid:
+uuid.uuid4().hex[:10]
+'''

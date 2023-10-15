@@ -81,7 +81,6 @@ def set_args(argv):
                     description="Generate urls")
     parser.add_argument('-r', '--repo', help='Path to repository containing the files', type=lambda s:check_path(parser,s, "dir"), required=True)
     parser.add_argument('-cf', '--config-filename',  help='Full path to the config file', type=lambda s:check_path(parser,s, "file"), required=True)
-    parser.add_argument('-td', '--testing-domain',  help='Testing domain to check that the urls resolve', required=True)
     args = parser.parse_args(argv)
     return args
 
@@ -125,22 +124,6 @@ def read_pid_file(file):
     except Exception as e:
         raise (f"ERROR: {e}")
     return records
-
-def check_urls(pidfile):
-    records = read_pid_file(pidfile)
-    bad_url_status = {}
-    for r in records:
-        request = None
-        if r['url']:
-            try:
-                request = requests.get(r['url'])
-                if not(request.ok):
-                    print (r['url'])
-                    bad_url_status[r['file']] = {"url": r['url'], "status": request.status_code, "reason": request.reason}
-            except Exception as e:
-                raise (f"Error occurred on request: {e}")
-    return bad_url_status
-            
     
 # this script can be run after the files are initialized
 def main(argv=None):

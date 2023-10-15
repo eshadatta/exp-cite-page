@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<doi_batch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.crossref.org/schema/5.3.0 https://www.crossref.org/schemas/crossref5.3.0.xsd"
+    xmlns="http://www.crossref.org/schema/5.3.0" version="5.3.0">
+    <head>
+        <doi_batch_id>test.labs</doi_batch_id>
+        <timestamp>20230912154744</timestamp>
+        <depositor>
+            <depositor_name>Test</depositor_name>
+            <email_address>s@t.org</email_address>
+        </depositor>
+        <registrant>metadata rocks</registrant>
+    </head>
+    <body>
+        <posted_content type="other">
+            <titles>
+                <title>How funding agencies can meet OSTP (and Open Science) guidance using existing open infrastructure</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>12</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/3Rm4SW7oeB</doi>
+                <resource>https://labs.research.crossref.org/test-site/blog/how-funding-agencies-can-meet-ostp-and-open-science-guidance-using-existing-open-infrastructure</resource>
+            </doi_data>
+        </posted_content>
+        <posted_content type="other">
+            <titles>
+                <title>ISR part three: Where does Crossref have the most impact on helping the community to assess the trustworthiness of the scholarly record?</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>12</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/sEFXEi6fth</doi>
+                <resource>https://labs.research.crossref.org/test-site/blog/isr-part-three-where-does-crossref-have-the-most-impact-on-helping-the-community-to-assess-the-trustworthiness-of-the-scholarly-record</resource>
+            </doi_data>
+        </posted_content>
+        <posted_content type="other">
+            <titles>
+                <title>Better preprint metadata through community participation</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>12</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/DtwRAdbeCB</doi>
+                <resource>https://labs.research.crossref.org/test-site/blog/better-preprint-metadata-through-community-participation</resource>
+            </doi_data>
+        </posted_content>
+        <posted_content type="other">
+            <titles>
+                <title>Forming new relationships: Contributing to Open source</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>12</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/3XbGLiuqfR</doi>
+                <resource>https://labs.research.crossref.org/test-site/blog/forming-new-relationships-contributing-to-open-source</resource>
+            </doi_data>
+        </posted_content>
+    </body>
+</doi_batch>

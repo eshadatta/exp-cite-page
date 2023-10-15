@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<doi_batch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.crossref.org/schema/5.3.0 https://www.crossref.org/schemas/crossref5.3.0.xsd"
+    xmlns="http://www.crossref.org/schema/5.3.0" version="5.3.0">
+    <head>
+        <doi_batch_id>labs_test_2</doi_batch_id>
+        <timestamp>20230906163021</timestamp>
+        <depositor>
+            <depositor_name>Esha Datta</depositor_name>
+            <email_address>edatta@crossref.org</email_address>
+        </depositor>
+        <registrant>Labs Tester</registrant>
+    </head>
+    <body>
+        <posted_content type="other">
+            <titles>
+                <title>2022 Board Election</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>06</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/eTkH8iYEJo</doi>
+                <resource>https://www.crossref.org/blog/2022-board-election</resource>
+            </doi_data>
+        </posted_content>
+        <posted_content type="other">
+            <titles>
+                <title>Better preprint metadata through community participation</title>
+            </titles>
+            <posted_date>
+                <month>09</month>
+                <day>06</day>
+                <year>2023</year>
+            </posted_date>
+            <doi_data>
+                <doi>10.5555/5xof44Cqt9</doi>
+                <resource>https://www.crossref.org/blog/better-preprint-metadata-through-community-participation</resource>
+            </doi_data>
+        </posted_content> 
+    </body>
+</doi_batch>
