@@ -1,4 +1,0 @@
-test:
-  user: !ENV ${username}
-  password: !ENV ${password}
-  random: random
