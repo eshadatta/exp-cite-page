@@ -25,28 +25,6 @@ def read_file(file):
             raise ValueError(f"ERROR: {e}")
     return data
 
-def add_dois(repo, pid_file):
-    add_doi_args = ['--repo', repo, '-f', pid_file]
-    add_doi.main(add_doi_args)
-
-def check_doi_status(start_time, time_length, repo, pid_file, sleep_seconds=30):
-    time.sleep(sleep_seconds)
-    current_time=datetime.now()
-    check_doi_args = ['--repo', repo, '-p', pid_file]
-    status = check_doi_urls.main(check_doi_args)
-    if (current_time < time_length) and status:
-        check_doi_status(start_time, time_length, repo, pid_file)
-    elif not(status):
-        return status
-    elif current_time >= time_length:
-        return status
-
-def check_dois(repo, pid_file):
-    start = datetime.now()
-    end = start + timedelta(minutes=10)
-    status = check_doi_status(start, end, repo, pid_file)
-    return status
-
 def run_gen_id(config, args):
     content_args = ['--content']
     for i in config['content']:
@@ -55,20 +33,6 @@ def run_gen_id(config, args):
     if args['batch']:
         id_args.append('-b')
     id.main(id_args)
-
-def submit_file(xml_file, pid_file):
-    env_vars = {'username': None, 'password': None, 'deposit_endpoint': None}
-    err_msg = []
-    for k in env_vars.keys():
-        env_vars[k] = os.environ.get(k, None)
-        print(f"Key: {k}, Value: {env_vars[k]}")
-        if not(env_vars[k]):
-            err_msg.append(k)
-    if err_msg:
-        raise NameError(f"Please declare the following variables as environment variables to allow for further processing: {err_msg}")
-        
-    submit_args = ['-f', xml_file, '-pid', pid_file, '-u', env_vars['username'], '-p', env_vars['password'], '-e', env_vars['deposit_endpoint']]
-    submit_files.main(submit_args)
             
 def generate_xml_submission(pid_file, args):
     submission_info = args['submission_info']
