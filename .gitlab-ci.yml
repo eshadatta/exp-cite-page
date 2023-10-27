@@ -1,6 +1,6 @@
 workflow:
   rules:
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH ==  "test_dockerfile" 
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH ==  "main" 
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
