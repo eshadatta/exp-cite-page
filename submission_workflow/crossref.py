@@ -96,20 +96,23 @@ class CrossrefSubmission:
     def create_crossref_workflow(self):
         if self.site_type == "crossref":
             self.url_gen()
-            
+        dry_run = self.gen_pid_args['dry_run']
         no_urls = self.check_for_null_urls()
 
         if no_urls:
             raise ValueError(f"Submission process can not proceed. Please generate urls in {self.pid_file} for the following records: {no_urls}")
         else:
             xml_created, xml_file = self.generate_xml_submission()
-        if xml_created:
-            self.submit_file(xml_file)
-        doi_status = self.check_dois()
-        if doi_status:
-            print("Few records are not yet registered")
-            print(doi_status)
-        self.add_dois()
+        if dry_run:
+            print(f"DRY RUN ended. Please check {self.pid_file} for information on the versioned files and {xml_file} for the xml deposit file")
+        elif not(dry_run):
+            if xml_created:
+                self.submit_file(xml_file)
+            doi_status = self.check_dois()
+            if doi_status:
+                print("Few records are not yet registered")
+                print(doi_status)
+            self.add_dois()
         
 
 

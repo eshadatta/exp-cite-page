@@ -88,15 +88,25 @@ def init(content, domain, doi_prefix, id_type, pid_file, **kwargs):
 @cli.command()
 @common_options
 @click.option('-b', '--batch', is_flag=True, show_default=True, default=False)
+@click.option('-dry', '--dry-run', help='Run script upto deposit but do not deposit. Creates PIDs for files and stops', is_flag=True, show_default=True, default=False)
 @click.option('-st', '--sub-type', help='Type of submission protocol', type=click.Choice(["crossref", "custom"], case_sensitive=False), default="crossref")
 @click.option('--info', help='Submission information, for crossref, please enter path to the submittor information yml file', type=click.Path(exists=True, dir_okay=False, file_okay=True, readable=True))
-def gen_pid(batch, sub_type, info, **kwargs):
+def gen_pid(batch, dry_run, sub_type, info, **kwargs):
     kwargs['repo'] = os.path.normpath(kwargs['repo'])
     config_file = os.path.join(kwargs['repo'], kwargs['conf_file'])
     config, pid_file = check_files(config_file, kwargs['repo'])
     gen_pid_args = kwargs.copy()
-    gen_pid_args.update({"batch": batch, "sub_type": sub_type, "submission_info": info})
+    gen_pid_args.update({"batch": batch, "dry_run": dry_run, "sub_type": sub_type, "submission_info": info})
     # generate ids
+    if dry_run:
+        print("Running in DRY RUN mode")
+        print("In DRY RUN mode, script will generate: ")
+        print("1. unique identifier for each file with a x-version tag in frontmatter")
+        print("2. URL based on website logic. Currently hardcoded for the Crossref website")
+        print("3. Create a xml deposit file and save it to the specified directory")
+        print("4. Script will NOT deposit the file")
+        print("4. Script will NOT register a DOI")
+        print("4. Script will NOT add the DOI back to the file")
     run_gen_id(config, gen_pid_args)
     # if submission type is crossref, run the crossref submission workflow
     if sub_type == "crossref":

@@ -31,6 +31,8 @@ def write_content_file(file_path, markdown):
             m.write(frontmatter.dumps(markdown, handler=markdown.handler))
     except Exception as e:
         raise(f"ERROR: {e}")
+    else:
+        print("Added DOI: ", file_path)
 
 def check_path(parser, p, type=None):
     if not(exists(p)):
@@ -62,10 +64,12 @@ def get_registered_pids(file):
 def add_dois(dir, submitted_dois):
     for d in submitted_dois:
         file = dir + "/" + d['file']
-        print("Updating: ", file)
         md = read_markdown_file(file)
-        md.metadata['DOI'] = d['doi']['value']
-        write_content_file(file, md)
+        doi_value = md.metadata.get('DOI', None)
+        # if there is no doi value
+        if not(doi_value):
+            md.metadata['DOI'] = d['doi']['value']
+            write_content_file(file, md)
         #commit_file(dir, d['file'])
 
 def main(argv=None):
