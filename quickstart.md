@@ -126,13 +126,13 @@ In DRY RUN mode, script will generate:
 4. Script will NOT add the DOI back to the file
 Generating PID(s)
 ERROR: Invalid inline table encountered (line 3 column 1 char 63)
-WARNING: Not processing: /Users/eshadatta/quickstart/archetypes/default.md. There was an error or there is no markdown present
+WARNING: Not processing: /tmp/my_science_blog/archetypes/default.md. There was an error or there is no markdown present
 ERROR: while parsing a block mapping
   in "<unicode string>", line 2, column 1
 did not find expected key
   in "<unicode string>", line 2, column 43
-WARNING: Not processing: /Users/eshadatta/quickstart/themes/ananke/archetypes/default.md. There was an error or there is no markdown present
-Files in ['.'] have been processed and written to /Users/eshadatta/quickstart/pid.json
+WARNING: Not processing: /tmp/my_science_blog/themes/ananke/archetypes/default.md. There was an error or there is no markdown present
+Files in ['.'] have been processed and written to /tmp/my_science_blog/quickstart/pid.json
 Generating URLs
 Generating XML document for submission
 SUCCESS! /tmp/my_science_blog/submission_info/20231029101102_submission.xml is valid. Ready for deposit
