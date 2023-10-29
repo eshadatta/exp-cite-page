@@ -5,7 +5,7 @@
 ## What is this?
 A prototype to create PIDs for a static page generator
 
-This is a prototype to create permanent identifiers for static pages such as blog posts. Eventually, the identifiers can be used to generate different types of permanent urls including DOIs.
+This is a prototype to create permanent identifiers for static pages such as blog posts. Eventually, the identifiers can be used to generate different types of permanent urls including DOIs. 
 
 This is meant to be used with markdown files and is being currently tested with Hugo.
 
@@ -18,14 +18,22 @@ This is meant to be used with markdown files and is being currently tested with 
 
 
 #### **USAGE:**
-A toy example of a collection of markdown pages is available for the user to see the results of the code. The following steps will be shown with this toy example.
-1. Please clone the toy example from [here](https://gitlab.com/eshadatta-crossref/tiny_static_site) 
+### Dependencies
+* Recent version of Hugo
+* Git
+* curl
+* Python >= 3.8
+
+
+### TL;DR:
+* For a quickstart, which walks through creating a small site with Hugo and using this script, please go [here](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/quickstart.md?ref_type=heads#quickstart)
+* For a quick summary to run everything, go [here](#just-tell-me-how-to-run-everything)
+* For in-depth instructions to set up everything, read on below.
+
+### Installation
+1. Please refer to quickstart [documentation](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/quickstart.md?ref_type=heads#create-a-new-site-and-generate-some-content) to set up a small hugo site. Once those instructions are followed, there should be `/tmp/my_science_blog` as the repository of a new example hugo site.
 2. Separately, please clone this [repository](https://gitlab.com/crossref/labs/static-page-id-generator.git)
 3. In the root directory of the static-page-id-generator repository, please install the requirements: `pip install -r requirements.txt`
-
-#### TL;DR:
-* For a quick summary to run everything, go [here](#just-tell-me-how-to-run-everything)
-* Otherwise, read on below.
 
 ##### **USAGE OVERVIEW**
 * In order to use this software, the user needs to add a frontmatter tag and a version using the [semantic versioning convention](https://semver.org/) to the markdown file. The script looks for this tag and checks the version in order to generate IDs.
@@ -36,6 +44,7 @@ A toy example of a collection of markdown pages is available for the user to see
     * Creates a submission file to deposit the content for the user
     * Deposits the content 
     * Registers the PID as a DOI in Crossref
+    * Adds the DOI back to the tagged markdown file
 * All of the scripts can be run individually or together. The following examples will demonstrate the scripts that are run under one script
 
 #### **USAGE EXAMPLES**:
@@ -54,8 +63,8 @@ Commands:
 ```
 The two commands available are: `init` and `gen-pid`. `init` creates a config file and a json file with all the relevant information required for processing. `gen-pid` runs all the subsequent steps from PID genertaion to DOI registration.
 Here are the steps in detail.
-### Script Steps:
-#### Initialize the script
+## Script Steps:
+### Initialize the script
 * creates a config file (default file name: `config.yml`) and a json file (default file name: `pid.json`)
     * The required arguments are the repository path that contains the static site, the production domain, the doi-prefix to be used. 
     * `python run_all.py init --help` gives the following:
@@ -78,13 +87,13 @@ Here are the steps in detail.
           --help                 Show this message and exit.
         ```
     * The user can specify a pid file name, and a config file name if they so choose. The default id type is DOI. Currently, that is the only type of id type that is in use. The user has to specify a doi-prefix. So, a command using only the required arguments using the toy example cloned to the user's machine can look like the following:
-    `python run_all.py init -r tiny_static_site/ -d https://production.domain.org --doi-prefix 'user-prefix'`
-    * Running this command will generate a config file named `config.yml` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`. If one does not specify the `-c` parameter, the default value is sent which is the `.`. In the default case for the content parameter, the static site pid generator will begin tracking files for everything under the `-r` path. If a content path is specified, the script will begin tracking files for everything under the `-r` + `-c` paths, so if the content path is specified as `a/b`, the script with start tracking everything under `tiny_static_site/a/b`. If the default, `.`, is given, the script will start tracking everything under `tiny-static_site/`
+    `python run_all.py init -r /tmp/my_science_blog/ -c content -d https://production.domain.org --doi-prefix 'user-prefix'`
+    * Running this command will generate a config file named `config.yml` in the root of the tiny_static_site repository and `pid.json` file with an empty dictionary: `{}`. If one does not specify the `-c` parameter, the default value is sent which is the `.`. In the default case for the content parameter, the static site pid generator will begin tracking files for everything under the `-r` path. If a content path is specified, the script will begin tracking files for everything under the `-r` + `-c` paths, so if the content path is specified as `a/b`, the script with start tracking everything under `tiny_static_site/a/b`. If the default, `.`, is given, the script will start tracking everything under `/tmp/my_science_blog/`
     * Using the above commands, the config file looks like the following:
         ```
         cat config.yml
         $ content:
-          - .
+          - content
           doi_prefix: 'user-prefix'
           domain: https://production.domain.org
           id_type: doi
@@ -93,8 +102,9 @@ Here are the steps in detail.
 #### **run_all**:
 * Once the config and pid files are created, the user would need to do the following actions to begin file tracking.
 * If the user is depositing the content with Crossref, a yml file is needed for the script to generate the xml file. 
+  > An example yml file is located [here](https://gitlab.com/crossref/labs/static-page-id-generator/-/raw/main/submission_workflow/submission_info.yml?ref_type=heads). Please download the file to the root of your website repository and change the values in quotes to fit the values you need to deposit the metadata. Deposit credentials will be needed to be set as environment variables to deposit the xml file to Crossref.
 * In the frontmatter of the markdown file of interest, add a frontmatter tag, `x-version` and the version of the file, so to initialize files that do not have tracking, do the following:
-  * `x-version: 0.0.0`. Here's an example frontmatter setup:
+  * Add this `x-version: 0.0.0` to the frontmatter. Here's an example frontmatter setup in yaml:
      ```
      subject:
       - 2023
@@ -126,7 +136,7 @@ Here are the steps in detail.
       title: 'Metadata is great'
       x-version: 0.0.0
      ```
-* The command to run the above actions with default parameters are the following:
+* The gen-pid command have the following options:
     ```
     $ python run_all.py gen-pid --help
       Usage: run_all.py gen-pid [OPTIONS]
@@ -138,6 +148,8 @@ Here are the steps in detail.
         -r, --repo DIRECTORY            Path to repository containing the files
                                         [required]
         -b, --batch
+        -dry, --dry-run                 Run script upto deposit but do not deposit.
+                                        Creates PIDs for files and stops
         -st, --sub-type [crossref|custom]
                                         Type of submission protocol
         --info FILE                     Submission information, for crossref, please
@@ -145,66 +157,28 @@ Here are the steps in detail.
                                         file
         --help                          Show this message and exit.
     ```
-* This can be run with the dry run argument. If done so, this is the expected output:
-  ```
-  $ python id.py -r ~/tiny_static_site/ -c content/blog --dry-run
-    RUNNING DRY RUN:
-    At check_args: Checks if config file has been created
-    At check_config_args: Checks if config values exist
-    At get_file_list: Gets file list from paths
-    At check_file_versions: gets a list of all files from given content paths and their versions from the pid file (if they exist) and generates a list of files to be pid-ized
-    At git_info: Generate PID and git information for file to be saved in pid file
-    Generates a ProcessJSON object which contains path and domain information
-    Updates any PID information in the pid file, if the file already exists in the pid file or inserts PID information if the file is new
-  ```
-  
-* **MARKDOWN EDITING**: The user needs to add a tag like the following to the frontmatter of the markdown. So, please edit `content/blog/2023/2023-05-30-our-annual-call-for-board-nominations.md` in the `tiny_static_site` repo. So, it should look like this **before**:
-    ```markdown
-        ---
-        title: 'Our annual call for board nominations'
-        author: ABC
-        draft: false
-        authors:
-          - ABC
-        date: 2023-05-30
-        categories:
-          - Board
-          - Member Briefing
-          - Governance
-          - Elections
-          - Crossref Live
-          - Annual Meeting
-        archives:
-          - 2023
-        ---
-    ```
-    * Please edit the frontmatter to add the following: `x-version: 0.0.0`. **After editing**, it should look like this:
-    ```markdown
-        ---
-        title: 'Our annual call for board nominations'
-        author: ABC
-        draft: false
-        authors:
-          - ABC
-        date: 2023-05-30
-        categories:
-          - Board
-          - Member Briefing
-          - Governance
-          - Elections
-          - Crossref Live
-          - Annual Meeting
-        x-version: 0.0.0
-        archives:
-            - 2023
-        ---
-    ```
-    * It is important to commit this change. If the user doesn't, the script will error out.
-* To generate an id for this file, please run the `id.py` script:
-      `python id.py -r <path-to-repo>/tiny_static_site/ -c content/blog/2023/`
-* It should run and create an entry in the `pid.json` file in the root of the toy example repo. 
-* The pid file will look like the following:
-    ```json
+### DRY RUN of the script
+* Running this in DRY RUN mode as a Crossref member will generate unique ids for the tagged files, generate urls (currently hardcoded for the Crossref website), generate a xml deposit file to deposit into the Crossref system:
+```
+  python run_all.py gen-pid -r /tmp/my_science_blog/ -st crossref --info /tmp/my_science_blog/submission_info.yml -dry
+
+  Running in DRY RUN mode
+  In DRY RUN mode, script will generate:
+  1. unique identifier for each file with a x-version tag in frontmatter
+  2. URL based on website logic. Currently hardcoded for the Crossref website
+  3. Create a xml deposit file (currently hardcoded for Crossref) and save it to the specified directory. 
+  4. Script will NOT deposit the file
+  4. Script will NOT register a DOI
+  4. Script will NOT add the DOI back to the file
+  Generating PID(s)
+  Files in ['.'] have been processed and written to /tmp/my_science_blog/quickstart/pid.json
+  Generating URLs
+  Generating XML document for submission
+  SUCCESS! /tmp/my_science_blog/submission_info/20231029101102_submission.xml is valid. Ready for deposit
+  DRY RUN ended. Please check /tmp/my_science_blog/pid.json for information on the versioned files and /tmp/my_science_blog/submission_info/20231029101102_submission.xml for the xml deposit file
+```
+The pid file will look like the following:
+```json
     [
 	    {
             "file_commit_id": "b3599bfa471171961ea36226129251653d38c391",
@@ -218,108 +192,125 @@ Here are the steps in detail.
             "doi_prefix": "10.1212"
 	    }
     ]
+```
+
+## RUN THE SCRIPT
+### As a Crossref Member
+* Dependencies:
+  - requires deposit credentials and deposit endpoint declared as env variables
+  - requires the member to fill out the `submission_info.yml` file and create a xml deposit directory which will store all the xml deposit files. Please copy the example submission yml from [here](https://gitlab.com/crossref/labs/static-page-id-generator/-/raw/main/submission_workflow/submission_info.yml?ref_type=heads), change the values in the quotes to reflect your data, and save the file as `submission_info.yml` at the root of the website repository. 
+  - As an example, change the `submission_info.yml` file values to this:
+    ```
+    depositor: 
+        - name: "Test"
+        - email: "t@test.org"
+    registrant: Test"
+    submission_path: "submission_info"
+    batch_id: "test.id.batch"
+    ```
+  - `mkdir submission_info` at the root of the website directory. This will be the directory that contains the xml deposit files.
+  - If the user wants the DOI to be displayed, add a [DOI shortcode](https://gohugo.io/templates/shortcode-templates/) so that it will be displayed on the website. Here is an example of a DOI shortcode in use on the Crossref [website](https://www.crossref.org/operations-and-sustainability/annual-report/).
+* Once `x-version: 0.0.0` or `x-version = "0.0.0"` (depending on if the frontmatter is in yaml or toml), has been added to the files that the user wants tracked, running eveything as a Crossref member, the script will do the following:
+  - unique identifier for each file with a x-version tag in frontmatter
+  - URL based on website logic. Currently hardcoded for the Crossref website
+  - Create a xml deposit file (currently hardcoded for Crossref) and save it to the specified directory. 
+  - Script will deposit the file
+  - Script will register a DOI
+  - Script will add the DOI back to the file
+* Using the quickstart [repository](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/quickstart.md?ref_type=heads#create-a-new-site-and-generate-some-content) as an example, if a user starts out with a markdown file in this format:
+  ```
+  +++
+  title = 'My First Post'
+  date = 2023-10-26T13:12:40-04:00
+  draft = false
+  +++
+  test test
+  ```
+  and adds the `x-version = "0.0.0"` tag to this:
+  ```
+  +++
+  title = 'My First Post'
+  date = 2023-10-26T13:12:40-04:00
+  draft = false
+  x-version = "0.0.0"
+  +++
+  test test
+  ```
+  and commits this to git. Running the script will eventually generate this in the markdown file:
+  ```
+  +++
+  DOI = "https://some-doi-registered"
+  title = 'My First Post'
+  date = 2023-10-26T13:12:40-04:00
+  draft = false
+  x-version = "0.0.0"
+  +++
+  test test
+  ```
+  * Here is an example of the [end result](https://www.crossref.org/operations-and-sustainability/annual-report/), where a DOI appears on the website. A DOI shortcode is implemented in this website for it to appear the way it does.
+  #### Running the script:
+  * First initialize the repository with the following:
+    - repository path: `-r /tmp/my_science_blog/`
+    - content path: `-c content` If no `-c` option is included, the content path has a default value of `.` which would be everything under the repository path: 
+    - domain: `-d http://production-domain,org`
+    - doi-prefix: `member-doi-prefix`
+
+    It will create `config.yml` and `pid.json` 
+    ```
+    python run_all.py init -r /tmp/my_science_blog/ -c content -d "https://production-domain.org" --doi-prefix "member-doi-prefix"
+    Config file created: -r /tmp/my_science_blog/config.yml
+    Pid tracking file: -r /tmp/my_science_blog/pid.json created
+    ```
+    After the files are initialized, run the script. It will need the following:
+    - repository path: `-r /tmp/my_science_blog/`
+    - submission type: `-st crossref`. As a Crossref member, it will be Crossref
+    - submission info: `-info /tmp/my_science_blog/submission_info.yml` which is the file that was saved for deposit purposes. For more information, please go [here](#as-a-crossref-member). The name can be whatever you want it to be, you just have to specify the full path and the filename with the `-info` option for the script
+    - As a reminder, please have a directory ready to save the xml deposit files. This would be the same directory listed as the `submission_path` value in the `submission_info.yml` file
+    - As a reminder, please have your deposit credentials and the deposit endpoint environment variables set. Otherwise, the deposit, DOI registration, and DOI addition to the script will fail.
+
+    Run the script and you get the following:
+    ```
+    python run_all.py gen-pid -r /tmp/my_science_blog/ -st crossref --info /tmp/my_science_blog/submission_info.yml
+    Generating PID(s)
+    Files in ['.'] have been processed and written to website-repo/pid.json
+    Generating URLs
+    Generating XML document for submission
+    SUCCESS! /tmp/my_science_blog/submission_info/20231026164029_submission.xml is valid. Ready for deposit
+    Submitting file:  /tmp/my_science_blog/submission_info/20231026164029_submission.xml
+    Submission was successful
+    Updating doi status in /tmp/my_science_blog/pid.json
+    DOI status updated
+    Checking doi registration status
+    Checking DOI URLs
+    Added DOI:  /tmp/my_science_blog/content/posts/my-first-post.md
     ```
 
-### There are different ways to run the `id.py` script:
-#### Using the toy example:
-* **With one file:**
-`python id.py -r  <path-to-repo>/tiny_static_site/ -c 2023-05-30-our-annual-call-for-board-nominations.md`
-* **With multiple paths:**
-`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/ content/blog/2022`
-* **With a mix of files and paths:**
-`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog/2023/2023-02-28-in-the-know-on-workflows.md content/blog/2022`
-* **To run a batch process:**
-`python id.py -r  <path-to-repo>/tiny_static_site/ -c content/blog -b`: This will run through all files and initialize a file if it is not already initialized, i.e. it will add `x-version: 0.0.0` to the frontmatter of the markdown file and add it to the pid file. It will also commit the change.
-## Further information
-* If the major version has been bumped up in the markdown file and the file already exists in the pid file, the file will show information about both versions. For example, if the `x-version` has changed from `0.0.0` to `1.0.0` and the file already exists in the pid json file, it will show the git information about both versions and the id for both. 
-  * Frontmatter change from major version 0 to 1:
-    ```
-    ---
-    title: 'Forming new relationships: Contributing to Open source'
-    author: ABC
-    draft: false
-    authors:
-    date: 2022-10-19
-    x-version: 1.0.0
-    categories:
-        - DOIs
-        - Linking
-        - Interoperability
-        - Accessibility
-        - Engineering
-    archives:
-        - 2022
-    ---
-    ```
-  * PID file looks like the following, provided that the file already existed in the pid json file:
-    ```json
-    {
-		"file_commit_id": "baba78e8c26e19681042ed2d863b7d98f761295e",
-		"file_hash": "7a7f12724563873874f2e35ffd4fd33940b5145c",
-		"utc_commit_date": "2023-06-20 22:42:41",
-		"current_id": "3zyaTDyRGf",
-		"version": "1.0.0",
-		"url": null,
-		"file": "content/blog/2022/2022-10-19-forming-new-relationships-contributing-to-open-source.md",
-		"past_versions": [
-			"0.0.0"
-		],
-		"past_relationships": [
-			{
-				"file_commit_id": "7abdb96efaa0bcb52449f0856a9482e5800120d4",
-				"file_hash": "221ad44858a93ce285aaa55d5a73e3d67f049258",
-				"version": "0.0.0"
-			}
-		],
-		"production_domain": "https://www.crossref.org",
-		"doi_prefix": "10.1212"
-	}
-    ```
-#### **URL GENERATION:**
-* URLs pointing to the production instance need to be created and associated with the files so that the IDs can be registered with the url. Many times, the static site may have its own logic according to the use case of the institution. The given script here follows the Crossref website logic. 
-* `python helper_url_generation/url_constructor.py -r  <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`. This populates the pid.json file with the urls.
-    ```json
-    [{
-		"file_commit_id": "6375f0c13a42668210378e2352d447eca6fc3857",
-		"file_hash": "13ef0183a59ea4624c892306100bdff71496ee9d",
-		"utc_commit_date": "2023-06-20 21:04:58",
-		"current_id": "W2iTVv6WNT",
-		"version": "1.0.0",
-		"url": "https://www.crossref.org/blog/better-preprint-metadata-through-community-participation",
-		"file": "content/blog/2022/2022-11-09-preprint-schema-recommendations.md",
-		"production_domain": "https://www.crossref.org",
-		"doi_prefix": "10.1212"
-	},
-	{
-		"file_commit_id": "7abdb96efaa0bcb52449f0856a9482e5800120d4",
-		"file_hash": "b1206ee6d8cf91468f58362c86bb1a22aa2fab2e",
-		"utc_commit_date": "2023-06-20 22:38:34",
-		"current_id": "3WcMKovZou",
-		"version": "1.0.0",
-		"url": "https://www.crossref.org/blog/our-annual-call-for-board-nominations",
-		"file": "content/blog/2023/2023-05-30-our-annual-call-for-board-nominations.md",
-		"past_versions": [
-			"0.0.0"
-		],
-		"past_relationships": [
-			{
-				"file_commit_id": "b3599bfa471171961ea36226129251653d38c391",
-				"file_hash": "37e9449337f968c8f27345dd09a92975b1131982",
-				"version": "0.0.0"
-			}
-		],
-		"production_domain": "https://www.crossref.org",
-		"doi_prefix": "10.1212"
-	}]
-    ```
 ### Just tell me how to run everything:
-1. Using the toy site as an example, run the init script from the root of the static id generator script:
-    * `python init.py -r <path-to-repo>/tiny_static_site/ -id doi --doi-prefix 10.1212 -d https://www.crossref.org`
-2. Add the `x-version` tag to the markdown frontmatter and follow the semantic versioning convention and add `0.0.0` or bump up the major version. 
-    * `x-version: 0.0.0`
-3. Run `id.py` to generate IDs for the files. [Here](#using-the-toy-example) are ways to do it.
-4. Run the url generator script. An example for the crossref site is here: 
-   * `python helper_url_generation/url_constructor.py -r <path-to-repo>/tiny_static_site/ -cf ~/tiny_static_site/static.ini`
+1. Clone the static page id generator repository. Establish the virtual environment, install all the requirements. From the root of this reposiory, run the initialize step:
+    * `python run_all.py init -r /path/to/website/repo/ -c /specify/path/to/content -d "https://production-domain.org" --doi-prefix "member-doi-prefix"`
+2. Add the `x-version` tag to the markdown frontmatter and follow the semantic versioning convention and add `0.0.0`. 
+    * `x-version: 0.0.0` for yaml or `x-version = "0.0.0"` for toml
+3. If you are a Crossref member, please satisfy the [dependencies](#as-a-crossref-member). Run this:
+    * `python run_all.py gen-pid -r /path/to/website/repo/ -st crossref --info /path/to/website/repo/submission_info.yml`
+4. If you are NOT a Crossref member, you can run the script in the following way. This will generate file information in `pid.json` but will not generate urls, deposit files, or register the DOIs. 
+    * `python run_all.py gen-pid -r /path/to/website/repo/ -st custom`
+
+### Individual scripts
+The following documentation walks through the scripts used. You can run the scripts individually but they have dependencies. The chain of dependency is as follows:
+* Initialize the repository, for info: 
+  - `python run_all.py init --help`
+* Generate IDs in the tracked files and adds them to the PID tracking json file, for more info:
+  - `python id.py --help`
+* Generate URLs(currently hardcoded for the Crossref website) and add them to the PID tracking JSON file, for more info:
+  - `python helper_url_generation/url_constructor.py -h`
+* Generate xml files for deposit, for more info:
+  - `python submit_files/create_xml_files.py -h`
+* Deposit the xml files, for more info:
+  - `python submit_files/submit_files.py -h`
+* Add DOIs to the frontmatter of the tracked markdown files:
+  - `python add_doi.py -h`
+
+ 
 
 ## Developer Information
 * As of now, only integration tests are available. To run tests, after cloning the repository and installing the requirements, please run the following:

@@ -87,9 +87,9 @@ Check everything into git.
 
 **For a full description of all the arguments for the static-page-id-generator script, please check [here](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/README.md?ref_type=heads#usage-examples).**
 
-After all the requirements have been installed, we will first initialize the repository. The script will notify the user that it has created a config and pid tracking file. 
+After all the requirements have been installed, we will first initialize the repository. The script will notify the user that it has created a config and pid tracking file. The user can also specify which directory the script should track. In this case, it is the `content/` directory
 ```
-python run_all.py init -r /tmp/my_science_blog/ -d "https://some-production-domain.org" --doi-prefix "10.5555"
+python run_all.py init -r /tmp/my_science_blog/ -c content -d "https://some-production-domain.org" --doi-prefix "10.5555"
 Config file created: /tmp/my_science_blog/config.yml
 Pid tracking file: /tmp/my_science_blog/pid.json created
 
@@ -97,9 +97,9 @@ Pid tracking file: /tmp/my_science_blog/pid.json created
 The **config.yml** file will look like this:
 ```yaml
 content:
-- .
+- content
 doi_prefix: '10.5555'
-domain: "https://some-production-domain.org
+domain: https://some-production-domain.org
 id_type: doi
 pid_file: pid.json
 ```
@@ -127,13 +127,6 @@ In DRY RUN mode, script will generate:
 4. Script will NOT register a DOI
 4. Script will NOT add the DOI back to the file
 Generating PID(s)
-ERROR: Invalid inline table encountered (line 3 column 1 char 63)
-WARNING: Not processing: /tmp/my_science_blog/archetypes/default.md. There was an error or there is no markdown present
-ERROR: while parsing a block mapping
-  in "<unicode string>", line 2, column 1
-did not find expected key
-  in "<unicode string>", line 2, column 43
-WARNING: Not processing: /tmp/my_science_blog/themes/ananke/archetypes/default.md. There was an error or there is no markdown present
 Files in ['.'] have been processed and written to /tmp/my_science_blog/quickstart/pid.json
 Generating URLs
 Generating XML document for submission
