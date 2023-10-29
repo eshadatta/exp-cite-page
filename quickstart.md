@@ -1,6 +1,8 @@
 # Quickstart
 
-This will show you how to create a simple web site using the Hugo static site generator and then use the `static-page-id-generator` to assign and manage DOIs in the new site. These instructions are for the command line on your computer.
+This will show you how to create a simple web site using the Hugo static site generator and then use the `static-page-id-generator` to assign and manage DOIs in the new site. The following steps are done assuming that you are a Crossref member. Even if you are not a Crossref member, if you follow them, you can get a feel for what the script can do. After that, there are [instructions](#not-as-a-crossref-member) on what to do if you are not a Crossref member.
+
+These instructions are for the command line on your computer.
 
 Open two terminal windows side-by-side. In one terminal we'll create the site. In the other terminal we'll run the commands needed to init the site for DOI assignment.
 
@@ -198,3 +200,10 @@ The xml deposit file will look like this:
 </doi_batch>
 ```
 
+## Further processing
+### As a Crossref member
+As a Crossref member, in order to fully process the files (including depositing the xml, registering the DOIs, and adding the DOIs to the file), the user will need to add deposit credentials as environment variables and run the `run_all` script without the `-dry` flag. There are more instructions in the [README](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/README.md?ref_type=heads#usage-examples) for complete processing.
+
+### Not as a Crossref member
+If you are not a Crossref member, you would need to add code to generate a deposit and submit to whichever registration agency you choose. You would run the flag `-st custom` instead of `-st crossref` for the script. So, for example:
+`python run_all.py gen-pid -r ~/quickstart/ -st custom` which will create unique ids for the tagged files and enter the file and url information in `pid.json`. It will NOT generate any deposit information, register DOIs, or add them to the tagged files.
