@@ -108,7 +108,7 @@ After the necessary files have been created, we will run the pid generator scrip
 - the script generates a unique id for each file that is tagged
 - Create urls for the files that are tagged
 
-The script will NOT do the following:
+In DRY RUN mode, the script will **NOT** do the following:
 - deposit the files to Crossref 
 - register the DOI, and 
 - add the DOIs back to the markdown files that the script is tracking.
