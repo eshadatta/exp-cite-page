@@ -16,16 +16,15 @@ This is meant to be used with markdown files and is being currently tested with 
 * This only supports DOIs for now. A UUID option has been given as an example. 
 
 ### Quick Links
-* Different ways of using this script:
-  * [Usage Overview](#usage-overview)
-  * [Quickstart](#tldr)
-  * [Quick summary to run everything](#tldr)
-  * [Dependencies](#dependencies)
-  * [Installation](#installation)
-  * Script Steps:
-    - [Init](#initialize-the-script)
-    - [Run everything else](#run-the-script)
-  * Run scripts [individually](#individual-scripts)
+* [Usage Overview](#usage-overview)
+* [Quickstart](#tldr)
+* [Quick summary to run everything](#tldr)
+* [Dependencies](#dependencies)
+* [Installation](#installation)
+* Script Steps:
+  - [Init](#initialize-the-script)
+  - [Run everything else](#run-the-script)
+* Run scripts [individually](#individual-scripts)
 
 
 
