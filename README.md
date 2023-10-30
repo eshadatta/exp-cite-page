@@ -22,9 +22,14 @@ This is meant to be used with markdown files and is being currently tested with 
 * [Dependencies](#dependencies)
 * [Installation](#installation)
 * Script Steps:
-  - [Init](#initialize-the-script)
-  - [Run everything else](#run-the-script)
+  - As a Crossref and not as a Crossref member
+    - [Init](#initialize-the-script)
+  - As a Crossref member
+    - [Run everything else](#run-the-script)
+  - Not as a Crossref member
+    - [Run everything](#not-as-a-crossref-member)
 * Run scripts [individually](#individual-scripts)
+* Example of running this in [CI](https://gitlab.com/crossref/labs/test-website-workflow)
 
 
 
@@ -229,6 +234,7 @@ The pid file will look like the following:
   - Script will deposit the file
   - Script will register a DOI
   - Script will add the DOI back to the file
+##### EDIT the file to add the `x-version` tag
 * Using the quickstart [repository](https://gitlab.com/crossref/labs/static-page-id-generator/-/blob/main/quickstart.md?ref_type=heads#create-a-new-site-and-generate-some-content) as an example, if a user starts out with a markdown file in this format:
   ```
   +++
@@ -261,6 +267,7 @@ The pid file will look like the following:
   ```
   * Here is an example of the [end result](https://www.crossref.org/operations-and-sustainability/annual-report/), where a DOI appears on the website. A DOI shortcode is implemented in this website for it to appear the way it does.
   #### Running the script:
+  ##### Initialize
   * First initialize the repository with the following:
     - repository path: `-r /tmp/my_science_blog/`
     - content path: `-c content` If no `-c` option is included, the content path has a default value of `.` which would be everything under the repository path: 
@@ -296,7 +303,11 @@ The pid file will look like the following:
     Checking DOI URLs
     Added DOI:  /tmp/my_science_blog/content/posts/my-first-post.md
     ```
-
+### Not as a Crossref member
+* Initialize the script as [above](#initialize)
+* Run the script as follows; this will generate unique ids and populate `pid.json` but will not generate urls, deposit, or add DOIs back to the file.
+  * > `python run_all.py gen-pid -r /path/to/website/repo/ -st custom
+`
 ### Just tell me how to run everything:
 1. Clone the static page id generator repository. Establish the virtual environment, install all the requirements. From the root of this reposiory, run the initialize step:
     * `python run_all.py init -r /path/to/website/repo/ -c /specify/path/to/content -d "https://production-domain.org" --doi-prefix "member-doi-prefix"`
