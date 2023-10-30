@@ -15,14 +15,27 @@ This is meant to be used with markdown files and is being currently tested with 
 * Code needs to be abstracted out further so that a user could add more functionality for custom url construction or ID generation
 * This only supports DOIs for now. A UUID option has been given as an example. 
 
+### Quick Links
+* Different ways of using this script:
+  * [Usage Overview](#usage-overview)
+  * [Quickstart](#tldr)
+  * [Quick summary to run everything](#tldr)
+  * [Dependencies](#dependencies)
+  * [Installation](#installation)
+  * Script Steps:
+    - [Init](#initialize-the-script)
+    - [Run everything else](#run-the-script)
+  * Run scripts [individually](#individual-scripts)
 
 
-#### **USAGE:**
+
+### **USAGE:**
 ### Dependencies
-* Recent version of Hugo
+* Recent version of Hugo - for the website being tracked
 * Git
 * curl
 * Python >= 3.8
+
 
 
 ### TL;DR:
