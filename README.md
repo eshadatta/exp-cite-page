@@ -21,6 +21,7 @@ This is meant to be used with markdown files and is being currently tested with 
 * [Quick summary to run everything](#tldr)
 * [Dependencies](#dependencies)
 * [Installation](#installation)
+* [Dry run](#dry-run-of-the-script)
 * Script Steps:
   - As a Crossref and not as a Crossref member
     - [Init](#initialize-the-script)
