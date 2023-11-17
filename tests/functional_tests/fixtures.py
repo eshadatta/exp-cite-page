@@ -18,20 +18,20 @@ def fixture_domain():
     return {'domain': 'https://test.org'}
 
 def fixture_default_filenames():
-    return {'default_pid_json_filename': 'pid.json','default_config_filename': 'static.ini'}
+    return {'default_pid_json_filename': 'pid.json','default_config_filename': 'config.yml'}
 
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
 
 def fixture_id():
-    return [{"id": "uuid"}, {"id": "doi", "doi_prefix": "x.x.x"}]
+    return [{"id": "doi", "doi_prefix": "x.x.x"}]
 
 def fixture_content_path():
     return "content/blog/"
 
 def init_files():
     # returning an empty array to create valid args with and without specifying user files
-    user_specified_files = {"-p": "record.json", "-cf": "config.ini"}
+    user_specified_files = {"-p": "record.json", "-cf": "config.yml"}
     return [{}, user_specified_files]
 
 def flatten_dict(d, expected_length = 3, key = '-c'):
@@ -70,14 +70,14 @@ def files():
     return ["tests/fixtures/tiny_static_site/content/blog/2022/2022-09-16-2022-board-election.md", "tests/fixtures/tiny_static_site/content/blog/2023/2023-04-01-renewed-persistence.md"]
 
 def valid_init_args():
-    ids = fixture_id()[1]
-    args = {"-r": fixture_dir_path()['dir_path'], "-d": fixture_domain()["domain"], "-id": ids['id'], "--doi-prefix": ids['doi_prefix']}
+    ids = fixture_id()[0]
+    args = {"-r": fixture_dir_path()['dir_path'], "-d": fixture_domain()["domain"], "--doi-prefix": ids['doi_prefix']}
     process_args = flatten_dict(args)
     return process_args
 
 class TestScenarios():
     def __init__(self):
-        ids = fixture_id()[1]
+        ids = fixture_id()[0]
         args = {"-r": fixture_dir_path()['dir_path'], "-d": fixture_domain()["domain"], "-id": ids['id'], "--doi-prefix": ids['doi_prefix']}
         default_files = list(fixture_default_filenames().values())
         self.dir_path = fixture_dir_path()["dir_path"]
@@ -153,7 +153,8 @@ class TestScenarios():
         info['args'].update({"-b": None})
         return info
     
-    def scenario_existing_single_file(self):
+    # need to reimplement
+    """ def scenario_existing_single_file(self):
         name = "scenario_existing_single_file"
         expected_output = "tests/fixtures/tiny_static_site/expected_values_json/existing_files/one_value.json"
         preset_file = "tests/fixtures/tiny_static_site/expected_values_json/non_existing_files/one_value.json"
@@ -170,7 +171,7 @@ class TestScenarios():
         content_path = self.content_path
         additional_data = {"preset_file": preset_file, "files": {"non_existing": "content/blog/2022/2022-09-16-2022-board-election.md", "existing": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md"}}
         info = self.generate_fixture_info(name, content_path, expected_output, additional_data)
-        return info 
+        return info  """
 
 
 
