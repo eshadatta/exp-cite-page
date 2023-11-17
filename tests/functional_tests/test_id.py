@@ -1,4 +1,4 @@
-import init
+from run_all import init
 import id
 import pytest
 import re
@@ -7,10 +7,13 @@ import configparser
 from os.path import exists
 from itertools import chain
 import json
+import helpers.git_info as g
 import tests.functional_tests.fixtures as f
 import id
 import helpers.utilities as u
-import helpers.initialize_files
+from click.testing import CliRunner
+from git import Repo
+import os
 
 def check_output(output):
     contents = None
@@ -21,6 +24,14 @@ def check_output(output):
         print(e)
     return contents
 
+def is_repo(path):
+    repo = None
+    try:
+        repo = Repo(path)
+    except:
+        pass
+    return repo
+    
 def get_all_scenarios(scenario_type):
     test_scenarios = f.TestScenarios()
     regex = re.compile(rf'^{scenario_type}')
@@ -57,8 +68,9 @@ def setup_files(dir_path, content_files, processing_type=None):
     if not(processing_type):
         content_file(dir_path, content_files, "initialize")
     process_args = f.valid_init_args()
-    init.main(process_args)
-
+    runner = CliRunner()
+    runner.invoke(init, process_args)
+    
 def teardown_files(dir_path, content_files):
     content_file(dir_path, content_files, "restore")
     default_files = list(f.fixture_default_filenames().values())
@@ -96,7 +108,7 @@ def check_scenario_settings(scenario):
         content_file(dir_path, increment_file, "increment")
     return [dir_path, pid_file, content_files]
 # for batch scenario we are not initializing the files. The id script will do that
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_batch'), ids=scenario_name)
+@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
 def test_id_valid_args(monkeypatch, scenario):
     dir_path, pid_file, content_files = check_scenario_settings(scenario)
     args = f.flatten_dict(scenario['args'])
@@ -123,3 +135,15 @@ def test_id_valid_args(monkeypatch, scenario):
     expected_output = check_output(scenario['expected_output'])
     assert pid_output == expected_output
     teardown_files(dir_path, content_files)
+
+"""Restoring fixtures to their original state"""
+@pytest.fixture(scope="session", autouse=True)
+def restore(request):
+    def git_restore():
+        cwd = os.getcwd()
+        repo = is_repo(cwd)
+        if repo:
+            fixtures_path = f.fixture_dir_path()['dir_path'] + "/" + f.fixture_content_path()
+            g.GitInfo(cwd).restore(fixtures_path)
+    request.addfinalizer(git_restore)
+

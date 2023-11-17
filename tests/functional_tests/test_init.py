@@ -1,5 +1,6 @@
 import helpers.static_page_id as sp
-import init
+from run_all import init
+from click.testing import CliRunner
 import pytest
 import re
 import os
@@ -7,6 +8,7 @@ import configparser
 from os.path import exists
 from itertools import chain
 import json
+import yaml 
 
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
@@ -15,17 +17,17 @@ def fixture_domain():
     return {'domain': 'https://test.org'}
 
 def fixture_default_filenames():
-    return {'default_pid_json_filename': 'pid.json','default_config_filename': 'static.ini'}
+    return {'default_pid_json_filename': 'pid.json','default_config_filename': 'config.yml'}
 
 def fixture_dir_path():
     return {"dir_path": "tests/fixtures/tiny_static_site"}
 
 def fixture_id():
-    return [{"id": "uuid"}, {"id": "doi", "doi_prefix": "x.x.x"}]
+    return [{"id": "doi", "doi_prefix": "x.x.x"}]
 
 def files():
     # returning an empty array to create valid args with and without specifying user files
-    user_specified_files = {"-p": "record.json", "-cf": "config.ini"}
+    user_specified_files = {"-p": "record.json", "-cf": "test.yml", "-c": "content"}
     return [{}, user_specified_files]
 
 def fixtures():
@@ -41,12 +43,13 @@ def flatten_dict(d):
     return data
 
 def read_config_parser(file):
-    config = configparser.ConfigParser()
+    data = None
     try:
-        config.read(file)
+        with open(file, 'r') as y:
+            data = yaml.safe_load(y)
     except Exception as e:
-        raise NameError(e)
-    return list(config['DEFAULT'].items())
+            raise ValueError(f"ERROR: {e}")
+    return data
 
 def remove_files(files):
     for f in files:
@@ -61,7 +64,7 @@ def valid_args():
     ids = fixture_id()
     script_files = files()
     for id in ids:
-        args = {"-r": fixture_dir_path()["dir_path"], "-d": fixture_domain()["domain"], "-id": id['id']}
+        args = {"-r": fixture_dir_path()["dir_path"], "-d": fixture_domain()["domain"]}
         if 'doi_prefix' in id:
             args['--doi-prefix'] = id['doi_prefix']
         for f in script_files:
@@ -97,10 +100,13 @@ def data(valid_args):
     
 class InitTest:
     def __init__(self, args):
+        default_id = 'doi'
+        default_content = ['.']
         self.args = args
         self.files = data(self.args)
         self.domain = args['-d']
-        self.id_type = args['-id']
+        self.content_path = args.get('-id', default_content)
+        self.id_type = args.get('-id', default_id)
         self.doi_prefix = args.get('--doi-prefix', None)
 
     def check_files(self):
@@ -131,7 +137,8 @@ class TestInit:
     def setup_and_teardown(self, v_args):
         print("setup")
         process_args = flatten_dict(v_args)
-        init.main(process_args)
+        runner = CliRunner()
+        runner.invoke(init, process_args)
         yield
         remove_files(v_args)
 
@@ -143,10 +150,8 @@ class TestInit:
             assert exists(f)
         json_file_should_be_empty == test_init.check_pid_file_contents()
         defaults, ini_contents = test_init.check_config_contents()
-        for c in ini_contents:
-            key = c[0]
-            assert defaults[key] == c[1]
-
+        for k, v in defaults.items():
+            assert v == ini_contents[k]
 
 def invalid_args():
     invalid_args = {
@@ -158,9 +163,8 @@ def invalid_args():
         "incomplete_args": ['-r', '.'],
         "required_arg_without_value1": ['-r', '.', '-d'],
         "incomplete_args2": ['-r', '.', '-d', 'a'],
-        "required_arg_without_value2": ['-r', '.', '-d', 'a', '-id'],
-        "required_arg_with_incorrect_value": ['-r', '.', '-d', 'a', '-id', 'x'],
-        "required_arg_without_req_subcommand": ['-r', '.', '-d', 'a', '-id', 'doi']
+        "required_arg_without_value2": ['-r', '.', '-d', 'a', '--id-type'],
+        "required_arg_without_req_subcommand": ['-r', '.', '-d', 'a', '--id-type', 'doi']
     }
     return invalid_args
 
@@ -168,8 +172,9 @@ def invalid_args():
 def test_invalid_args():
     args = invalid_args()
     for k, v in args.items():
-        with pytest.raises(SystemExit) as e:
-            init.main(v)
-   
-        assert e.value.code != 0
+        print("Testing: ", k)
+        print("args: ", v)
+        runner = CliRunner()
+        result = runner.invoke(init, v)
+        assert result.exit_code != 0
 

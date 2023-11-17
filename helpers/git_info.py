@@ -82,6 +82,9 @@ class GitInfo:
         utc_datetime = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
         return utc_datetime
 
+    def restore(self, path):
+        self.git.restore(path)
+        
     # there is a similar function in initialize_files
     # this only shows messages if it is not tracked or committed
     # this should be optimized
