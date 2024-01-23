@@ -1,0 +1,6 @@
+depositor: 
+  - name: "Foo"
+  - email: "foo@foo.org"
+registrant: "Foo Registrant"
+submission_path: crossref_submission_fixtures
+batch_id: "test.batch_id"

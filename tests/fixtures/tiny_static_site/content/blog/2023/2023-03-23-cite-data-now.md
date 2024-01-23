@@ -1,17 +1,17 @@
 ---
-title: 'Start citing data now. Not later'
-author: Geoffrey Bilder
-draft: false
-authors:
-  - Geoffrey Bilder
-date: 2023-03-23
-categories:
-  - Metadata
-  - Citation
-  - Data Citation
-  - Research Nexus
 archives:
-      - 2023
+- 2023
+author: Geoffrey Bilder
+authors:
+- Geoffrey Bilder
+categories:
+- Metadata
+- Citation
+- Data Citation
+- Research Nexus
+date: 2023-03-23
+draft: false
+title: Start citing data now. Not later
 ---
 
 Recording data citations supports data reuse and aids research integrity and reproducibility. Crossref makes it easy for our members to submit data citations to support the scholarly record.
@@ -317,4 +317,4 @@ And here are some example API requests for discovering more metadata citations. 
 
 #### Find all data citations to DataCite member X
 
-[https://api.eventdata.crossref.org/v1/events?rows=20&scholix=true&obj-id.prefix=10.5061](https://api.eventdata.crossref.org/v1/events?rows=20&scholix=true&obj-id.prefix=10.5061) 
+[https://api.eventdata.crossref.org/v1/events?rows=20&scholix=true&obj-id.prefix=10.5061](https://api.eventdata.crossref.org/v1/events?rows=20&scholix=true&obj-id.prefix=10.5061)

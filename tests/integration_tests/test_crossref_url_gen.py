@@ -1,19 +1,38 @@
 from run_all import init
-import id
-import pytest
-import re
-import shutil
-import configparser
-from os.path import exists
-from itertools import chain
-import json
-import helpers.git_info as g
+from helper_url_generation import url_constructor
 import tests.functional_tests.fixtures as f
-import id
+import json
 import helpers.utilities as u
 from click.testing import CliRunner
-from git import Repo
+import id
 import os
+import pytest
+import helpers.git_info as g
+
+content_path = ["content/blog", "content/report/_index.md","content/report/rules.md"]
+files = ["content/blog/2022/2022-09-16-2022-board-election.md", "content/blog/2023/2023-03-23-cite-data-now.md", "content/report/_index.md", "content/report/rules.md"]
+ids = f.fixture_id()[0]
+args = {"-r": f.fixture_dir_path()['dir_path'], "-d": f.fixture_domain()["domain"], "--doi-prefix": ids['doi_prefix']}
+url_constructor_args = ['-r', '/Users/eshadatta/test-website-workflow', '-cf', '/Users/eshadatta/test-website-workflow/config.yml']
+url_gen_output = "tests/fixtures/tiny_static_site/crossref_submission_fixtures/url_gen.json"
+
+def is_repo(path):
+    repo = None
+    try:
+        repo = Repo(path)
+    except:
+        pass
+    return repo
+
+def valid_init_args(content=None):
+    process_args = f.flatten_dict(args)
+    if isinstance(content, list):
+        for i in range(0, len(content) * 2):
+            if (i % 2) == 0:
+                content.insert(i, "-c")
+        process_args = process_args + content
+
+    return process_args
 
 def check_output(output):
     contents = None
@@ -23,24 +42,6 @@ def check_output(output):
     except Exception as e:
         print(e)
     return contents
-
-def is_repo(path):
-    repo = None
-    try:
-        repo = Repo(path)
-    except:
-        pass
-    return repo
-    
-def get_all_scenarios(scenario_type):
-    test_scenarios = f.TestScenarios()
-    regex = re.compile(rf'^{scenario_type}')
-    scenario_methods = list(filter(regex.match, dir(test_scenarios)))
-    scenarios = []
-    for i in scenario_methods:
-        m = getattr(test_scenarios, i)
-        scenarios.append(m())
-    return scenarios
 
 def content_file(dir_path, file, action="initialize"):
         s = f.TestScenarios()
@@ -63,56 +64,21 @@ def content_file(dir_path, file, action="initialize"):
                 md.metadata[s.version_tag] = updated_version
             s.write_content_file(i, md)
 
-
-def setup_files(dir_path, content_files, processing_type=None):
-    if not(processing_type):
-        content_file(dir_path, content_files, "initialize")
-    process_args = f.valid_init_args()
+def setup_files():
+    process_args = valid_init_args(content = content_path)
+    print("PARGS: ", process_args)
     runner = CliRunner()
     runner.invoke(init, process_args)
-    
+    content_file(args['-r'], files)
+
 def teardown_files(dir_path, content_files):
     content_file(dir_path, content_files, "restore")
     default_files = list(f.fixture_default_filenames().values())
     default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
     f.remove_files(default_config_files)
 
-def prepare_existing_pid_file(src, dst):
-    try:
-        shutil.copyfile(src, dst)
-    except Exception as e:
-        print(e)
-        
-def scenario_name(scenario):
-    return scenario['name']
-
-def check_scenario_settings(scenario):
-    existing_file = None
-    processing_type = 'batch' if ('batch' in scenario['name']) else None
-    dir_path = f.fixture_dir_path()["dir_path"]
-    # this needs to be optimized
-    if not('mixed' in scenario['name'] or 'batch' in scenario['name']):
-        content_files = scenario['args']['-c']
-    elif 'batch' in scenario['name']:
-        content_files = list(scenario['expected_content_values'].keys())
-    else:
-        content_files = list(scenario['files'].values())
-    pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-    setup_files(dir_path, content_files, processing_type)
-    if '_mixed' in scenario['name']:
-        existing_file = scenario['files']['existing']
-    if 'scenario_existing' in scenario['name'] or '_mixed' in scenario['name']:
-        increment_file = existing_file if existing_file else content_files
-        preset_file = scenario['preset_file']
-        prepare_existing_pid_file(preset_file, pid_file)
-        content_file(dir_path, increment_file, "increment")
-    return [dir_path, pid_file, content_files]
-# for batch scenario we are not initializing the files. The id script will do that
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
-def test_id_valid_args(monkeypatch, scenario):
-    dir_path, pid_file, content_files = check_scenario_settings(scenario)
-    args = f.flatten_dict(scenario['args'])
-    print(scenario)
+def test(monkeypatch):
+    setup_files()
     class MockGit(object):
         def __init__(self, a):
             self.a = a
@@ -145,11 +111,15 @@ def test_id_valid_args(monkeypatch, scenario):
         
     monkeypatch.setattr('helpers.git_info.GitInfo', mock_git)
     monkeypatch.setattr('helpers.generate_id.GenID', mock_gen_id)
-    id.main(args)
+    id_args = ["-r", args['-r'], '-c'] + files
+    id.main(id_args)
+    url_gen_args = ["-r", args['-r'], "-cf", args['-r']+'/'+f.fixture_default_filenames()['default_config_filename']]
+    pid_file = args['-r']+'/'+f.fixture_default_filenames()['default_pid_json_filename']
+    url_constructor.main(url_gen_args)
     pid_output = check_output(pid_file)
-    expected_output = check_output(scenario['expected_output'])
+    expected_output = check_output(url_gen_output)
     assert pid_output == expected_output
-    teardown_files(dir_path, content_files)
+    teardown_files(args['-r'], files)
 
 """Restoring fixtures to their original state"""
 @pytest.fixture(scope="session", autouse=True)
@@ -161,4 +131,3 @@ def restore(request):
             fixtures_path = f.fixture_dir_path()['dir_path'] + "/" + f.fixture_content_path()
             g.GitInfo(cwd).restore(fixtures_path)
     request.addfinalizer(git_restore)
-

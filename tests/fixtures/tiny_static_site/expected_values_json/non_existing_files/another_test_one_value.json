@@ -7,6 +7,11 @@
 		"version": "0.0.0",
 		"url": null,
 		"file": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md",
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
 		"production_domain": "https://test.org",
 		"doi_prefix": "x.x.x"
 	}

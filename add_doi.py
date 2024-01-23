@@ -70,7 +70,6 @@ def add_dois(dir, submitted_dois):
         if not(doi_value):
             md.metadata['DOI'] = d['doi']['value']
             write_content_file(file, md)
-        #commit_file(dir, d['file'])
 
 def main(argv=None):
     args = set_args(argv)
