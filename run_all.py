@@ -32,6 +32,7 @@ def run_gen_id(config, args):
     id_args = content_args + ['--repo', args['repo'], '--config-filename', args['conf_file']]
     if args['batch']:
         id_args.append('-b')
+    print("IN ID: ")
     id.main(id_args)
             
 def generate_xml_submission(pid_file, args):
@@ -103,7 +104,7 @@ def gen_pid(batch, dry_run, sub_type, info, **kwargs):
         print("In DRY RUN mode, script will generate: ")
         print("1. unique identifier for each file with a x-version tag in frontmatter")
         print("2. URL based on website logic. Currently hardcoded for the Crossref website")
-        print("3. Create a xml deposit file and save it to the specified directory")
+        print("3. If a Crossref submission, will create a xml deposit file and save it to the specified directory")
         print("4. Script will NOT deposit the file")
         print("4. Script will NOT register a DOI")
         print("4. Script will NOT add the DOI back to the file")

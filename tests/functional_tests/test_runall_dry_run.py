@@ -1,4 +1,4 @@
-from run_all import init
+from run_all import init, gen_pid
 import id
 import pytest
 import re
@@ -14,6 +14,7 @@ import helpers.utilities as u
 from click.testing import CliRunner
 from git import Repo
 import os
+import re
 
 def check_output(output):
     contents = None
@@ -31,16 +32,25 @@ def is_repo(path):
     except:
         pass
     return repo
-    
-def get_all_scenarios(scenario_type):
-    test_scenarios = f.TestScenarios()
-    regex = re.compile(rf'^{scenario_type}')
-    scenario_methods = list(filter(regex.match, dir(test_scenarios)))
-    scenarios = []
-    for i in scenario_methods:
-        m = getattr(test_scenarios, i)
-        scenarios.append(m())
-    return scenarios
+
+def get_valid_gen_pid_args():
+    args = [{}, {'batch': True}, {'st': "custom"}, {'st': "custom", 'batch': True}]
+    info = []
+    ts = f.TestScenarios()
+    for a in args:
+        process = {}
+        if 'batch' in a.keys():
+            if 'st' in a.keys() and a['st'] == "custom":
+                process['info'] = ts.scenario_batch(st="custom")
+            else:
+                process['info'] = ts.scenario_batch(st="crossref")
+        elif 'st' in a.keys() and a['st'] == "custom":
+            process['info'] = ts.scenario_multiple_non_existing_files(st="custom")
+        else:
+            process['info'] = ts.scenario_multiple_non_existing_files(st="crossref")
+        process['test_args'] = f.valid_gen_pid_args(**a)
+        info.append(process)
+    return info
 
 def content_file(dir_path, file, action="initialize"):
         s = f.TestScenarios()
@@ -62,57 +72,34 @@ def content_file(dir_path, file, action="initialize"):
                 updated_version = f"{str(mv)}.0.0"
                 md.metadata[s.version_tag] = updated_version
             s.write_content_file(i, md)
+def scenario_name(scenario):
+    return scenario['info']['name']
 
-
-def setup_files(dir_path, content_files, processing_type=None):
+def setup_files(dir_path, content_files,processing_type=None):
     if not(processing_type):
-        content_file(dir_path, content_files, "initialize")
-    process_args = f.valid_init_args()
+        content_file(dir_path, content_files,"initialize")
+    process_args = f.valid_init_args(content = f.fixture_content_path())
     runner = CliRunner()
     runner.invoke(init, process_args)
     
-def teardown_files(dir_path, content_files):
+def teardown_files(dir_path, content_files, other_files = None):
     content_file(dir_path, content_files, "restore")
     default_files = list(f.fixture_default_filenames().values())
     default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
+    if other_files:
+        default_config_files.append(other_files)
     f.remove_files(default_config_files)
 
-def prepare_existing_pid_file(src, dst):
-    try:
-        shutil.copyfile(src, dst)
-    except Exception as e:
-        print(e)
-        
-def scenario_name(scenario):
-    return scenario['name']
-
-def check_scenario_settings(scenario):
-    existing_file = None
-    processing_type = 'batch' if ('batch' in scenario['name']) else None
+@pytest.mark.parametrize('scenario', get_valid_gen_pid_args(), ids=scenario_name)
+def test_valid_args(monkeypatch, scenario):
+    s = scenario['info']
+    processing_type = 'batch' if ('batch' in s['name']) else None
     dir_path = f.fixture_dir_path()["dir_path"]
-    # this needs to be optimized
-    if not('mixed' in scenario['name'] or 'batch' in scenario['name']):
-        content_files = scenario['args']['-c']
-    elif 'batch' in scenario['name']:
-        content_files = list(scenario['expected_content_values'].keys())
-    else:
-        content_files = list(scenario['files'].values())
     pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-    setup_files(dir_path, content_files, processing_type)
-    if '_mixed' in scenario['name']:
-        existing_file = scenario['files']['existing']
-    if 'scenario_existing' in scenario['name'] or '_mixed' in scenario['name']:
-        increment_file = existing_file if existing_file else content_files
-        preset_file = scenario['preset_file']
-        prepare_existing_pid_file(preset_file, pid_file)
-        content_file(dir_path, increment_file, "increment")
-    return [dir_path, pid_file, content_files]
-# for batch scenario we are not initializing the files. The id script will do that
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
-def test_id_valid_args(monkeypatch, scenario):
-    dir_path, pid_file, content_files = check_scenario_settings(scenario)
-    args = f.flatten_dict(scenario['args'])
-    print(scenario)
+    if not('mixed' in s['name'] or 'batch' in s['name']):
+        content_files = s['args']['-c']
+    elif 'batch' in s['name']:
+        content_files = list(s['expected_content_values'].keys())
     class MockGit(object):
         def __init__(self, a):
             self.a = a
@@ -134,7 +121,7 @@ def test_id_valid_args(monkeypatch, scenario):
         def __init__(self):
             pass
         def gen_default(self, len=None):
-            return 12345
+            return "hvvgkns9ta"
     
     def mock_git(a):
         return MockGit(a)
@@ -145,11 +132,19 @@ def test_id_valid_args(monkeypatch, scenario):
         
     monkeypatch.setattr('helpers.git_info.GitInfo', mock_git)
     monkeypatch.setattr('helpers.generate_id.GenID', mock_gen_id)
-    id.main(args)
+    setup_files(dir_path, content_files, processing_type)
+    runner = CliRunner()
+    result = runner.invoke(gen_pid, scenario['test_args'])
+    assert result.exit_code == 0
+    submission_file = None
+    if 'crossref' in scenario['test_args']:
+        submission_file_match = re.search("tests.*?xml", result.output, re.MULTILINE)
+        submission_file = submission_file_match.group() 
+        assert os.path.exists(submission_file)
     pid_output = check_output(pid_file)
-    expected_output = check_output(scenario['expected_output'])
+    expected_output = check_output(s['expected_output'])
     assert pid_output == expected_output
-    teardown_files(dir_path, content_files)
+    teardown_files(dir_path, content_files, submission_file)
 
 """Restoring fixtures to their original state"""
 @pytest.fixture(scope="session", autouse=True)
@@ -161,4 +156,3 @@ def restore(request):
             fixtures_path = f.fixture_dir_path()['dir_path'] + "/" + f.fixture_content_path()
             g.GitInfo(cwd).restore(fixtures_path)
     request.addfinalizer(git_restore)
-

@@ -1,19 +1,19 @@
-from run_all import init
-import id
+from run_all import init, gen_pid
 import pytest
 import re
-import shutil
-import configparser
 from os.path import exists
-from itertools import chain
 import json
 import helpers.git_info as g
 import tests.functional_tests.fixtures as f
-import id
 import helpers.utilities as u
 from click.testing import CliRunner
 from git import Repo
 import os
+import re
+from xmldiff import main
+from lxml import etree
+from submit_files import submit_files
+import check_doi_urls
 
 def check_output(output):
     contents = None
@@ -31,16 +31,13 @@ def is_repo(path):
     except:
         pass
     return repo
-    
-def get_all_scenarios(scenario_type):
-    test_scenarios = f.TestScenarios()
-    regex = re.compile(rf'^{scenario_type}')
-    scenario_methods = list(filter(regex.match, dir(test_scenarios)))
-    scenarios = []
-    for i in scenario_methods:
-        m = getattr(test_scenarios, i)
-        scenarios.append(m())
-    return scenarios
+
+def get_valid_gen_pid_args():
+    process = {}
+    ts = f.TestScenarios()
+    process['info'] = ts.scenario_single_non_existing_file(st="crossref")
+    process['args'] = f.valid_gen_pid_args()
+    return process
 
 def content_file(dir_path, file, action="initialize"):
         s = f.TestScenarios()
@@ -63,56 +60,26 @@ def content_file(dir_path, file, action="initialize"):
                 md.metadata[s.version_tag] = updated_version
             s.write_content_file(i, md)
 
-
-def setup_files(dir_path, content_files, processing_type=None):
+def setup_files(dir_path, content_files,processing_type=None):
     if not(processing_type):
-        content_file(dir_path, content_files, "initialize")
-    process_args = f.valid_init_args()
+        content_file(dir_path, content_files,"initialize")
+    process_args = f.valid_init_args(content = f.fixture_content_path())
     runner = CliRunner()
     runner.invoke(init, process_args)
     
-def teardown_files(dir_path, content_files):
+def teardown_files(dir_path, content_files, other_files = None):
     content_file(dir_path, content_files, "restore")
     default_files = list(f.fixture_default_filenames().values())
     default_config_files = list(map(lambda x: dir_path+"/"+x, default_files))
+    if other_files:
+        default_config_files = default_config_files + other_files
     f.remove_files(default_config_files)
 
-def prepare_existing_pid_file(src, dst):
-    try:
-        shutil.copyfile(src, dst)
-    except Exception as e:
-        print(e)
-        
-def scenario_name(scenario):
-    return scenario['name']
-
-def check_scenario_settings(scenario):
-    existing_file = None
-    processing_type = 'batch' if ('batch' in scenario['name']) else None
+def run_script(monkeypatch):
+    test_info = get_valid_gen_pid_args()
+    s = test_info['info']
     dir_path = f.fixture_dir_path()["dir_path"]
-    # this needs to be optimized
-    if not('mixed' in scenario['name'] or 'batch' in scenario['name']):
-        content_files = scenario['args']['-c']
-    elif 'batch' in scenario['name']:
-        content_files = list(scenario['expected_content_values'].keys())
-    else:
-        content_files = list(scenario['files'].values())
-    pid_file = dir_path+"/"+f.fixture_default_filenames()['default_pid_json_filename']
-    setup_files(dir_path, content_files, processing_type)
-    if '_mixed' in scenario['name']:
-        existing_file = scenario['files']['existing']
-    if 'scenario_existing' in scenario['name'] or '_mixed' in scenario['name']:
-        increment_file = existing_file if existing_file else content_files
-        preset_file = scenario['preset_file']
-        prepare_existing_pid_file(preset_file, pid_file)
-        content_file(dir_path, increment_file, "increment")
-    return [dir_path, pid_file, content_files]
-# for batch scenario we are not initializing the files. The id script will do that
-@pytest.mark.parametrize('scenario', get_all_scenarios(scenario_type='scenario_'), ids=scenario_name)
-def test_id_valid_args(monkeypatch, scenario):
-    dir_path, pid_file, content_files = check_scenario_settings(scenario)
-    args = f.flatten_dict(scenario['args'])
-    print(scenario)
+    content_files = s['args']['-c']
     class MockGit(object):
         def __init__(self, a):
             self.a = a
@@ -134,7 +101,7 @@ def test_id_valid_args(monkeypatch, scenario):
         def __init__(self):
             pass
         def gen_default(self, len=None):
-            return 12345
+            return "hvvgkns9ta"
     
     def mock_git(a):
         return MockGit(a)
@@ -145,11 +112,50 @@ def test_id_valid_args(monkeypatch, scenario):
         
     monkeypatch.setattr('helpers.git_info.GitInfo', mock_git)
     monkeypatch.setattr('helpers.generate_id.GenID', mock_gen_id)
-    id.main(args)
+    setup_files(dir_path, content_files)
+    runner = CliRunner()
+    result = runner.invoke(gen_pid, test_info['args'])
+    submission_file = None
+    submission_file_match = re.search("tests.*?\\d{14}_submission.xml", result.output, re.MULTILINE)
+    submission_file = submission_file_match.group()
+    return [dir_path, content_files, [submission_file]]
+    
+def mock_submit_file_args(requests_mock, pid_file, submission_file):
+    username = "username"
+    password = "password"
+    deposit_endpoint = "mock://dummy-endpoint"
+    submit_files_arg = ['-f', submission_file, '-pid', pid_file, '-u', username, '-p', password, '-e', deposit_endpoint]
+    requests_mock.post(deposit_endpoint, text = "success", status_code = 200)
+    submit_files.main(submit_files_arg)
+
+def mock_check_doi_urls(requests_mock, repo_path, pid_file):
+    check_doi_args = ['-r', repo_path, '-p', pid_file]
+    test_doi_prefix = f.fixture_id()[0]['doi_prefix']
+    # the breakup of the strings is to accurately represent
+    # the regular expression with the variable interpolation. 
+    # Otherwise, the regular expression ends up with incorrectly compiling the {10} signifier 
+
+    match_str = f'http.*?doi.org/{test_doi_prefix}'
+    # mock doi url check
+    matcher = re.compile(match_str + r'\/[a-z0-9]{10}$')
+    # get location from pid_file
     pid_output = check_output(pid_file)
-    expected_output = check_output(scenario['expected_output'])
+    location = pid_output[0]['url']
+    requests_mock.get(matcher, headers={'location':location}, status_code = 302)
+    url_status = check_doi_urls.main(check_doi_args)
+    return url_status
+
+def test_valid_args(monkeypatch, requests_mock):
+    dir_path, content_files, [submission_file] = run_script(monkeypatch)
+    expected_output_file = "tests/fixtures/tiny_static_site/crossref_submission_fixtures/one_value.json"
+    pid_file = dir_path + '/' + f.fixture_default_filenames()['default_pid_json_filename']
+    expected_output = check_output(expected_output_file)
+    mock_submit_file_args(requests_mock, pid_file, [submission_file][0])
+    url_status = mock_check_doi_urls(requests_mock, dir_path, pid_file)
+    pid_output = check_output(pid_file)
+    assert url_status == {}
     assert pid_output == expected_output
-    teardown_files(dir_path, content_files)
+    teardown_files(dir_path, content_files, [submission_file]) 
 
 """Restoring fixtures to their original state"""
 @pytest.fixture(scope="session", autouse=True)
@@ -161,4 +167,3 @@ def restore(request):
             fixtures_path = f.fixture_dir_path()['dir_path'] + "/" + f.fixture_content_path()
             g.GitInfo(cwd).restore(fixtures_path)
     request.addfinalizer(git_restore)
-

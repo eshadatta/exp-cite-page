@@ -126,6 +126,7 @@ def read_pid_file(file):
     return records
     
 # this script can be run after the files are initialized
+# this url generator works only for the Crossref website
 def main(argv=None):
     args = set_args(argv)
     print("Generating URLs")
