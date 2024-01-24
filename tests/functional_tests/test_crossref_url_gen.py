@@ -8,7 +8,7 @@ import id
 import os
 import pytest
 import helpers.git_info as g
-
+from git import Repo
 content_path = ["content/blog", "content/report/_index.md","content/report/rules.md"]
 files = ["content/blog/2022/2022-09-16-2022-board-election.md", "content/blog/2023/2023-03-23-cite-data-now.md", "content/report/_index.md", "content/report/rules.md"]
 ids = f.fixture_id()[0]
@@ -66,7 +66,6 @@ def content_file(dir_path, file, action="initialize"):
 
 def setup_files():
     process_args = valid_init_args(content = content_path)
-    print("PARGS: ", process_args)
     runner = CliRunner()
     runner.invoke(init, process_args)
     content_file(args['-r'], files)
@@ -118,7 +117,9 @@ def test(monkeypatch):
     url_constructor.main(url_gen_args)
     pid_output = check_output(pid_file)
     expected_output = check_output(url_gen_output)
-    assert pid_output == expected_output
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    assert sorted_pid_output == sorted_expected_output
     teardown_files(args['-r'], files)
 
 """Restoring fixtures to their original state"""
