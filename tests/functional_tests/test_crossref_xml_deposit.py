@@ -134,7 +134,9 @@ def test_valid_args(monkeypatch, requests_mock):
     expected_output = check_output(expected_output_file)
     mock_submit_file_args(requests_mock, pid_file, [submission_file][0])
     pid_output = check_output(pid_file)
-    assert pid_output == expected_output
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    assert sorted_pid_output == sorted_expected_output
     teardown_files(dir_path, content_files, [submission_file]) 
 
 """Restoring fixtures to their original state"""

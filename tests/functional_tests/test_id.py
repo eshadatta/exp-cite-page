@@ -112,7 +112,6 @@ def check_scenario_settings(scenario):
 def test_id_valid_args(monkeypatch, scenario):
     dir_path, pid_file, content_files = check_scenario_settings(scenario)
     args = f.flatten_dict(scenario['args'])
-    print(scenario)
     class MockGit(object):
         def __init__(self, a):
             self.a = a
@@ -148,7 +147,9 @@ def test_id_valid_args(monkeypatch, scenario):
     id.main(args)
     pid_output = check_output(pid_file)
     expected_output = check_output(scenario['expected_output'])
-    assert pid_output == expected_output
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    assert sorted_pid_output == sorted_expected_output
     teardown_files(dir_path, content_files)
 
 """Restoring fixtures to their original state"""

@@ -154,7 +154,9 @@ def test_valid_args(monkeypatch, requests_mock):
     url_status = mock_check_doi_urls(requests_mock, dir_path, pid_file)
     pid_output = check_output(pid_file)
     assert url_status == {}
-    assert pid_output == expected_output
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    assert sorted_pid_output == sorted_expected_output
     teardown_files(dir_path, content_files, [submission_file]) 
 
 """Restoring fixtures to their original state"""

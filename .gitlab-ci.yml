@@ -1,9 +1,7 @@
 workflow:
   rules:
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH ==  "main" 
+    - if: $CI_PIPELINE_SOURCE == "push" 
 
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 stages:
   - build_image
@@ -17,14 +15,30 @@ variables:
   DOCKER_TLS_CERTDIR: "/certs"
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
 
+test:
+  image: python:3.8-alpine
+  script:
+    - apk update
+    - apk upgrade
+    - apk add git
+    - git config user.email "labs@crossref.org"
+    - git config user.name "gitlab-ci-token"
+    - git checkout -b $CI_COMMIT_BRANCH
+    - pip install -r requirements.txt
+    - pytest -v tests/functional_tests/
+     
+
 build:
   image: docker:stable
   stage: build_image
   script: 
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - echo $CONTAINER_RELEASE_IMAGE
     - echo $CI_REGISTRY
     - docker build --pull -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - main
 
 
 

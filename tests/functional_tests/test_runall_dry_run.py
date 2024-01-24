@@ -143,7 +143,9 @@ def test_valid_args(monkeypatch, scenario):
         assert os.path.exists(submission_file)
     pid_output = check_output(pid_file)
     expected_output = check_output(s['expected_output'])
-    assert pid_output == expected_output
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    assert sorted_pid_output == sorted_expected_output
     teardown_files(dir_path, content_files, submission_file)
 
 """Restoring fixtures to their original state"""

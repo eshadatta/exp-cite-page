@@ -10,7 +10,7 @@ This is a prototype to create permanent identifiers for static pages such as blo
 This is meant to be used with markdown files and is being currently tested with Hugo.
 
 ### **Current Status**
-* Needs test coverage
+* Integration tests checking valid arguments have been written. Further tests can always be written
 * The scope for now is to only work with new PIDs, i.e. a file can have a new PID or be upgraded to a major version to get a new PID. It currently _does not_ work with deleted pages or tombstoning anything.
 * Code needs to be abstracted out further so that a user could add more functionality for custom url construction or ID generation
 * This only supports DOIs for now. A UUID option has been given as an example. 
