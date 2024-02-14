@@ -4,8 +4,8 @@ workflow:
 
 
 stages:
-  - build_image
   - test
+  - build_image
 
 services:
   - name: docker:dind
