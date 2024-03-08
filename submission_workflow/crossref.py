@@ -1,5 +1,6 @@
 import helper_url_generation.url_constructor as uc
 from submit_files import create_xml_files, submit_files
+import add_deposit_information
 import check_doi_urls
 import add_doi
 import time
@@ -9,12 +10,13 @@ import os
 import json
 
 class CrossrefSubmission:
-    def __init__(self, repo, pid_file, config_filename, gen_pid_args, site_type="crossref"):
+    def __init__(self, repo, pid_file, config_filename, gen_pid_args, add_info_file, site_type="crossref"):
         self.site_types = ["crossref", "other"]
         self.repo = repo
         self.pid_file = pid_file
         self.config_filename = config_filename
         self.gen_pid_args = gen_pid_args
+        self.add_info_file = add_info_file
         if site_type in self.site_types:
             self.site_type = site_type
         else:
@@ -42,7 +44,10 @@ class CrossrefSubmission:
         url_gen = ['--repo', self.repo, '--config-filename', self.config_filename]
         uc.main(url_gen)
 
-    
+    def add_additional_deposit_info(self):
+        add_info_args = ['-p', self.pid_file, '-a', self.add_info_file]
+        add_deposit_information.main(add_info_args)
+        
     def generate_xml_submission(self):
         submission_info = self.gen_pid_args['submission_info']
         default_xml_filename = datetime.now().strftime("%Y%m%d%H%M%S") + "_submission.xml"
@@ -94,11 +99,11 @@ class CrossrefSubmission:
         return no_urls
     
     def create_crossref_workflow(self):
+        self.add_additional_deposit_info()
         if self.site_type == "crossref":
             self.url_gen()
         dry_run = self.gen_pid_args['dry_run']
         no_urls = self.check_for_null_urls()
-
         if no_urls:
             raise ValueError(f"Submission process can not proceed. Please generate urls in {self.pid_file} for the following records: {no_urls}")
         else:

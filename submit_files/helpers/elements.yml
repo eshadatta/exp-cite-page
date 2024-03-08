@@ -7,7 +7,13 @@ doi_batch:
       email_address: "value"
     registrant: "Value"
   body: 
-    - posted_content: 
+    - posted_content:
+        contributors:
+          - person_name: {
+              given_name: "value",
+              surname: "value",
+              ORCID: "value"
+              }
         titles:
           title: "Value"
         posted_date:
