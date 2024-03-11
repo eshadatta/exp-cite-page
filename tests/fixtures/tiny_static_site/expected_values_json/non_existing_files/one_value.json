@@ -8,6 +8,14 @@
 		"url": null,
 		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
 		"title": "2022 Board Election",
+		"authors": [
+			{
+				"name": "Lucy Ofiesh",
+				"sequence": "first",
+				"given_name": "Lucy",
+				"surname": "Ofiesh"
+			}
+		],
 		"doi": {
 			"submitted": null,
 			"registered": null,
