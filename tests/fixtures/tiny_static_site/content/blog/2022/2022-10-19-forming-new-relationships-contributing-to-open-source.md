@@ -1,6 +1,8 @@
 ---
 title: 'Forming new relationships: Contributing to Open source'
 author: Patrick Vale
+authors:
+    - Patrick Vale
 draft: false
 authors:
 date: 2022-10-19
