@@ -4,7 +4,6 @@ author: Patrick Vale
 authors:
     - Patrick Vale
 draft: false
-authors:
 date: 2022-10-19
 categories:
     - DOIs
