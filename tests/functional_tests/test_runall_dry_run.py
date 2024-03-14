@@ -29,7 +29,7 @@ def is_repo(path):
     repo = None
     try:
         repo = Repo(path)
-    except:
+    except Exception:
         pass
     return repo
 
@@ -90,6 +90,24 @@ def teardown_files(dir_path, content_files, other_files = None):
         default_config_files.append(other_files)
     f.remove_files(default_config_files)
 
+def compare(pid, expected, file=None, diff = []):
+    for i, item in enumerate(pid):       
+        for k, v in item.items():
+            if isinstance(v, list):
+                compare(v, expected[i][k], item['file'],diff)
+            else:  
+                if v != expected[i][k]:
+                    diff.append({"file": file, "pid_value": v, "expected_value": expected[i][k]})
+    return diff
+
+def check_outputs(pid, expected):
+    pid_output = check_output(pid)
+    expected_output = check_output(expected)
+    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
+    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
+    diff = compare(sorted_pid_output, sorted_expected_output)
+    return diff
+    
 @pytest.mark.parametrize('scenario', get_valid_gen_pid_args(), ids=scenario_name)
 def test_valid_args(monkeypatch, scenario):
     s = scenario['info']
@@ -141,11 +159,8 @@ def test_valid_args(monkeypatch, scenario):
         submission_file_match = re.search("tests.*?xml", result.output, re.MULTILINE)
         submission_file = submission_file_match.group() 
         assert os.path.exists(submission_file)
-    pid_output = check_output(pid_file)
-    expected_output = check_output(s['expected_output'])
-    sorted_pid_output = sorted(pid_output, key = lambda d: d['file'])
-    sorted_expected_output = sorted(expected_output, key = lambda d: d['file'])
-    assert sorted_pid_output == sorted_expected_output
+    diff = check_outputs(pid_file, s['expected_output'])
+    assert len(diff) == 0
     teardown_files(dir_path, content_files, submission_file)
 
 """Restoring fixtures to their original state"""

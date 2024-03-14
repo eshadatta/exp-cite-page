@@ -1,0 +1,238 @@
+{
+    "Crossref": {
+      "department": "Crossref",
+      "thumb": "/filepath/to/image.jpg",
+      "bio": "Everyone on the Crossref staff. See us all at [crossref.org/people](/people)",
+      "staff": false,
+      "fullname": "Crossref",
+      "image": "/images/staff/staff-headshot-720px.jpg"
+    },
+    "Fabienne Michaud": {
+      "department": "Product team",
+      "thumb": "/filepath/to/image.jpg",
+      "title": "Product Manager",
+      "bio": "Test",
+      "staff": true,
+      "fullname": "Fabienne Michaud",
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "image": "/filepath/to/image.png"
+    },
+    "Patrick Vale": {
+      "department": "Technology & Research team",
+      "thumb": "/filepath/to/image.jpg",
+      "title": "Senior Front End Developer",
+      "bio": "Test",
+      "staff": true,
+      "fullname": "Patrick Vale",
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "image": "/filepath/to/image.jpg"
+    },
+    "Kornelia Korzec": {
+      "bio": "Test",
+      "staff": true,
+      "fullname": "Kornelia Korzec",
+      "twitter": "@qornik",
+      "orcid": "0000-0002-4632-5228",
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "image": "/filepath/to/image",
+      "department": "Member & Community Outreach team",
+      "title": "Head Community Engmt & Comms",
+      "thumb": "/filepath/to/image.png"
+    },
+    "Susan Collins": {
+      "bio": "Test",
+      "staff": true,
+      "twitter": "@collinssu",
+      "fullname": "Susan Collins",
+      "email": "member@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "image": "/images/staff/susan17-720px.png",
+      "topics": [
+        "Crossref services Content Registration, Cited-by, and Reference Linking",
+        "small publishers",
+        "membership and onboarding"
+      ],
+      "department": "Member & Community Outreach team",
+      "thumb": "/filepath/to/image.png",
+      "title": "Community Engagement Manager"
+    },
+    "Joe Wass": {
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "fullname": "Joe Wass",
+      "staff": true,
+      "bio": "Test",
+      "topics": [
+        "Crossref Event Data",
+        "altmetrics",
+        "Wikipedia",
+        "linked clinical trials",
+        "text and data mining"
+      ],
+      "image": "/filepath/to/image.jpg",
+      "department": "Technology & Research team",
+      "twitter": "@joewass",
+      "orcid": "0000-0002-0840-454X",
+      "thumb": "/filepath/to/image.png",
+      "title": "Head of Software Development"
+    },
+    "Rachael Lammey": {
+      "department": "Product team",
+      "twitter": "@rachaellammey",
+      "discourseUsername": "rlammey",
+      "orcid": "0000-0001-5800-1434",
+      "thumb": "/images/staff/rachael_thumbnail.png",
+      "title": "Director of Product",
+      "fullname": "Rachael Lammey",
+      "phone": "xxx-xxx-xxxx",
+      "email": "email@crossref.org",
+      "bio": "Test.",
+      "staff": false,
+      "image": "/filepath/to/image.jpg",
+      "topics": [
+        "Metadata (and Crossref's REST API)",
+        "preprints",
+        "text mining",
+        "funding data",
+        "scholarly publishing",
+        "community-focused product development"
+      ]
+    },
+    "Jennifer Kemp": {
+      "topics": [
+        "Scholarly communications",
+        "Metadata retrieval",
+        "Event Data",
+        "Use of our metadata",
+        "Books",
+        "Libraries"
+      ],
+      "image": "/filepath/to/image.jpg",
+      "staff": false,
+      "bio": "Test ",
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "fullname": "Jennifer Kemp",
+      "title": "Head of Partnerships",
+      "thumb": "/filepath/to/image.png",
+      "department": "Member & Community Outreach team"
+    },
+    "Ed Pentz": {
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx",
+      "fullname": "Ed Pentz",
+      "staff": true,
+      "bio": "Test",
+      "topics": [
+        "Scholarly communications",
+        "Crossref tools and services",
+        "Not-for-profit governance"
+      ],
+      "image": "/filepath/to/image.png",
+      "orcid": "0000-0002-5993-8592",
+      "twitter": "@epentz",
+      "title": "Executive Director",
+      "thumb": "/filepath/to/image.png",
+      "department": "Executive team"
+    },
+    "Lucy Ofiesh": {
+      "fullname": "Lucy Ofiesh",
+      "phone": "xxx-xxx-xxxx",
+      "email": "email@crossref.org",
+      "bio": "Test",
+      "staff": true,
+      "image": "/images/staff/staff-robot-1-full.png",
+      "department": "Finance & Operations team",
+      "title": "Director of Finance & Operations",
+      "thumb": "/images/staff/staff-robot-1-thumb.png"
+    },
+    "Martyn Rittman": {
+      "fullname": "Martyn Rittman",
+      "phone": "xxx-xxx-xxxx",
+      "email": "email@crossref.org",
+      "bio": "Test",
+      "staff": true,
+      "image": "/images/staff/staff-robot-1.png",
+      "department": "Product team",
+      "title": "Product Manager",
+      "thumb": "/images/staff/staff-robot-1.png"
+    },
+    "Ginny Hendricks": {
+      "thumb": "/filepath/to/image.png",
+      "title": "Director of Member & Community Outreach",
+      "orcid": "0000-0002-0353-2702",
+      "staff": true,
+      "fullname": "Ginny Hendricks",
+      "topics": [
+        "Metadata 20/20",
+        "Scholarly communications",
+        "international community engagement",
+        "branding and visual identity",
+        "ROR"
+      ],
+      "image": "/filepath/to/image.jpg",
+      "bio": "Test"
+    },
+    "Geoffrey Bilder": {
+      "department": "Technology & Research team",
+      "title": "Director of Technology & Research",
+      "thumb": "/filepath/to/image.png",
+      "orcid": "0000-0003-1315-5960",
+      "twitter": "@gbilder",
+      "staff": true,
+      "bio": "Test",
+      "phone": "xxx-xxx-xxxx",
+      "email": "email@crossref.org",
+      "fullname": "Geoffrey Bilder",
+      "topics": [
+        "future of scholarly communication",
+        "scholarly infrastructures",
+        "persistent identifiers",
+        "ORCID"
+      ],
+      "image": "/filepath/to/image.jpg"
+    },
+    "David Haber": {
+      "fullname": "David Haber",
+      "thumb": "/images/staff-headshot-100px.jpg",
+      "image": "/images/staff-headshot-720px.jpg",
+      "bio": "Test",
+      "title": "Publishing Operations Director",
+      "staff": false,
+      "email": "email@crossref.org"
+    },
+    "Deborah Plavin": {
+      "fullname": "Deborah Plavin",
+      "thumb": "/images/staff-headshot-100px.jpg",
+      "image": "/images/staff-headshot-720px.jpg",
+      "bio": "Test",
+      "title": "Digital Publishing Manager",
+      "staff": false,
+      "email": "email@crossref.org"
+    },
+    "Amanda Bartell": {
+      "fullname": "Amanda Bartell",
+      "thumb": "/filepath/to/image.jpg",
+      "image": "/filepath/to/image.jpg",
+      "bio": "Test",
+      "title": "Head of Member Experience",
+      "department": "Member & Community Outreach team",
+      "staff": true,
+      "email": "email@crossref.org"
+    },
+    "Patrick Polischuk": {
+      "fullname": "Patrick Polischuk",
+      "thumb": "/filepath/to/image.png",
+      "image": "/filepath/to/image.png",
+      "bio": "Test",
+      "title": "Product Manager",
+      "department": "Product team",
+      "staff": true,
+      "email": "email@crossref.org",
+      "phone": "xxx-xxx-xxxx"
+    }
+  }
+  

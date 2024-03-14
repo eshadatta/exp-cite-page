@@ -8,6 +8,7 @@
 		"url": "https://test.org/blog/2022-board-election",
 		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
 		"title": "2022 Board Election",
+		"authors": [{"name": "Lucy Ofiesh", "sequence": "first", "given_name": "Lucy", "surname": "Ofiesh"}],
 		"doi": {
 			"submitted": true,
 			"registered": true,
@@ -25,6 +26,15 @@
 		"url": "https://test.org/blog/renewed-persistence",
 		"file": "content/blog/2023/2023-04-01-renewed-persistence.md",
 		"title": "Renewed Persistence",
+		"authors": [
+			{
+				"name": "Joe Wass",
+				"sequence": "first",
+				"given_name": "Joe",
+				"surname": "Wass",
+				"ORCID": "https://orcid.org/0000-0002-0840-454X"
+			}
+		],
 		"doi": {
 			"submitted": true,
 			"registered": true,

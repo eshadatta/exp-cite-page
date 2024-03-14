@@ -88,6 +88,6 @@ def main(argv = None):
     if doi_submitted:
         print(f"Updating doi status in {args.pid_file_name}")
         process_submitted_dois(args.pid_file_name, args.xml_file_name)
-        print(f"DOI status updated")
+        print("DOI status updated")
 if __name__ == "__main__":
     main()

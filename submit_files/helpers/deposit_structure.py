@@ -1,5 +1,4 @@
 from datetime import datetime
-import yaml
 from copy import deepcopy
 
 class DepositStructure:
@@ -52,12 +51,13 @@ class DepositStructure:
         head_tree['depositor']['email_address'] = self.de
         head_tree['registrant'] = self.dr
         return {el_name: head_tree}
+    
     def convert_doc_structure(self, docs):
         struct_docs = []
         crosswalk = {
             'title': 'title',
             'doi_prefix': 'doi', 
-            'url': 'resource'
+            'url': 'resource',
         }
         for d in docs:
             info = {}
@@ -66,16 +66,24 @@ class DepositStructure:
                     info[v] = d[k] + "/" + d['current_id']
                 else:
                     info[v] = d[k]
+            if 'authors' in d.keys():
+                info['contributors'] = []
+                for a in d['authors']:
+                    author_info = {}
+                    author_info['sequence'] = a['sequence']
+                    author_info['given_name'] = a['given_name']
+                    author_info['surname'] = a['surname']
+                    if 'ORCID' in a.keys():
+                       author_info['ORCID'] =  a['ORCID']
+                    info['contributors'].append({'person_name': author_info})
             struct_docs.append(info)
         return struct_docs
 
-        
     def body_tree(self, body_tree, el_name, docs):
         now = datetime.now()
         structure = body_tree
         crosswalked_docs = self.convert_doc_structure(docs)
         xml_docs = []
-
         for d in crosswalked_docs:
             tmp = deepcopy(structure[0])
             t = self.traverse_tree(tmp, d, now)

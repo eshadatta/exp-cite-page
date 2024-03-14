@@ -35,7 +35,7 @@ build:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - echo $CONTAINER_RELEASE_IMAGE
     - echo $CI_REGISTRY
-    - docker build --pull -t $CONTAINER_RELEASE_IMAGE .
+    - docker build --pull -t $CONTAINER_RELEASE_IMAGE:mvp .
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - main

@@ -69,7 +69,8 @@ class InitializeFiles:
             [file_commit_id, git_hash, utc_datetime] = self.gen_initialized_file_info(f)
             md = u.read_markdown_file(f)
             title = u.get_md_title(f, md)
-            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.static_page.init_version, "url": None, "current_id": current_id, "title": title}
+            authors = u.get_md_authors(f, md)
+            info = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "file": f.split(self.repo_path+"/")[1], "version": self.static_page.init_version, "url": None, "current_id": current_id, "title": title, "authors": authors}
             info.update(doi)
             file_git_info[f] = info
         return file_git_info

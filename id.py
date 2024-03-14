@@ -19,7 +19,7 @@ import helpers.initialize_files as init_file
 
 def check_path(parser, p, type='dir'):
     path_types = ["file", "dir"]
-    if not(type in path_types):
+    if type not in path_types:
         raise parser.error(f"type: {type} must be one of these: {path_types}")
     if not(exists(p)):
         parser.error(f"{p} needs to exist")
@@ -67,7 +67,7 @@ def git_info(args, files, dry_run):
                 filename = f.split(args.repo+"/")[1]
                 current_id = gid.GenID().gen_default(len=10)
                 doi = {"doi": {"submitted": None, "registered": None, "value": None}}
-                file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename, "title": v['title']}
+                file_info[filename] = {"file_commit_id": file_commit_id, "file_hash": git_hash, "utc_commit_date": utc_datetime, "current_id": current_id, "version": v["version"], "url": v["url"], "file": filename, "title": v['title'], "authors": v['author_info']}
                 file_info[filename].update(doi)
             else:
                 err_msg[f] = err
@@ -76,7 +76,7 @@ def git_info(args, files, dry_run):
             print("ERRORS found in files to be processed:")
             for k, v in err_msg.items():
                 print(f"For file {k}: {v}")
-            raise AssertionError(f"Script will stop processing until errors are addressed")
+            raise AssertionError("Script will stop processing until errors are addressed")
     return file_info
 
 def check_config_args(config_args, dry_run, arg_type=None):

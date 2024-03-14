@@ -1,8 +1,9 @@
 ---
 title: 'Forming new relationships: Contributing to Open source'
 author: Patrick Vale
-draft: false
 authors:
+    - Patrick Vale
+draft: false
 date: 2022-10-19
 categories:
     - DOIs

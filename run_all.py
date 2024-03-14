@@ -111,7 +111,9 @@ def gen_pid(batch, dry_run, sub_type, info, **kwargs):
     run_gen_id(config, gen_pid_args)
     # if submission type is crossref, run the crossref submission workflow
     if sub_type == "crossref":
-        cr_workflow = crossref.CrossrefSubmission(kwargs['repo'], pid_file, config_file, gen_pid_args, site_type="crossref")
+        additional_info_file = "data/team/biographies.json"
+        full_path_add_info_file = os.path.join(os.path.normpath(kwargs['repo']), os.path.normpath(additional_info_file))
+        cr_workflow = crossref.CrossrefSubmission(kwargs['repo'], pid_file, config_file, gen_pid_args, full_path_add_info_file, site_type="crossref")
         cr_workflow.create_crossref_workflow()
 
 if __name__ == "__main__":

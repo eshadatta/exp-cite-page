@@ -20,7 +20,7 @@ def is_repo(path):
     repo = None
     try:
         repo = Repo(path)
-    except:
+    except Exception:
         pass
     return repo
 

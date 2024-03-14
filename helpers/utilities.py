@@ -131,11 +131,41 @@ def get_files_pid(pid_file):
             file_version_info[d['file']] = {"version": d['version'], "url": d['url']}
     return file_version_info
 
-def get_md_title(file, md):
-    title = md.metadata.get('title', None)
-    if not(title):
-        raise ValueError(f"{file} must contain title")
+def get_md_info(file, md, key):
+    info = md.metadata.get(key, None)
+    if not(info):
+        raise ValueError(f"{file} must contain {key}")
+    return info
+
+def get_md_title(file, md, key='title'):
+    ''' Gets title in frontmatter '''
+    title = get_md_info(file, md, key)
     return title
+
+def split_authors(author):
+    info = {}
+    split_name = author.split(" ")
+    info['given_name'] = split_name[0]
+    info['surname'] = split_name[-1]
+    return info
+
+def get_md_authors(file, md, key='authors'):
+    ''' Gets author in frontmatter '''
+    author_info = []
+    existing_key = None
+    if 'authors' in md.metadata.keys():
+        existing_key = 'authors'
+    elif 'author' in md.metadata.keys():
+        existing_key = 'author'
+    authors = get_md_info(file, md, existing_key)
+    if isinstance(authors, str):
+        authors = [authors]
+    if authors:
+        for i, v in enumerate(authors):
+            sequence = "first" if i == 0 else "additional"
+            split_author_name = split_authors(v)
+            author_info.append({'name': v, 'sequence': sequence, "given_name": split_author_name['given_name'], "surname": split_author_name['surname']}) 
+    return author_info
 
 def check_file_versions(repo_path, pid_file, file_list, dry_run):
     '''gets a list of all files from given content paths and their versions from the pid file (if they exist) and generates a list of files to be pid-ized'''
@@ -165,12 +195,16 @@ def check_file_versions(repo_path, pid_file, file_list, dry_run):
                             previous_major_file_version = get_major_version(initialized_files[relative_path]["version"])
                             # only checks if it is greater. There should eventually be some handling if for some reason the file has been deprecated or is lower than the previous version
                             if major_version > previous_major_file_version:
-                                generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"], "title": md.metadata['title']}
+                                title = get_md_title(f, md)
+                                authors = get_md_authors(f, md)
+                                generate_dois[f] = {"version": version, "url": initialized_files[relative_path]["url"], "title": title, "author_info": authors}
                             else:
                                 print(f"For {f}: Version {major_version} can not be less than the previous version: {previous_major_file_version}. File will not be processed")
                     else:
                         # if file does not already exist in the pid file, it will be added to the list for id generation
-                        generate_dois[f] = {"version": md.metadata[version_tag], "url": None, "title": md.metadata['title']}
+                        title = get_md_title(f, md)
+                        authors = get_md_authors(f, md)
+                        generate_dois[f] = {"version": md.metadata[version_tag], "url": None, "title": md.metadata['title'], "author_info": authors}
                 else:
                     uninitialized_files.append(f)
         # add file version to this

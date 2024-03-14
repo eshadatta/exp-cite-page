@@ -1,25 +1,17 @@
-from run_all import init, gen_pid
 import pytest
 import re
-from os.path import exists
 import json
 import helpers.git_info as g
 import tests.functional_tests.fixtures as f
-import helpers.utilities as u
-from click.testing import CliRunner
 from git import Repo
 import os
-import re
-from xmldiff import main
-from lxml import etree
-from submit_files import submit_files
 import check_doi_urls
 
 def is_repo(path):
     repo = None
     try:
         repo = Repo(path)
-    except:
+    except Exception:
         pass
     return repo
 
@@ -63,7 +55,7 @@ def test_valid_args(monkeypatch, requests_mock):
     mock_pid_output = check_output(mock_pid_file)
     assert url_status == {}
     assert mock_pid_output == expected_output
-    teardown_files(dir_path) 
+    teardown_files(dir_path)
 
 """Restoring fixtures to their original state"""
 @pytest.fixture(scope="session", autouse=True)
