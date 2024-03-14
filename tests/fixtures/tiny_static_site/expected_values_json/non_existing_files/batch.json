@@ -1,1 +1,444 @@
-[{"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-12-07-introducing-the-global-equitable-membership-program.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Introducing our new Global Equitable Membership (GEM) program", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-10-10-crossref-membership-and-isr.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "ISR part two: How our membership approach helps to preserve the integrity of the scholarly record", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-09-16-2022-board-election.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "2022 Board Election", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-09-22-crossref-role-integrity-scholarly-record.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "ISR part one: What is our role in preserving the integrity of the scholarly record?", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-11-17-practical-guide-for-funders-open-science-ostp-2022.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "How funding agencies can meet OSTP (and Open Science) guidance using existing open infrastructure", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-10-17-where-does-crossref-have-the-most-impact.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "ISR part three: Where does Crossref have the most impact on helping the community to assess the trustworthiness of the scholarly record?", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-11-09-preprint-schema-recommendations.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Better preprint metadata through community participation", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2022/2022-10-19-forming-new-relationships-contributing-to-open-source.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Forming new relationships: Contributing to Open source", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-03-23-cite-data-now.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Start citing data now. Not later", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-04-01-renewed-persistence.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Renewed Persistence", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-02-28-in-the-know-on-workflows.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "In the know on workflows: The metadata user working group", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "2023 public data file now available with new and improved retrieval options", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-05-30-our-annual-call-for-board-nominations.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Our annual call for board nominations", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-03-14-shooting-for-the-stars.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Shooting for the stars \u2013 ASM\u2019s journey towards complete metadata", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-05-12-metadata-connects-the-global-community-summary-of-our-community-update-2023.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Metadata connects the global community \u2013 summary of our Community update 2023", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}, {"file_commit_id": 1, "file_hash": 2, "utc_commit_date": "2023-12-20 19:30:13", "file": "content/blog/2023/2023-05-01-similarity-check-ithenticate-v2-enhanced-interface-for-administrators.md", "version": "0.0.0", "url": null, "current_id": 12345, "title": "Similarity Check: look out for a refreshed interface and improvements for iThenticate v2 account administrators", "doi": {"submitted": null, "registered": null, "value": null}, "production_domain": "https://test.org", "doi_prefix": "10.5555"}]
+[
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-12-07-introducing-the-global-equitable-membership-program.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Introducing our new Global Equitable Membership (GEM) program",
+		"authors": [
+			{
+				"name": "Susan Collins",
+				"sequence": "first",
+				"given_name": "Susan",
+				"surname": "Collins"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-10-10-crossref-membership-and-isr.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "ISR part two: How our membership approach helps to preserve the integrity of the scholarly record",
+		"authors": [
+			{
+				"name": "Amanda Bartell",
+				"sequence": "first",
+				"given_name": "Amanda",
+				"surname": "Bartell"
+			},
+			{
+				"name": "Ginny Hendricks",
+				"sequence": "additional",
+				"given_name": "Ginny",
+				"surname": "Hendricks"
+			},
+			{
+				"name": "Lucy Ofiesh",
+				"sequence": "additional",
+				"given_name": "Lucy",
+				"surname": "Ofiesh"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-09-16-2022-board-election.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "2022 Board Election",
+		"authors": [
+			{
+				"name": "Lucy Ofiesh",
+				"sequence": "first",
+				"given_name": "Lucy",
+				"surname": "Ofiesh"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-09-22-crossref-role-integrity-scholarly-record.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "ISR part one: What is our role in preserving the integrity of the scholarly record?",
+		"authors": [
+			{
+				"name": "Amanda Bartell",
+				"sequence": "first",
+				"given_name": "Amanda",
+				"surname": "Bartell"
+			},
+			{
+				"name": "Ginny Hendricks",
+				"sequence": "additional",
+				"given_name": "Ginny",
+				"surname": "Hendricks"
+			},
+			{
+				"name": "Ed Pentz",
+				"sequence": "additional",
+				"given_name": "Ed",
+				"surname": "Pentz"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-11-17-practical-guide-for-funders-open-science-ostp-2022.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "How funding agencies can meet OSTP (and Open Science) guidance using existing open infrastructure",
+		"authors": [
+			{
+				"name": "Ed Pentz",
+				"sequence": "first",
+				"given_name": "Ed",
+				"surname": "Pentz"
+			},
+			{
+				"name": "Ginny Hendricks",
+				"sequence": "additional",
+				"given_name": "Ginny",
+				"surname": "Hendricks"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-10-17-where-does-crossref-have-the-most-impact.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "ISR part three: Where does Crossref have the most impact on helping the community to assess the trustworthiness of the scholarly record?",
+		"authors": [
+			{
+				"name": "Rachael Lammey",
+				"sequence": "first",
+				"given_name": "Rachael",
+				"surname": "Lammey"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-11-09-preprint-schema-recommendations.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Better preprint metadata through community participation",
+		"authors": [
+			{
+				"name": "Martyn Rittman",
+				"sequence": "first",
+				"given_name": "Martyn",
+				"surname": "Rittman"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2022/2022-10-19-forming-new-relationships-contributing-to-open-source.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Forming new relationships: Contributing to Open source",
+		"authors": [
+			{
+				"name": "Patrick Vale",
+				"sequence": "first",
+				"given_name": "Patrick",
+				"surname": "Vale"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-03-23-cite-data-now.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Start citing data now. Not later",
+		"authors": [
+			{
+				"name": "Geoffrey Bilder",
+				"sequence": "first",
+				"given_name": "Geoffrey",
+				"surname": "Bilder"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-04-01-renewed-persistence.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Renewed Persistence",
+		"authors": [
+			{
+				"name": "Joe Wass",
+				"sequence": "first",
+				"given_name": "Joe",
+				"surname": "Wass"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-02-28-in-the-know-on-workflows.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "In the know on workflows: The metadata user working group",
+		"authors": [
+			{
+				"name": "Jennifer Kemp",
+				"sequence": "first",
+				"given_name": "Jennifer",
+				"surname": "Kemp"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-05-02-2023-public-data-file-now-available-with-new-and-improved-retrieval-options.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "2023 public data file now available with new and improved retrieval options",
+		"authors": [
+			{
+				"name": "Patrick Polischuk",
+				"sequence": "first",
+				"given_name": "Patrick",
+				"surname": "Polischuk"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-05-30-our-annual-call-for-board-nominations.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Our annual call for board nominations",
+		"authors": [
+			{
+				"name": "Lucy Ofiesh",
+				"sequence": "first",
+				"given_name": "Lucy",
+				"surname": "Ofiesh"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-03-14-shooting-for-the-stars.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Shooting for the stars \u2013 ASM\u2019s journey towards complete metadata",
+		"authors": [
+			{
+				"name": "Kornelia Korzec",
+				"sequence": "first",
+				"given_name": "Kornelia",
+				"surname": "Korzec"
+			},
+			{
+				"name": "David Haber",
+				"sequence": "additional",
+				"given_name": "David",
+				"surname": "Haber"
+			},
+			{
+				"name": "Deborah Plavin",
+				"sequence": "additional",
+				"given_name": "Deborah",
+				"surname": "Plavin"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-05-12-metadata-connects-the-global-community-summary-of-our-community-update-2023.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Metadata connects the global community \u2013 summary of our Community update 2023",
+		"authors": [
+			{
+				"name": "Kornelia Korzec",
+				"sequence": "first",
+				"given_name": "Kornelia",
+				"surname": "Korzec"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	},
+	{
+		"file_commit_id": 1,
+		"file_hash": 2,
+		"utc_commit_date": "2023-12-20 19:30:13",
+		"file": "content/blog/2023/2023-05-01-similarity-check-ithenticate-v2-enhanced-interface-for-administrators.md",
+		"version": "0.0.0",
+		"url": null,
+		"current_id": 12345,
+		"title": "Similarity Check: look out for a refreshed interface and improvements for iThenticate v2 account administrators",
+		"authors": [
+			{
+				"name": "Fabienne Michaud",
+				"sequence": "first",
+				"given_name": "Fabienne",
+				"surname": "Michaud"
+			}
+		],
+		"doi": {
+			"submitted": null,
+			"registered": null,
+			"value": null
+		},
+		"production_domain": "https://test.org",
+		"doi_prefix": "10.5555"
+	}
+]

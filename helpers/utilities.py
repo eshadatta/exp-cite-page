@@ -152,7 +152,14 @@ def split_authors(author):
 def get_md_authors(file, md, key='authors'):
     ''' Gets author in frontmatter '''
     author_info = []
-    authors = get_md_info(file, md, key)
+    existing_key = None
+    if 'authors' in md.metadata.keys():
+        existing_key = 'authors'
+    elif 'author' in md.metadata.keys():
+        existing_key = 'author'
+    authors = get_md_info(file, md, existing_key)
+    if isinstance(authors, str):
+        authors = [authors]
     if authors:
         for i, v in enumerate(authors):
             sequence = "first" if i == 0 else "additional"

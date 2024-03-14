@@ -1,7 +1,6 @@
 from run_all import init, gen_pid
 import pytest
 import re
-from os.path import exists
 import json
 import helpers.git_info as g
 import tests.functional_tests.fixtures as f
@@ -9,7 +8,6 @@ import helpers.utilities as u
 from click.testing import CliRunner
 from git import Repo
 import os
-import re
 from xmldiff import main
 from lxml import etree
 
@@ -56,7 +54,7 @@ def is_repo(path):
     repo = None
     try:
         repo = Repo(path)
-    except:
+    except Exception:
         pass
     return repo
 
@@ -155,7 +153,7 @@ def test_valid_args(monkeypatch):
     d = main.diff_files(tmp_submission, tmp_fixture)
     assert len(d) == 0
     remove_extraneous_files = [tmp_submission, tmp_fixture, submission_file]
-    teardown_files(dir_path, content_files, remove_extraneous_files) 
+    teardown_files(dir_path, content_files, remove_extraneous_files)
 
 """Restoring fixtures to their original state"""
 @pytest.fixture(scope="session", autouse=True)

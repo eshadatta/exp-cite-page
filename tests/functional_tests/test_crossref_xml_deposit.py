@@ -1,7 +1,6 @@
 from run_all import init, gen_pid
 import pytest
 import re
-from os.path import exists
 import json
 import helpers.git_info as g
 import tests.functional_tests.fixtures as f
@@ -9,9 +8,6 @@ import helpers.utilities as u
 from click.testing import CliRunner
 from git import Repo
 import os
-import re
-from xmldiff import main
-from lxml import etree
 from submit_files import submit_files
 
 def check_output(output):
@@ -27,7 +23,7 @@ def is_repo(path):
     repo = None
     try:
         repo = Repo(path)
-    except:
+    except Exception:
         pass
     return repo
 
