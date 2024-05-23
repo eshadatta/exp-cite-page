@@ -28,7 +28,7 @@ def commit_file(repo_path, file):
 def write_content_file(file_path, markdown):
     try:
         with open(file_path, 'w') as m:
-            m.write(frontmatter.dumps(markdown, handler=markdown.handler))
+            m.write(frontmatter.dumps(markdown, sort_keys=False, handler=markdown.handler))
     except Exception as e:
         raise(f"ERROR: {e}")
     else:
