@@ -13,8 +13,7 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
-  #CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:mvp
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:test_order
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:mvp
 
 test:
   image: python:3.8-alpine
